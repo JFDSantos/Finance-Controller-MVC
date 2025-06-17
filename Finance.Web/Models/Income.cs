@@ -1,0 +1,12 @@
+﻿using System.Security.Cryptography.X509Certificates;
+
+namespace Finance.Web.Models
+{   
+    public class Income : Moviment
+    {
+        public int typeIncome { get; set; }
+
+        public Income() {
+        }
+    }
+}
