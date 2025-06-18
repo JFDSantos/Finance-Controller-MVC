@@ -11,6 +11,7 @@ namespace Finance.Web.Models
         public Boolean isAppellant {  get; set; }
         public int categoryId { get; set; }
         public Category? Category { get; set; }
+        public decimal value { get; set; }
 
     }
 }

@@ -1,5 +1,7 @@
-﻿using System.Threading.Tasks;
+﻿using System.Runtime.InteropServices.Marshalling;
+using System.Threading.Tasks;
 using Finance.Web.Data;
+using Finance.Web.Interfaces;
 using Finance.Web.Models;
 using Finance.Web.Models.Enums;
 using Finance.Web.ViewModel;
@@ -13,64 +15,91 @@ namespace Finance.API.Controllers
     [Route("[controller]")]
     public class IncomeController : ControllerBase
     {
-        private readonly FinanceContext _context;
-        public IncomeController(FinanceContext context)
+        private readonly IIncomeService _IncomeService;
+        public IncomeController(IIncomeService service)
         {
-            _context = context;
+            _IncomeService = service;
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Income>>> GetAll()
+        public async Task<ActionResult<Income>> GetAll()
         {
-            var incomes = await _context.Incomes.Include(i => i.Category).Select(i => new IncomeDto
+            try
             {
-                Id = i.id,
-                Description = i.description,
-                MovimentDate = i.movimentDate,
-                IsAppellant = i.isAppellant,
-                TypeIncome = i.typeIncome,
-                CategoryId = i.categoryId,
-                CategoryName = i.Category.Name
-            }).ToListAsync();
-
-            return Ok(incomes);
+                var incomes = await _IncomeService.GetAllAsync();
+                return Ok(incomes);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<Income>> GetById(int id)
         {
-            var income = await _context.Incomes.Include(i => i.Category).FirstOrDefaultAsync(i => i.id == id);
-
-            if (income == null)
+            try
             {
-                return NotFound();
+                var income = await _IncomeService.GetByIdAsync(id);
+                return Ok(income);
             }
-
-            return Ok(income);
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpPost]
-        public async Task<ActionResult<Income>> Create(IncomeCreateDto vm) {
+        public async Task<ActionResult<Income>> Create(IncomeCreateDto dto)
+        {
 
-
+            try
+            {
                 var income = new Income
                 {
-
-                    description = vm.Description,
-                    isAppellant = vm.IsAppellant,
-                    movimentDate = vm.MovimentDate,
-                    typeIncome = vm.TypeIncome,
-                    type = MovimentType.Income,
-                    categoryId = vm.CategoryId
-
+                    categoryId = dto.CategoryId,
+                    description = dto.Description,
+                    isAppellant = dto.IsAppellant,
+                    value = dto.Value,
+                    movimentDate = dto.MovimentDate
                 };
 
-                _context.Add(income);
-                await _context.SaveChangesAsync();
+                await _IncomeService.AddAsync(income);
                 return CreatedAtAction(nameof(GetById), new { id = income.id }, income);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
 
         }
 
+        [HttpDelete]
+        public async Task<ActionResult<Income>> Delete(int id)
+        {
+            try
+            {
+                await _IncomeService.DeleteAsync(id);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
 
+        [HttpPut]
+        public async Task<ActionResult<Income>> Update(int id, [FromBody] IncomeCreateDto dto)
+        {
+            try
+            {
+                var income = await _IncomeService.UpdateAsync(id,dto);
+                return CreatedAtAction(nameof(GetById), new { id = income.Id }, income);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }

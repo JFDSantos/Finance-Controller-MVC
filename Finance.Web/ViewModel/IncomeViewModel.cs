@@ -9,8 +9,8 @@ namespace Finance.Web.ViewModel
         public DateTime movimentDate { get; set; }
         public bool isAppellant { get; set; }
         public int categoryId { get; set; }
-        public int typeIncome { get; set; }
-        public IEnumerable<Category>? Categories { get; set; }
+        public IEnumerable<Finance.Web.Models.Category>? Categories { get; set; }
+        public required decimal value { get; set; }
 
     }
 }

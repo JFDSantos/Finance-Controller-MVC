@@ -1,4 +1,5 @@
 ﻿using Finance.Web.Data;
+using Finance.Web.Interfaces;
 using Finance.Web.Models;
 using Finance.Web.Models.Enums;
 using Finance.Web.ViewModel;
@@ -11,47 +12,89 @@ namespace Finance.API.Controllers
     [Route("[controller]")]
     public class CategoryController : ControllerBase
     {
-        private readonly FinanceContext _context;
-        public CategoryController(FinanceContext context)
+        private readonly ICategoryService _catService;
+        public CategoryController(ICategoryService CatService)
         {
-            _context = context;
+            _catService = CatService;
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Category>>> GetAll()
+        public async Task<IActionResult> GetAll()
         {
-            return await _context.Categories.ToListAsync();
-
+            try
+            {
+                var result = await _catService.GetAllAsync();
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Category>> GetById(int id)
+        public async Task<IActionResult> GetById(int id)
         {
-            var category = await _context.Categories.FirstOrDefaultAsync(i => i.Id == id);
-
-            if (category == null)
+            try
             {
-                return NotFound();
+                var result = await _catService.GetByIdAsync(id);
+                return Ok(result);
             }
-
-            return Ok(category);
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpPost]
-        public async Task<ActionResult<Category>> Create(CategoryCreateDto cat)
+        public async Task<IActionResult> Create(CategoryCreateDto cat)
         {
 
-            var category = new Category
+            try
             {
+                var category = new Category
+                {
 
-                Name = cat.Name
+                    Name = cat.Name
 
-            };
+                };
 
-            _context.Add(category);
-            await _context.SaveChangesAsync();
-            return CreatedAtAction(nameof(GetById), new { id = category.Id }, category);
+                await _catService.AddAsync(category);
+                return CreatedAtAction(nameof(GetById), new { id = category.Id }, category);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
 
+            }
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> Update(int id, [FromBody] CategoryCreateDto dto)
+        {
+            try
+            {
+                var updateCategory = await _catService.UpdateAsync(id, dto);
+                return Ok(updateCategory);
+            }
+            catch
+            {
+                return NotFound("Transaction not found!");
+            }
+        }
+
+        [HttpDelete]
+        public async Task<IActionResult> Delete(int id)
+        {
+            try
+            {
+                await _catService.DeleteAsync(id);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }
