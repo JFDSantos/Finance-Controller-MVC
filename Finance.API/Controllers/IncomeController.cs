@@ -5,6 +5,7 @@ using Finance.Web.Interfaces;
 using Finance.Web.Models;
 using Finance.Web.Models.Enums;
 using Finance.Web.ViewModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -21,6 +22,7 @@ namespace Finance.API.Controllers
             _IncomeService = service;
         }
 
+        [Authorize]
         [HttpGet]
         public async Task<ActionResult<Income>> GetAll()
         {
@@ -35,6 +37,7 @@ namespace Finance.API.Controllers
             }
         }
 
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<ActionResult<Income>> GetById(int id)
         {
@@ -49,6 +52,7 @@ namespace Finance.API.Controllers
             }
         }
 
+        [Authorize]
         [HttpPost]
         public async Task<ActionResult<Income>> Create(IncomeCreateDto dto)
         {
@@ -74,6 +78,7 @@ namespace Finance.API.Controllers
 
         }
 
+        [Authorize]
         [HttpDelete]
         public async Task<ActionResult<Income>> Delete(int id)
         {
@@ -88,6 +93,7 @@ namespace Finance.API.Controllers
             }
         }
 
+        [Authorize]
         [HttpPut]
         public async Task<ActionResult<Income>> Update(int id, [FromBody] IncomeCreateDto dto)
         {

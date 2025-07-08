@@ -3,6 +3,7 @@ using Finance.Web.Interfaces;
 using Finance.Web.Models;
 using Finance.Web.Models.Enums;
 using Finance.Web.ViewModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,6 +19,7 @@ namespace Finance.API.Controllers
             _catService = CatService;
         }
 
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
@@ -32,6 +34,7 @@ namespace Finance.API.Controllers
             }
         }
 
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
@@ -46,6 +49,7 @@ namespace Finance.API.Controllers
             }
         }
 
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> Create(CategoryCreateDto cat)
         {
@@ -69,6 +73,7 @@ namespace Finance.API.Controllers
             }
         }
 
+        [Authorize]
         [HttpPut]
         public async Task<IActionResult> Update(int id, [FromBody] CategoryCreateDto dto)
         {
@@ -83,6 +88,7 @@ namespace Finance.API.Controllers
             }
         }
 
+        [Authorize]
         [HttpDelete]
         public async Task<IActionResult> Delete(int id)
         {
