@@ -12,15 +12,16 @@ namespace Finance.Web.Data
         public DbSet<Income> Incomes { get; set; }
         public DbSet<Expense> Expenses { get; set; }
         public DbSet<Category> Categories { get; set; }
+        public DbSet<User> User { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // Define o campo "type" como discriminador explícito
             modelBuilder.Entity<Moviment>()
-                .HasDiscriminator<MovimentType>("type")
-                .HasValue<Moviment>(MovimentType.Base)
-                .HasValue<Income>(MovimentType.Income)
-                .HasValue<Expense>(MovimentType.Expense);
+                .HasDiscriminator<EMovimentType>("type")
+                .HasValue<Moviment>(EMovimentType.Base)
+                .HasValue<Income>(EMovimentType.Income)
+                .HasValue<Expense>(EMovimentType.Expense);
 
             // Configura relacionamento Moviment → Category
             modelBuilder.Entity<Moviment>()

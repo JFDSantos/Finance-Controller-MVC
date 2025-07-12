@@ -1,4 +1,4 @@
-﻿using Finance.Web.Interfaces;
+﻿using Finance.Web.Patterns.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Finance.API.Controllers
@@ -7,8 +7,8 @@ namespace Finance.API.Controllers
     [Route("[controller]")]
     public class ExpenseController : ControllerBase
     {
-        private readonly IExpenseService _expService;
-        public ExpenseController(IExpenseService expService)
+        private readonly IExpenseRepository _expService;
+        public ExpenseController(IExpenseRepository expService)
         {
             _expService = expService;
         }

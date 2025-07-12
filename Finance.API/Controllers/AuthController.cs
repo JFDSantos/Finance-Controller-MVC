@@ -1,6 +1,9 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Finance.Web.Models;
+using Finance.Web.Patterns.Interfaces;
+using Finance.Web.ViewModel;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 
@@ -11,43 +14,55 @@ namespace Finance.API.Controllers
     public class AuthController : Controller
     {
         private readonly IConfiguration _config;
-        public AuthController(IConfiguration config)
+        private readonly IUserRepository _user;
+
+        public AuthController(IConfiguration config, IUserRepository user)
         {
             _config = config;
+            _user = user;
         }
 
         [HttpPost]
-        public IActionResult Login([FromForm] string username, [FromForm] string password)
+        public async Task<IActionResult> Login([FromForm] string email, [FromForm] string password)
         {
-            //Todo: criar a validação do usuário e senha no banco
-
-            var claims = new[]
+            try
             {
-                new Claim(ClaimTypes.Name, username),
-                new Claim(ClaimTypes.Role, "Admin") //Todo: passar a role vinda do banco user.role
-            };
+                var user = await _user.ValidLoginUser(email, password);
+                
+                var claims = new[]
+                {
+                    new Claim(ClaimTypes.Email, email),
+                    new Claim(ClaimTypes.Role, user.role.ToString()),
+                    new Claim(ClaimTypes.Name, user.user)
+                };
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:key"]!));
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:key"]!));
+                var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-            var token = new JwtSecurityToken(
-                claims: claims,
-                expires: DateTime.UtcNow.AddHours(1),
-                signingCredentials: creds
-            );
+                var token = new JwtSecurityToken(
+                    claims: claims,
+                    expires: DateTime.UtcNow.AddHours(1),
+                    signingCredentials: creds
+                );
 
-            var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
+                var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
 
-            Response.Cookies.Append("jwt", tokenString, new CookieOptions 
+                Response.Cookies.Append("jwt", tokenString, new CookieOptions
+                {
+                    HttpOnly = true,
+                    Secure = true,
+                    SameSite = SameSiteMode.Strict,
+                    Expires = DateTimeOffset.UtcNow.AddHours(1)
+
+                });
+
+                return Ok("Login bem-sucedido");
+            }
+            catch (Exception ex)
             {
-                HttpOnly = true,
-                Secure= true,
-                SameSite = SameSiteMode.Strict,
-                Expires = DateTimeOffset.UtcNow.AddHours(1)
-
-            });
-
-            return Ok("Login bem-sucedido");
+                return BadRequest(ex.Message);
+            }
+            
         }
 
         [HttpPost("logout")]
@@ -55,6 +70,27 @@ namespace Finance.API.Controllers
         {
             Response.Cookies.Delete("jwt");
             return Ok("Logout realizado");
+        }
+
+        [HttpPost("create")]
+        public async Task<IActionResult> Create(UserCreateDto dto)
+        {
+            try
+            {
+                var user = new User
+                {
+                    user = dto.user,
+                    email = dto.email,
+                    password = BCrypt.Net.BCrypt.HashPassword(dto.password)
+                };
+
+                await _user.AddAsync(user);
+                return CreatedAtAction(nameof(Login), new { username = user.user }, user);
+            }
+            catch (Exception ex) {
+                return BadRequest(ex.Message);
+            }
+ 
         }
 
     }

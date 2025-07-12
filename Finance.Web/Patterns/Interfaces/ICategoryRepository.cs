@@ -1,9 +1,9 @@
 ﻿using Finance.Web.Models;
 using Finance.Web.ViewModel;
 
-namespace Finance.Web.Interfaces
+namespace Finance.Web.Patterns.Interfaces
 {
-    public interface ICategoryService
+    public interface ICategoryRepository
     {
         Task<IEnumerable<CategorySelectDto>> GetAllAsync();
         Task<CategorySelectDto> GetByIdAsync(int id);

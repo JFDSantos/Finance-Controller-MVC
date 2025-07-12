@@ -1,9 +1,10 @@
 using Finance.Web.Data;
-using Finance.Web.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Finance.Web.Patterns.Interfaces;
+using Finance.Web.Patterns.Repositories;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -43,8 +44,9 @@ builder.Services.AddDbContext<FinanceContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddControllers();
-builder.Services.AddScoped<ICategoryService, CategoryService>();
-builder.Services.AddScoped<IIncomeService, IncomeService>();
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<IIncomeRepository, IncomeRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 var app = builder.Build();
 

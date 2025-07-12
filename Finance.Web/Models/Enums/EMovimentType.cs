@@ -1,6 +1,6 @@
 ﻿namespace Finance.Web.Models.Enums
 {
-    public enum MovimentType
+    public enum EMovimentType
     {
         Base = 0,
         Income = 1,

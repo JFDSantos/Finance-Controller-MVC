@@ -1,15 +1,16 @@
 ﻿using Finance.Web.Data;
 using Finance.Web.Models;
+using Finance.Web.Patterns.Interfaces;
 using Finance.Web.ViewModel;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace Finance.Web.Interfaces
+namespace Finance.Web.Patterns.Repositories
 {
-    public class IncomeService : IIncomeService
+    public class IncomeRepository : IIncomeRepository
     {
         private readonly FinanceContext _context;
-        public IncomeService(FinanceContext context) { 
+        public IncomeRepository(FinanceContext context) { 
             _context = context;
         }
 

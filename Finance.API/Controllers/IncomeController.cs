@@ -1,9 +1,9 @@
 ﻿using System.Runtime.InteropServices.Marshalling;
 using System.Threading.Tasks;
 using Finance.Web.Data;
-using Finance.Web.Interfaces;
 using Finance.Web.Models;
 using Finance.Web.Models.Enums;
+using Finance.Web.Patterns.Interfaces;
 using Finance.Web.ViewModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -16,8 +16,8 @@ namespace Finance.API.Controllers
     [Route("[controller]")]
     public class IncomeController : ControllerBase
     {
-        private readonly IIncomeService _IncomeService;
-        public IncomeController(IIncomeService service)
+        private readonly IIncomeRepository _IncomeService;
+        public IncomeController(IIncomeRepository service)
         {
             _IncomeService = service;
         }

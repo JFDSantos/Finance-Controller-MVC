@@ -1,7 +1,7 @@
 ﻿using Finance.Web.Data;
-using Finance.Web.Interfaces;
 using Finance.Web.Models;
 using Finance.Web.Models.Enums;
+using Finance.Web.Patterns.Interfaces;
 using Finance.Web.ViewModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,8 +13,8 @@ namespace Finance.API.Controllers
     [Route("[controller]")]
     public class CategoryController : ControllerBase
     {
-        private readonly ICategoryService _catService;
-        public CategoryController(ICategoryService CatService)
+        private readonly ICategoryRepository _catService;
+        public CategoryController(ICategoryRepository CatService)
         {
             _catService = CatService;
         }
@@ -49,7 +49,7 @@ namespace Finance.API.Controllers
             }
         }
 
-        [Authorize]
+        [Authorize(Roles = "admin")]
         [HttpPost]
         public async Task<IActionResult> Create(CategoryCreateDto cat)
         {

@@ -5,7 +5,7 @@ namespace Finance.Web.Models
     public class Moviment
     {
         public int id { get; set; }
-        public MovimentType type { get; set; }
+        public EMovimentType type { get; set; }
         public string? description { get; set; }
         public DateTime movimentDate { get; set; }
         public Boolean isAppellant {  get; set; }

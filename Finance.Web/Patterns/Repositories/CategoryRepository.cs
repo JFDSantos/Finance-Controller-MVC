@@ -1,14 +1,15 @@
 ﻿using Finance.Web.Data;
 using Finance.Web.Models;
+using Finance.Web.Patterns.Interfaces;
 using Finance.Web.ViewModel;
 using Microsoft.EntityFrameworkCore;
 
-namespace Finance.Web.Interfaces
+namespace Finance.Web.Patterns.Repositories
 {
-    public class CategoryService : ICategoryService
+    public class CategoryRepository : ICategoryRepository
     {
         private readonly FinanceContext _context;
-        public CategoryService(FinanceContext context)
+        public CategoryRepository(FinanceContext context)
         {
             _context = context;
         }
