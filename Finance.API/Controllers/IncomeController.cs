@@ -16,8 +16,8 @@ namespace Finance.API.Controllers
     [Route("[controller]")]
     public class IncomeController : ControllerBase
     {
-        private readonly IIncomeRepository _IncomeService;
-        public IncomeController(IIncomeRepository service)
+        private readonly IIncomeService _IncomeService;
+        public IncomeController(IIncomeService service)
         {
             _IncomeService = service;
         }
@@ -59,17 +59,8 @@ namespace Finance.API.Controllers
 
             try
             {
-                var income = new Income
-                {
-                    categoryId = dto.CategoryId,
-                    description = dto.Description,
-                    isAppellant = dto.IsAppellant,
-                    value = dto.Value,
-                    movimentDate = dto.MovimentDate
-                };
-
-                await _IncomeService.AddAsync(income);
-                return CreatedAtAction(nameof(GetById), new { id = income.id }, income);
+                await _IncomeService.AddAsync(dto);
+                return NoContent();
             }
             catch (Exception ex)
             {
