@@ -1,6 +1,6 @@
-﻿using Finance.Web.Models;
-using Finance.Web.Patterns.Interfaces;
-using Finance.Web.ViewModel;
+﻿using Finance.Domain.Models;
+using Finance.Application.Interfaces;
+using Finance.Application.ViewModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

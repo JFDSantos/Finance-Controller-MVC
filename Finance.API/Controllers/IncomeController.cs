@@ -1,10 +1,10 @@
 ﻿using System.Runtime.InteropServices.Marshalling;
 using System.Threading.Tasks;
-using Finance.Web.Data;
-using Finance.Web.Models;
-using Finance.Web.Models.Enums;
-using Finance.Web.Patterns.Interfaces;
-using Finance.Web.ViewModel;
+using Finance.Infrastructure;
+using Finance.Domain.Models;
+using Finance.Domain.Models.Enums;
+using Finance.Application.Interfaces;
+using Finance.Application.ViewModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;

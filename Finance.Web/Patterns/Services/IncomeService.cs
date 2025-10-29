@@ -1,6 +1,6 @@
-﻿using Finance.Web.Models;
-using Finance.Web.Patterns.Interfaces;
-using Finance.Web.ViewModel;
+﻿using Finance.Domain.Models;
+using Finance.Application.Interfaces;
+using Finance.Application.ViewModel;
 
 namespace Finance.Web.Patterns.Services
 {

@@ -1,9 +1,9 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using Finance.Web.Models;
-using Finance.Web.Patterns.Interfaces;
-using Finance.Web.ViewModel;
+using Finance.Domain.Models;
+using Finance.Application.Interfaces;
+using Finance.Application.ViewModel;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 

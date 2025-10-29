@@ -1,8 +1,8 @@
-﻿using Finance.Web.Data;
-using Finance.Web.Models;
-using Finance.Web.Models.Enums;
-using Finance.Web.Patterns.Interfaces;
-using Finance.Web.ViewModel;
+﻿using Finance.Application.ViewModel;
+using Finance.Infrastructure.Data;
+using Finance.Domain.Models;
+using Finance.Domain.Models.Enums;
+using Finance.Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;

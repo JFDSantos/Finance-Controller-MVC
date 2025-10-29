@@ -1,11 +1,17 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.36203.30 d17.14
+VisualStudioVersion = 17.14.36203.30
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Finance.API", "Finance.API\Finance.API.csproj", "{CEFFB154-0624-4563-9F1C-9022A5CFFDE8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Finance.Web", "Finance.Web\Finance.Web.csproj", "{6E7E203F-557C-4108-A568-58C62E550C33}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Finance.Domain", "Finance.Domain\Finance.Domain.csproj", "{974199A7-0F2E-A54F-B9D7-5F7EEE777161}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Finance.Infrastructure", "Finance.Infrastructure\Finance.Infrastructure.csproj", "{49657418-CE04-DEB8-16B7-D13ED889CB3E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Finance.Application", "Finance.Application\Finance.Application.csproj", "{DED3A256-AA8F-4C1A-3B06-6C6E48A6059A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +27,18 @@ Global
 		{6E7E203F-557C-4108-A568-58C62E550C33}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6E7E203F-557C-4108-A568-58C62E550C33}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6E7E203F-557C-4108-A568-58C62E550C33}.Release|Any CPU.Build.0 = Release|Any CPU
+		{974199A7-0F2E-A54F-B9D7-5F7EEE777161}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{974199A7-0F2E-A54F-B9D7-5F7EEE777161}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{974199A7-0F2E-A54F-B9D7-5F7EEE777161}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{974199A7-0F2E-A54F-B9D7-5F7EEE777161}.Release|Any CPU.Build.0 = Release|Any CPU
+		{49657418-CE04-DEB8-16B7-D13ED889CB3E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{49657418-CE04-DEB8-16B7-D13ED889CB3E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{49657418-CE04-DEB8-16B7-D13ED889CB3E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{49657418-CE04-DEB8-16B7-D13ED889CB3E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DED3A256-AA8F-4C1A-3B06-6C6E48A6059A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DED3A256-AA8F-4C1A-3B06-6C6E48A6059A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DED3A256-AA8F-4C1A-3B06-6C6E48A6059A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DED3A256-AA8F-4C1A-3B06-6C6E48A6059A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

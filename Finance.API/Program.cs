@@ -1,11 +1,11 @@
-using Finance.Web.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using Finance.Web.Patterns.Interfaces;
-using Finance.Web.Patterns.Repositories;
+using Finance.Application.Interfaces;
+using Finance.Infrastructure.Repositories;
 using Finance.Web.Patterns.Services;
+using Finance.Infrastructure.Data;
 
 
 var builder = WebApplication.CreateBuilder(args);
