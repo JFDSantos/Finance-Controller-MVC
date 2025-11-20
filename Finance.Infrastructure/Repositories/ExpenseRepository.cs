@@ -1,9 +1,7 @@
 ﻿using Finance.Infrastructure.Data;
 using Finance.Domain.Models;
 using Finance.Application.Interfaces;
-using Finance.Application;
 using Microsoft.EntityFrameworkCore;
-using Finance.Application.ViewModel;
 
 namespace Finance.Infrastructure.Repositories
 {
@@ -14,9 +12,9 @@ namespace Finance.Infrastructure.Repositories
         {
             _context = context;
         }
-        public async Task AddAsync(Expense dto)
+        public async Task AddAsync(Expense expense)
         {
-            _context.Add(dto);
+            _context.Add(expense);
             await _context.SaveChangesAsync();
         }
 
@@ -33,17 +31,18 @@ namespace Finance.Infrastructure.Repositories
             throw new KeyNotFoundException("Expense not found");
         }
 
-        public async Task<IEnumerable<ExpenseDto>> GetAllAsync()
+        public async Task<IEnumerable<Expense>> GetAllAsync()
         {
-            var expenses = await _context.Expenses.Include(i => i.Category).Select(e => new ExpenseDto
+            var expenses = await _context.Expenses.Include(i => i.Category).Select(e => new Expense
             {
-                CategoryName = e.Category.Name,
-                CategoryId = e.Category.Id,
-                Description = e.description,
-                Id = e.id,
-                IsAppellant = e.isAppellant,
-                MovimentDate = e.movimentDate,
-                Value = e.value
+                Category = e.Category,
+                categoryId = e.categoryId,
+                description = e.description,
+                id = e.id,
+                isAppellant = e.isAppellant,
+                movimentDate = e.movimentDate,
+                value = e.value
+
             }).ToListAsync();
 
             if (expenses != null)
@@ -54,18 +53,19 @@ namespace Finance.Infrastructure.Repositories
             throw new KeyNotFoundException("Expenses not found");
         }
 
-        public async Task<ExpenseDto> GetByIdAsync(int id)
+        public async Task<Expense> GetByIdAsync(int id)
         {
-            var expense = await _context.Expenses.Include(i => i.Category).Select(e => new ExpenseDto
+            var expense = await _context.Expenses.Include(i => i.Category).Select(e => new Expense
             {
-                CategoryName = e.Category.Name,
-                CategoryId = e.Category.Id,
-                Description = e.description,
-                Id = e.id,
-                IsAppellant = e.isAppellant,
-                MovimentDate = e.movimentDate,
-                Value = e.value
-            }).FirstOrDefaultAsync(i => i.Id == id);
+                Category = e.Category,
+                categoryId = e.categoryId,
+                description = e.description,
+                id = e.id,
+                isAppellant = e.isAppellant,
+                movimentDate = e.movimentDate,
+                value = e.value
+
+            }).FirstOrDefaultAsync(i => i.id == id);
 
             if(expense != null)
             {
@@ -75,31 +75,31 @@ namespace Finance.Infrastructure.Repositories
             throw new KeyNotFoundException("Expense not found");
         }
 
-        public async Task<ExpenseDto> UpdateAsync(int id, ExpenseCreateDto dto)
+        public async Task<Expense> UpdateAsync(int id, Expense expenseCreate)
         {
             var expense = await _context.Expenses.Include(i => i.Category).FirstOrDefaultAsync(i => i.id == id);
 
             if (expense != null) 
             {
                 expense.id = id;
-                expense.value = dto.Value;
-                expense.description = dto.Description;
-                expense.movimentDate = dto.MovimentDate;
-                expense.isAppellant = dto.IsAppellant;
-                expense.categoryId = dto.CategoryId;
+                expense.value = expenseCreate.value;
+                expense.description = expenseCreate.description;
+                expense.movimentDate = expenseCreate.movimentDate;
+                expense.isAppellant = expenseCreate.isAppellant;
+                expense.categoryId = expenseCreate.categoryId;
 
                 _context.Update(expense);
                 await _context.SaveChangesAsync();
 
-                return new ExpenseDto
+                return new Expense
                 {
-                    Id = id,
-                    CategoryId = expense.categoryId,
-                    Value = expense.value,
-                    Description = expense.description,
-                    MovimentDate = expense.movimentDate,
-                    IsAppellant = expense.isAppellant,
-                    CategoryName = expense.Category.Name
+                    id = id,
+                    categoryId = expense.categoryId,
+                    value = expense.value,
+                    description = expense.description,
+                    movimentDate = expense.movimentDate,
+                    isAppellant = expense.isAppellant,
+                    Category = expense.Category
                 };
             }
 

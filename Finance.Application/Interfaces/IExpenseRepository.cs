@@ -1,14 +1,13 @@
 ﻿using Finance.Domain.Models;
-using Finance.Application.ViewModel;
 
 namespace Finance.Application.Interfaces
 {
     public interface IExpenseRepository
     {
-        Task<IEnumerable<ExpenseDto>> GetAllAsync();
-        Task<ExpenseDto> GetByIdAsync(int id);
-        Task AddAsync(Expense dto);
+        Task<IEnumerable<Expense>> GetAllAsync();
+        Task<Expense> GetByIdAsync(int id);
+        Task AddAsync(Expense expense);
         Task DeleteAsync(int id);
-        Task<ExpenseDto> UpdateAsync(int id, ExpenseCreateDto dto);
+        Task<Expense> UpdateAsync(int id, Expense expense);
     }
 }

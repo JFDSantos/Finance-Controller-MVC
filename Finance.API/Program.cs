@@ -1,11 +1,16 @@
-using Microsoft.EntityFrameworkCore;
+using Finance.Application.Interfaces;
+using Finance.Application.Mappings;
+using Finance.Application.Services;
+using Finance.Application.Validators;
+using Finance.Application.ViewModel;
+using Finance.Domain.Models;
+using Finance.Infrastructure.Data;
+using Finance.Infrastructure.Repositories;
+using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using Finance.Application.Interfaces;
-using Finance.Infrastructure.Repositories;
-using Finance.Web.Patterns.Services;
-using Finance.Infrastructure.Data;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -44,12 +49,28 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<FinanceContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+// AutoMapper
+builder.Services.AddAutoMapper(
+    cfg => {
+        cfg.AddProfile<FinanceMappingProfile>();
+    }, 
+    AppDomain.CurrentDomain.GetAssemblies()
+);
+
 builder.Services.AddControllers();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IIncomeRepository, IncomeRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IExpenseRepository, ExpenseRepository>();
-builder.Services.AddScoped<IIncomeService, IncomeService>();
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+
+var services = builder.Services;
+
+services.AddScoped<IExpenseService, ExpenseService>();
+
+// FluentValidation
+services.AddScoped<IValidator<ExpenseCreateDto>, ExpenseCreateDtoValidator>();
 
 var app = builder.Build();
 

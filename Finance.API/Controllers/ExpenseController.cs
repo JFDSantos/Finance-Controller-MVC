@@ -10,8 +10,8 @@ namespace Finance.API.Controllers
     [Route("[controller]")]
     public class ExpenseController : ControllerBase
     {
-        private readonly IExpenseRepository _expService;
-        public ExpenseController(IExpenseRepository expService)
+        private readonly IExpenseService _expService;
+        public ExpenseController(IExpenseService expService)
         {
             _expService = expService;
         }
@@ -53,17 +53,8 @@ namespace Finance.API.Controllers
 
             try
             {
-                var expense = new Expense
-                {
-                    categoryId = dto.CategoryId,
-                    description = dto.Description,
-                    movimentDate = dto.MovimentDate,
-                    isAppellant = dto.IsAppellant,
-                    value = dto.Value
-                };
-
-                await _expService.AddAsync(expense);
-                return CreatedAtAction(nameof(GetById), new { id = expense.id }, expense);
+                var created = await _expService.AddAsync(dto);
+                return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
             }
             catch (Exception ex)
             {
@@ -74,16 +65,16 @@ namespace Finance.API.Controllers
 
         [Authorize]
         [HttpPut]
-        public async Task<IActionResult> Update(int id, [FromBody] ExpenseCreateDto dto)
+        public async Task<IActionResult> Update(int id, [FromBody] ExpenseDto dto)
         {
             try
             {
                 var updateExpense = await _expService.UpdateAsync(id, dto);
                 return Ok(updateExpense);
             }
-            catch
+            catch (Exception ex)
             {
-                return NotFound("Transaction not found!");
+                return BadRequest(ex.Message);
             }
         }
 
