@@ -1,13 +1,14 @@
-﻿using System.Runtime.InteropServices.Marshalling;
-using System.Threading.Tasks;
-using Finance.Infrastructure;
+﻿using Finance.Application.Interfaces;
+using Finance.Application.ViewModel;
 using Finance.Domain.Models;
 using Finance.Domain.Models.Enums;
-using Finance.Application.Interfaces;
-using Finance.Application.ViewModel;
+using Finance.Infrastructure;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Runtime.InteropServices.Marshalling;
+using System.Threading.Tasks;
 
 
 namespace Finance.API.Controllers
@@ -59,8 +60,8 @@ namespace Finance.API.Controllers
 
             try
             {
-                await _IncomeService.AddAsync(dto);
-                return NoContent();
+                var created = await _IncomeService.AddAsync(dto);
+                return CreatedAtAction(nameof(GetById), new { id = created.Id}, created);
             }
             catch (Exception ex)
             {
@@ -91,7 +92,7 @@ namespace Finance.API.Controllers
             try
             {
                 var income = await _IncomeService.UpdateAsync(id,dto);
-                return CreatedAtAction(nameof(GetById), new { id = income.Id }, income);
+                return Ok(income);
             }
             catch (Exception ex)
             {

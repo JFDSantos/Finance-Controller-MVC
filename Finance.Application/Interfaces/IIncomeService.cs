@@ -7,7 +7,7 @@ namespace Finance.Application.Interfaces
     {
         Task<IEnumerable<IncomeDto>> GetAllAsync();
         Task<IncomeDto> GetByIdAsync(int id);
-        Task AddAsync(IncomeCreateDto dto);
+        Task<IncomeDto> AddAsync(IncomeCreateDto dto);
         Task DeleteAsync(int id);
         Task<IncomeDto> UpdateAsync(int id, IncomeCreateDto dto);
     }

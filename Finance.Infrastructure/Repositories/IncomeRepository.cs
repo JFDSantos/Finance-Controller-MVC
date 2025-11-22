@@ -21,7 +21,7 @@ namespace Finance.Infrastructure.Repositories
 
         }
 
-        public  Task DeleteAsync(int id)
+        public Task DeleteAsync(int id)
         {
             var income =  _context.Incomes.Include(i => i.Category).FirstOrDefault(i => i.id == id);
 
@@ -34,17 +34,17 @@ namespace Finance.Infrastructure.Repositories
             throw new KeyNotFoundException("Income not found");
         }
 
-        public async Task<IEnumerable<IncomeDto>> GetAllAsync()
+        public async Task<IEnumerable<Income>> GetAllAsync()
         {
-            var incomes = await _context.Incomes.Select(c => new IncomeDto
+            var incomes = await _context.Incomes.Include(i => i.Category).Select(c => new Income
             {
-                Id = c.id,
-                CategoryId = c.categoryId,
-                CategoryName = c.Category.Name,
-                Description = c.description,
-                IsAppellant = c.isAppellant,
-                MovimentDate = c.movimentDate,
-                Value = c.value
+                id = c.id,
+                Category = c.Category,
+                categoryId = c.categoryId,
+                description = c.description,
+                isAppellant = c.isAppellant,
+                movimentDate = c.movimentDate,
+                value = c.value
 
             }).ToListAsync();
 
@@ -56,19 +56,19 @@ namespace Finance.Infrastructure.Repositories
             throw new KeyNotFoundException("Incomes not found");
         }
 
-        public async Task<IncomeDto> GetByIdAsync(int id)
+        public async Task<Income> GetByIdAsync(int id)
         {
-            var incomes = await _context.Incomes.Include(i => i.Category).Select(c => new IncomeDto
+            var incomes = await _context.Incomes.Include(i => i.Category).Select(c => new Income
             {
-                Id = c.id,
-                CategoryId = c.categoryId,
-                CategoryName = c.Category.Name,
-                Description = c.description,
-                IsAppellant = c.isAppellant,
-                MovimentDate = c.movimentDate,
-                Value = c.value
+                id = c.id,
+                Category = c.Category,
+                categoryId = c.categoryId,
+                description = c.description,
+                isAppellant = c.isAppellant,
+                movimentDate = c.movimentDate,
+                value = c.value
 
-            }).FirstOrDefaultAsync(i => i.Id == id);
+            }).FirstOrDefaultAsync(i => i.id == id);
 
             if (incomes != null) { 
                 return incomes;
@@ -77,7 +77,7 @@ namespace Finance.Infrastructure.Repositories
             throw new KeyNotFoundException("Income not Found");
         }
 
-        public async Task<IncomeDto> UpdateAsync(int id, IncomeCreateDto dto)
+        public async Task<Income> UpdateAsync(int id, Income dto)
         {
             var income = await _context.Incomes.Include(i => i.Category).FirstOrDefaultAsync(i => i.id == id);
 
@@ -86,24 +86,23 @@ namespace Finance.Infrastructure.Repositories
             if (income != null)
             {
                 income.id = id;
-                income.value = dto.Value;
-                income.movimentDate = dto.MovimentDate;
-                income.description = dto.Description;
-                income.categoryId = dto.CategoryId;
-                income.isAppellant = dto.IsAppellant;
+                income.value = dto.value;
+                income.movimentDate = dto.movimentDate;
+                income.description = dto.description;
+                income.categoryId = dto.categoryId;
+                income.isAppellant = dto.isAppellant;
 
                 _context.Incomes.Update(income);
                 await _context.SaveChangesAsync();
 
-                return new IncomeDto
+                return new Income
                 {
-                    Id = id,
-                    Value = income.value,
-                    MovimentDate = income.movimentDate,
-                    Description = income.description,
-                    CategoryId = income.categoryId,
-                    IsAppellant = income.isAppellant,
-                    CategoryName = income.Category.Name
+                    id = id,
+                    value = income.value,
+                    movimentDate = income.movimentDate,
+                    description = income.description,
+                    categoryId = income.categoryId,
+                    isAppellant = income.isAppellant
                 };
             }
 

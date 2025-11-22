@@ -34,14 +34,15 @@ namespace Finance.Infrastructure.Repositories
             throw new KeyNotFoundException("User not found");
         }
 
-        public async Task<IEnumerable<UserSelectDto>> GetAllAsync()
+        public async Task<IEnumerable<User>> GetAllAsync()
         {
-            var users = await _context.User.Select(u => new UserSelectDto {
+            var users = await _context.User.Select(u => new User {
 
-                Id = u.id,
+                id = u.id,
                 user = u.user,
                 email = u.email,
-                role = u.role
+                role = u.role,
+                password = u.password
 
             }).ToListAsync();
 
@@ -53,17 +54,18 @@ namespace Finance.Infrastructure.Repositories
             throw new KeyNotFoundException("Users not found");
         }
 
-        public async Task<UserSelectDto> GetByIdAsync(int id)
+        public async Task<User> GetByIdAsync(int id)
         {
-            var user = await _context.User.Select(u => new UserSelectDto
+            var user = await _context.User.Select(u => new User
             {
 
-                Id = u.id,
+                id = u.id,
                 user = u.user,
                 email = u.email,
-                role = u.role
+                role = u.role,
+                password = u.password
 
-            }).FirstOrDefaultAsync(i => i.Id == id);
+            }).FirstOrDefaultAsync(i => i.id == id);
 
             if (user != null)
             {
@@ -73,7 +75,7 @@ namespace Finance.Infrastructure.Repositories
             throw new KeyNotFoundException("User not found");
         }
 
-        public async Task<UserSelectDto> UpdateAsync(int IdTransaction, UserCreateDto dto)
+        public async Task<User> UpdateAsync(int IdTransaction, User dto)
         {
             var user = _context.User.Find(IdTransaction);
 
@@ -87,18 +89,20 @@ namespace Finance.Infrastructure.Repositories
                 _context.Update(user);
                 await _context.SaveChangesAsync();
 
-                return new UserSelectDto
+                return new User
                 {
+                    id = user.id,
                     user = user.user,
                     email = user.email,
-                    role = user.role
+                    role = user.role,
+                    password = user.password
                 };
             }
 
             throw new KeyNotFoundException("User not Found");
         }
 
-        public async Task<UserSelectDto> ValidLoginUser(string email, string password)
+        public async Task<User> ValidLoginUser(string email, string password)
         {
             var user = await _context.User.FirstOrDefaultAsync(i => i.email == email);
 
@@ -108,12 +112,13 @@ namespace Finance.Infrastructure.Repositories
 
                 if (passIsValid) 
                 {
-                    return new UserSelectDto
+                    return new User
                     {
-                        Id = user.id,
+                        id = user.id,
                         user = user.user,
                         email = user.email,
-                        role = user.role
+                        role = user.role,
+                        password = user.password
                     };
                 }
 

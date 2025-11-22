@@ -1,7 +1,7 @@
 using Finance.Application.Interfaces;
 using Finance.Infrastructure.Repositories;
 using Finance.Infrastructure.Data;
-using Finance.Web.Patterns.Services;
+using Finance.Application.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);

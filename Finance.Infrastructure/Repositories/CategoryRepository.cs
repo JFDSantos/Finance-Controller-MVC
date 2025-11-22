@@ -30,9 +30,9 @@ namespace Finance.Infrastructure.Repositories
                 
             throw new KeyNotFoundException("Category not found");
         }
-        public async Task<IEnumerable<CategorySelectDto>> GetAllAsync()
+        public async Task<IEnumerable<Category>> GetAllAsync()
         {
-            var categories = await _context.Categories.Select(c => new CategorySelectDto
+            var categories = await _context.Categories.Select(c => new Category
             {
                 Id = c.Id,
                 Name = c.Name
@@ -45,9 +45,9 @@ namespace Finance.Infrastructure.Repositories
 
             return categories;
         }
-        public async Task<CategorySelectDto> GetByIdAsync(int Id)
+        public async Task<Category> GetByIdAsync(int Id)
         {
-            var categories = await _context.Categories.Select(c => new CategorySelectDto
+            var categories = await _context.Categories.Select(c => new Category
             {
                 Id = c.Id,
                 Name = c.Name
@@ -60,7 +60,7 @@ namespace Finance.Infrastructure.Repositories
 
             return categories;
         }
-        public async Task<CategorySelectDto> UpdateAsync(int IdTransaction, CategoryCreateDto dto)
+        public async Task<Category> UpdateAsync(int IdTransaction, Category dto)
         {
             var categorie = await _context.Categories.FindAsync(IdTransaction);
 
@@ -75,7 +75,7 @@ namespace Finance.Infrastructure.Repositories
             _context.Categories.Update(categorie);
             await _context.SaveChangesAsync();
 
-            return new CategorySelectDto
+            return new Category
             {
                 Id = categorie.Id,
                 Name = categorie.Name

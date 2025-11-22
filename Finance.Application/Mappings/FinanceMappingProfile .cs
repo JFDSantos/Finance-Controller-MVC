@@ -15,6 +15,10 @@ namespace Finance.Application.Mappings
         {
             CreateMap<ExpenseCreateDto, Expense>();
             CreateMap<Expense, ExpenseDto>();
+            CreateMap<IncomeCreateDto, Income>();
+            CreateMap<Income, IncomeDto>();
+            CreateMap<CategoryCreateDto, Category>();
+            CreateMap<Category, CategorySelectDto>(); 
         }
     }
 }

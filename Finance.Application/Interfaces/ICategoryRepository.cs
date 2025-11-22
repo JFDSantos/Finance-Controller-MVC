@@ -5,10 +5,10 @@ namespace Finance.Application.Interfaces
 {
     public interface ICategoryRepository
     {
-        Task<IEnumerable<CategorySelectDto>> GetAllAsync();
-        Task<CategorySelectDto> GetByIdAsync(int id);
+        Task<IEnumerable<Category>> GetAllAsync();
+        Task<Category> GetByIdAsync(int id);
         Task AddAsync(Category dto);
         Task DeleteAsync(int IdTransaction);
-        Task<CategorySelectDto> UpdateAsync(int IdTransaction, CategoryCreateDto dto);
+        Task<Category> UpdateAsync(int IdTransaction, Category dto);
     }
 }

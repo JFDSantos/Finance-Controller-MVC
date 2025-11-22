@@ -5,10 +5,10 @@ namespace Finance.Application.Interfaces
 {
     public interface IIncomeRepository
     {
-        Task<IEnumerable<IncomeDto>> GetAllAsync();
-        Task<IncomeDto> GetByIdAsync(int id);
+        Task<IEnumerable<Income>> GetAllAsync();
+        Task<Income> GetByIdAsync(int id);
         Task AddAsync(Income dto);
         Task DeleteAsync(int id);
-        Task<IncomeDto> UpdateAsync(int id, IncomeCreateDto dto);
+        Task<Income> UpdateAsync(int id, Income dto);
     }
 }

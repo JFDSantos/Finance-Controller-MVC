@@ -13,8 +13,8 @@ namespace Finance.API.Controllers
     [Route("[controller]")]
     public class CategoryController : ControllerBase
     {
-        private readonly ICategoryRepository _catService;
-        public CategoryController(ICategoryRepository CatService)
+        private readonly ICategoryService _catService;
+        public CategoryController(ICategoryService CatService)
         {
             _catService = CatService;
         }
@@ -56,15 +56,8 @@ namespace Finance.API.Controllers
 
             try
             {
-                var category = new Category
-                {
-
-                    Name = cat.Name
-
-                };
-
-                await _catService.AddAsync(category);
-                return CreatedAtAction(nameof(GetById), new { id = category.Id }, category);
+                var created = await _catService.AddAsync(cat);
+                return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
             }
             catch (Exception ex)
             {

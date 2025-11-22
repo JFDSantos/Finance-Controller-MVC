@@ -67,10 +67,16 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 var services = builder.Services;
 
-services.AddScoped<IExpenseService, ExpenseService>();
+services.AddScoped<IExpenseService, ExpenseService>(); 
+services.AddScoped<IIncomeService, IncomeService>();
+services.AddScoped<ICategoryService, CategoryService>();
+services.AddScoped<IUserService, UserService>();
 
 // FluentValidation
 services.AddScoped<IValidator<ExpenseCreateDto>, ExpenseCreateDtoValidator>();
+services.AddScoped<IValidator<IncomeCreateDto>, IncomeCreateDtoValidator>();
+services.AddScoped<IValidator<CategoryCreateDto>, CategoryCreateDtoValidator>();
+services.AddScoped<IValidator<UserCreateDto>, UserCreateDtoValidator>();
 
 var app = builder.Build();
 
