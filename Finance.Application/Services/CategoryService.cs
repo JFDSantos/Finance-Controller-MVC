@@ -54,13 +54,13 @@ namespace Finance.Application.Services
 
         public async Task<IEnumerable<CategorySelectDto>> GetAllAsync()
         {
-            var categories = await _repository.GetAllAsync();
+            var categories = await _repository.GetAllAsync() ?? throw new KeyNotFoundException("Categorys not found");
             return _mapper.Map<IEnumerable<CategorySelectDto>>(categories);
         }
 
         public async Task<CategorySelectDto> GetByIdAsync(int id)
         {
-            var category = await _repository.GetByIdAsync(id);
+            var category = await _repository.GetByIdAsync(id) ?? throw new KeyNotFoundException("Category not found");
             return _mapper.Map<CategorySelectDto>(category);
         }
 

@@ -14,72 +14,40 @@ namespace Finance.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task AddAsync(Category dto)
+        public async Task AddAsync(Category category)
         {
-            _context.Add(dto);
-            await _context.SaveChangesAsync();
+            await _context.Categories.AddAsync(category);
         }
-        public Task DeleteAsync(int IdTransaction)
+
+        public async Task DeleteAsync(int id)
         {
-            var category = _context.Categories.Find(IdTransaction);
+            var category = await _context.Categories.FindAsync(id);
             if (category != null)
             {
                 _context.Categories.Remove(category);
-                return _context.SaveChangesAsync();
             }
-                
-            throw new KeyNotFoundException("Category not found");
+
+
         }
         public async Task<IEnumerable<Category>> GetAllAsync()
         {
-            var categories = await _context.Categories.Select(c => new Category
-            {
-                Id = c.Id,
-                Name = c.Name
-            }).ToListAsync();
-
-            if (categories == null)
-            {
-                throw new KeyNotFoundException("Categories not found");
-            }
-
-            return categories;
+            return await _context.Categories.AsNoTracking().ToListAsync();
         }
-        public async Task<Category> GetByIdAsync(int Id)
+
+        public async Task<Category?> GetByIdAsync(int id)
         {
-            var categories = await _context.Categories.Select(c => new Category
-            {
-                Id = c.Id,
-                Name = c.Name
-            }).FirstOrDefaultAsync(i => i.Id == Id);
-
-            if (categories == null)
-            {
-                throw new KeyNotFoundException("Category not found");
-            }
-
-            return categories;
+            return await _context.Categories.AsNoTracking().FirstOrDefaultAsync(i => i.Id == id);
         }
-        public async Task<Category> UpdateAsync(int IdTransaction, Category dto)
-        {
-            var categorie = await _context.Categories.FindAsync(IdTransaction);
 
-            if (categorie == null)
+        public async Task UpdateAsync(int id, Category category)
+        {
+            var categoryFind = await _context.Categories.FindAsync(id);
+
+            if (categoryFind != null)
             {
-                throw new KeyNotFoundException("Category not found");
+                _context.Entry(categoryFind).CurrentValues.SetValues(category);
             }
 
-            categorie.Id = IdTransaction;
-            categorie.Name = dto.Name;
-
-            _context.Categories.Update(categorie);
-            await _context.SaveChangesAsync();
-
-            return new Category
-            {
-                Id = categorie.Id,
-                Name = categorie.Name
-            };
         }
 
     } 
