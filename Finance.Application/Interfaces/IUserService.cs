@@ -15,6 +15,6 @@ namespace Finance.Application.Interfaces
         Task<UserSelectDto> AddAsync(UserCreateDto dto);
         Task DeleteAsync(int IdTransaction);
         Task<UserSelectDto> UpdateAsync(int IdTransaction, UserCreateDto dto);
-        Task<UserSelectDto> ValidLoginUser(string email, string password);
+        Task<UserSelectDto> ValidLoginUserAsync(string email, string password);
     }
 }

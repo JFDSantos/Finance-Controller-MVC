@@ -3,6 +3,9 @@ using Finance.Application.Interfaces;
 using Finance.Application.ViewModel;
 using Finance.Domain.Models;
 using FluentValidation;
+using Microsoft.IdentityModel.Tokens;
+using System.Security.Claims;
+using System.Text;
 
 namespace Finance.Application.Services
 {
@@ -38,7 +41,6 @@ namespace Finance.Application.Services
 
             return _mapper.Map<UserSelectDto>(user);
         }
-
         public async Task DeleteAsync(int IdTransaction)
         {
             var user = _repository.GetByIdAsync(IdTransaction) ?? throw new NotImplementedException("User not found");
@@ -70,11 +72,29 @@ namespace Finance.Application.Services
             return _mapper.Map<UserSelectDto>(user);
         }
 
-        public async Task<UserSelectDto> ValidLoginUser(string email, string password)
+        public async Task<UserSelectDto?> ValidLoginUserAsync(string email, string password)
         {
-            var user = await _repository.ValidLoginUser(email, password);
+            try
+            {
+                var user = await _repository.GetByEmailAsync(email, password);
 
-            return _mapper.Map<UserSelectDto>(user);
+                if (user == null)
+                    return null;
+
+                bool isValid = BCrypt.Net.BCrypt.Verify(password, user.password);
+
+                if (!isValid)
+                    return null;
+
+                
+
+                return _mapper.Map<UserSelectDto>(user);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            
         }
     }
 }

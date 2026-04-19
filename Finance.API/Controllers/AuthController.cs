@@ -1,11 +1,12 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
-using Finance.Domain.Models;
-using Finance.Application.Interfaces;
+﻿using Finance.Application.Interfaces;
+using Finance.Application.Services;
 using Finance.Application.ViewModel;
+using Finance.Domain.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace Finance.API.Controllers
 {
@@ -13,56 +14,36 @@ namespace Finance.API.Controllers
     [Route("[controller]")]
     public class AuthController : Controller
     {
-        private readonly IConfiguration _config;
-        private readonly IUserRepository _user;
+        private readonly IUserService _userService;
+        private readonly IJWTService _jwtService;
 
-        public AuthController(IConfiguration config, IUserRepository user)
+        public AuthController(IUserService userService, IJWTService jwtService)
         {
-            _config = config;
-            _user = user;
+            _userService = userService;
+            _jwtService = jwtService;
         }
 
         [HttpPost]
-        public async Task<IActionResult> Login([FromForm] string email, [FromForm] string password)
+        public async Task<IActionResult?> Login([FromForm] string email, [FromForm] string password)
         {
-            try
+            var user = await _userService.ValidLoginUserAsync(email, password);
+
+            if (user == null)
+                return BadRequest("Invalid email or password");
+
+            // 2. Gera token via JwtService
+            var token = _jwtService.GenerateToken(user);
+
+            // 3. Setta cookie
+            Response.Cookies.Append("jwt", token, new CookieOptions
             {
-                var user = await _user.ValidLoginUser(email, password);
-                
-                var claims = new[]
-                {
-                    new Claim(ClaimTypes.Email, email),
-                    new Claim(ClaimTypes.Role, user.role.ToString()),
-                    new Claim(ClaimTypes.Name, user.user)
-                };
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.Strict,
+                Expires = DateTimeOffset.UtcNow.AddHours(1)
+            });
 
-                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:key"]!));
-                var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-                var token = new JwtSecurityToken(
-                    claims: claims,
-                    expires: DateTime.UtcNow.AddHours(1),
-                    signingCredentials: creds
-                );
-
-                var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
-
-                Response.Cookies.Append("jwt", tokenString, new CookieOptions
-                {
-                    HttpOnly = true,
-                    Secure = true,
-                    SameSite = SameSiteMode.Strict,
-                    Expires = DateTimeOffset.UtcNow.AddHours(1)
-
-                });
-
-                return Ok("Login bem-sucedido");
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-            
+            return Ok(new { message = "Login successful" });
         }
 
         [HttpPost("logout")]
@@ -75,22 +56,9 @@ namespace Finance.API.Controllers
         [HttpPost("create")]
         public async Task<IActionResult> Create(UserCreateDto dto)
         {
-            try
-            {
-                var user = new User
-                {
-                    user = dto.user,
-                    email = dto.email,
-                    password = BCrypt.Net.BCrypt.HashPassword(dto.password)
-                };
+            var createdUser = await _userService.AddAsync(dto); 
 
-                await _user.AddAsync(user);
-                return CreatedAtAction(nameof(Login), new { username = user.user }, user);
-            }
-            catch (Exception ex) {
-                return BadRequest(ex.Message);
-            }
- 
+            return CreatedAtAction(nameof(Login), new { username = createdUser.user }, createdUser);
         }
 
     }

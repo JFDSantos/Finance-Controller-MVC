@@ -16,116 +16,43 @@ namespace Finance.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task AddAsync(User dto)
+        public async Task AddAsync(User user)
         {
-            _context.Add(dto);
-            await _context.SaveChangesAsync();
+            await _context.User.AddAsync(user);
         }
 
-        public async Task DeleteAsync(int IdTransaction)
+        public async Task DeleteAsync(int id)
         {
-            var user = _context.User.Find(IdTransaction);
+            var user = await _context.User.FindAsync(id);
 
             if (user != null) {
-                _context.Remove(user);
-                await _context.SaveChangesAsync();
+                _context.User.Remove(user);
             }
-
-            throw new KeyNotFoundException("User not found");
         }
 
-        public async Task<IEnumerable<User>> GetAllAsync()
+        public async Task<IEnumerable<User?>> GetAllAsync()
         {
-            var users = await _context.User.Select(u => new User {
-
-                id = u.id,
-                user = u.user,
-                email = u.email,
-                role = u.role,
-                password = u.password
-
-            }).ToListAsync();
-
-            if(users != null)
-            {
-                return users;
-            }
-            
-            throw new KeyNotFoundException("Users not found");
+            return await _context.User.AsNoTracking().ToListAsync();
         }
 
-        public async Task<User> GetByIdAsync(int id)
+        public async Task<User?> GetByIdAsync(int id)
         {
-            var user = await _context.User.Select(u => new User
-            {
-
-                id = u.id,
-                user = u.user,
-                email = u.email,
-                role = u.role,
-                password = u.password
-
-            }).FirstOrDefaultAsync(i => i.id == id);
-
-            if (user != null)
-            {
-                return user;
-            }
-
-            throw new KeyNotFoundException("User not found");
+            return await _context.User.AsNoTracking().FirstOrDefaultAsync(i => i.id == id);
         }
 
-        public async Task<User> UpdateAsync(int IdTransaction, User dto)
+        public async Task UpdateAsync(int id, User user)
         {
-            var user = _context.User.Find(IdTransaction);
+            var userFind = await _context.User.FindAsync(id);
 
-            if (user != null) {
+            if (userFind != null) {
 
-                user.user = dto.user;
-                user.email = dto.email;
-                user.password = dto.password;
-                user.role = dto.role;
-
-                _context.Update(user);
-                await _context.SaveChangesAsync();
-
-                return new User
-                {
-                    id = user.id,
-                    user = user.user,
-                    email = user.email,
-                    role = user.role,
-                    password = user.password
-                };
+                _context.Entry(userFind).CurrentValues.SetValues(user);
             }
-
-            throw new KeyNotFoundException("User not Found");
         }
 
-        public async Task<User> ValidLoginUser(string email, string password)
+        public async Task<User?> GetByEmailAsync(string email)
         {
-            var user = await _context.User.FirstOrDefaultAsync(i => i.email == email);
-
-            if (user != null) 
-            {
-                var passIsValid = BCrypt.Net.BCrypt.Verify(password, user.password);
-
-                if (passIsValid) 
-                {
-                    return new User
-                    {
-                        id = user.id,
-                        user = user.user,
-                        email = user.email,
-                        role = user.role,
-                        password = user.password
-                    };
-                }
-
-                throw new KeyNotFoundException("Email or Password is incorrect");
-            }
-
-            throw new KeyNotFoundException("User not found");
+            return await _context.User.AsNoTracking().FirstOrDefaultAsync(i => i.email == email);
         }
     }
 }
