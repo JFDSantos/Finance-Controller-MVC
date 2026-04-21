@@ -71,6 +71,7 @@ services.AddScoped<IExpenseService, ExpenseService>();
 services.AddScoped<IIncomeService, IncomeService>();
 services.AddScoped<ICategoryService, CategoryService>();
 services.AddScoped<IUserService, UserService>();
+services.AddScoped<IJWTService, JWTService>();
 
 // FluentValidation
 services.AddScoped<IValidator<ExpenseCreateDto>, ExpenseCreateDtoValidator>();
@@ -88,6 +89,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.UseAuthentication();
 app.UseAuthorization();

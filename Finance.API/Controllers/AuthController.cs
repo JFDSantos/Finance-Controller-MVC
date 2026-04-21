@@ -31,10 +31,8 @@ namespace Finance.API.Controllers
             if (user == null)
                 return BadRequest("Invalid email or password");
 
-            // 2. Gera token via JwtService
             var token = _jwtService.GenerateToken(user);
 
-            // 3. Setta cookie
             Response.Cookies.Append("jwt", token, new CookieOptions
             {
                 HttpOnly = true,

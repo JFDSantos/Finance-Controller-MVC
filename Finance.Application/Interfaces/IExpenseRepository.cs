@@ -2,12 +2,7 @@
 
 namespace Finance.Application.Interfaces
 {
-    public interface IExpenseRepository
+    public interface IExpenseRepository : IBaseRepository<Expense, int>
     {
-        Task<IEnumerable<Expense>> GetAllAsync();
-        Task<Expense?> GetByIdAsync(int id);
-        Task AddAsync(Expense expense);
-        Task DeleteAsync(int id);
-        Task UpdateAsync(int id, Expense expense);
     }
 }

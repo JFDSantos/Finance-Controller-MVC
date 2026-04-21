@@ -3,12 +3,7 @@ using Finance.Application.ViewModel;
 
 namespace Finance.Application.Interfaces
 {
-    public interface ICategoryRepository
+    public interface ICategoryRepository : IBaseRepository<Category, int>
     {
-        Task<IEnumerable<Category>> GetAllAsync();
-        Task<Category?> GetByIdAsync(int id);
-        Task AddAsync(Category dto);
-        Task DeleteAsync(int IdTransaction);
-        Task UpdateAsync(int IdTransaction, Category dto);
     }
 }

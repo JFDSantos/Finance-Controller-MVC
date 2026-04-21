@@ -20,77 +20,40 @@ namespace Finance.API.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            try
-            {
-                var result = await _expService.GetAllAsync();
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            var result = await _expService.GetAllAsync();
+            return Ok(result);
         }
 
         [Authorize]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-            try
-            {
-                var result = await _expService.GetByIdAsync(id);
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            var result = await _expService.GetByIdAsync(id);
+            return Ok(result);
         }
 
         [Authorize(Roles = "admin")]
         [HttpPost]
         public async Task<IActionResult> Create(ExpenseCreateDto dto)
         {
-
-            try
-            {
-                var created = await _expService.AddAsync(dto);
-                return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-
-            }
+            var created = await _expService.AddAsync(dto);
+            return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
         }
 
         [Authorize]
         [HttpPut]
         public async Task<IActionResult> Update(int id, [FromBody] ExpenseDto dto)
         {
-            try
-            {
-                var updateExpense = await _expService.UpdateAsync(id, dto);
-                return Ok(updateExpense);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            var updateExpense = await _expService.UpdateAsync(id, dto);
+            return Ok(updateExpense);
         }
 
         [Authorize]
         [HttpDelete]
         public async Task<IActionResult> Delete(int id)
         {
-            try
-            {
-                await _expService.DeleteAsync(id);
-                return NoContent();
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            await _expService.DeleteAsync(id);
+            return NoContent();
         }
     }
 }

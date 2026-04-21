@@ -1,14 +1,7 @@
 ﻿using Finance.Application.Interfaces;
 using Finance.Application.ViewModel;
-using Finance.Domain.Models;
-using Finance.Domain.Models.Enums;
-using Finance.Infrastructure;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System.Runtime.InteropServices.Marshalling;
-using System.Threading.Tasks;
 
 
 namespace Finance.API.Controllers
@@ -25,79 +18,42 @@ namespace Finance.API.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<ActionResult<Income>> GetAll()
+        public async Task<IActionResult> GetAll()
         {
-            try
-            {
-                var incomes = await _IncomeService.GetAllAsync();
-                return Ok(incomes);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            var incomes = await _IncomeService.GetAllAsync();
+            return Ok(incomes);
         }
 
         [Authorize]
         [HttpGet("{id}")]
-        public async Task<ActionResult<Income>> GetById(int id)
+        public async Task<IActionResult> GetById(int id)
         {
-            try
-            {
-                var income = await _IncomeService.GetByIdAsync(id);
-                return Ok(income);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            var income = await _IncomeService.GetByIdAsync(id);
+            return Ok(income);
         }
 
         [Authorize]
         [HttpPost]
-        public async Task<ActionResult<Income>> Create(IncomeCreateDto dto)
+        public async Task<IActionResult> Create(IncomeCreateDto dto)
         {
-
-            try
-            {
-                var created = await _IncomeService.AddAsync(dto);
-                return CreatedAtAction(nameof(GetById), new { id = created.Id}, created);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-
+            var created = await _IncomeService.AddAsync(dto);
+            return CreatedAtAction(nameof(GetById), new { id = created.Id}, created);
         }
 
         [Authorize]
         [HttpDelete]
-        public async Task<ActionResult<Income>> Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            try
-            {
-                await _IncomeService.DeleteAsync(id);
-                return NoContent();
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            await _IncomeService.DeleteAsync(id);
+            return NoContent();
         }
 
         [Authorize]
         [HttpPut]
-        public async Task<ActionResult<Income>> Update(int id, [FromBody] IncomeCreateDto dto)
+        public async Task<IActionResult> Update(int id, [FromBody] IncomeCreateDto dto)
         {
-            try
-            {
-                var income = await _IncomeService.UpdateAsync(id,dto);
-                return Ok(income);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            var income = await _IncomeService.UpdateAsync(id,dto);
+            return Ok(income);
         }
     }
 }

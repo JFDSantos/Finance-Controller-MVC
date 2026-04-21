@@ -8,13 +8,8 @@ using System.Threading.Tasks;
 
 namespace Finance.Application.Interfaces
 {
-    public interface IUserService
+    public interface IUserService : IBaseService<User, UserCreateDto, UserSelectDto>
     {
-        Task<IEnumerable<UserSelectDto>> GetAllAsync();
-        Task<UserSelectDto> GetByIdAsync(int id);
-        Task<UserSelectDto> AddAsync(UserCreateDto dto);
-        Task DeleteAsync(int IdTransaction);
-        Task<UserSelectDto> UpdateAsync(int IdTransaction, UserCreateDto dto);
-        Task<UserSelectDto> ValidLoginUserAsync(string email, string password);
+        Task<UserSelectDto?> ValidLoginUserAsync(string email, string password);
     }
 }

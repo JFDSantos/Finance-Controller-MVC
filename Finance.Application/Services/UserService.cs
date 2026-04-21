@@ -9,74 +9,23 @@ using System.Text;
 
 namespace Finance.Application.Services
 {
-    public class UserService : IUserService
+    public class UserService : BaseService<User, UserCreateDto, UserSelectDto>, IUserService
     {
-        private readonly IUserRepository _repository;
-        private readonly IUnitOfWork _uow;
-        private readonly IMapper _mapper;
-        private readonly IValidator<UserCreateDto> _validator;
+        private readonly IUserRepository _userRepository;
 
         public UserService(
-            IUserRepository repository,
+            IBaseRepository<User, int> repository,
+            IUserRepository userRepository,
             IUnitOfWork uow,
             IMapper mapper,
-            IValidator<UserCreateDto> validator)
+            IValidator<UserCreateDto> validator) : base(repository, uow, mapper, validator)
         {
-            _repository = repository;
-            _uow = uow;
-            _mapper = mapper;
-            _validator = validator;
-        }
-        public async Task<UserSelectDto> AddAsync(UserCreateDto dto)
-        {
-            var validationResult = _validator.Validate(dto);
-            if (!validationResult.IsValid)
-            {
-                throw new ValidationException(validationResult.Errors);
-            }
-            var user = _mapper.Map<User>(dto);
-
-            await _repository.AddAsync(_mapper.Map<User>(user));
-            await _uow.CommitAsync();
-
-            return _mapper.Map<UserSelectDto>(user);
-        }
-        public async Task DeleteAsync(int IdTransaction)
-        {
-            var user = _repository.GetByIdAsync(IdTransaction) ?? throw new NotImplementedException("User not found");
-
-            await _repository.DeleteAsync(IdTransaction);
-            await _uow.CommitAsync();
-        }
-
-        public async Task<IEnumerable<UserSelectDto>> GetAllAsync()
-        {
-            var users = await _repository.GetAllAsync();
-            return _mapper.Map<IEnumerable<UserSelectDto>>(users);
-        }
-
-        public async Task<UserSelectDto> GetByIdAsync(int id)
-        {
-            var user = await _repository.GetByIdAsync(id);
-            return _mapper.Map<UserSelectDto>(user);
-        }
-
-        public async Task<UserSelectDto> UpdateAsync(int IdTransaction, UserCreateDto dto)
-        {
-            var existingUser = _repository.GetByIdAsync(IdTransaction) ?? throw new NotImplementedException("User not found");
-
-            var user = _mapper.Map<User>(dto);
-            await _repository.UpdateAsync(IdTransaction, user);
-            await _uow.CommitAsync();
-
-            return _mapper.Map<UserSelectDto>(user);
+            _userRepository = userRepository;
         }
 
         public async Task<UserSelectDto?> ValidLoginUserAsync(string email, string password)
         {
-            try
-            {
-                var user = await _repository.GetByEmailAsync(email, password);
+                var user = await _userRepository.GetByEmailAsync(email);
 
                 if (user == null)
                     return null;
@@ -86,15 +35,7 @@ namespace Finance.Application.Services
                 if (!isValid)
                     return null;
 
-                
-
                 return _mapper.Map<UserSelectDto>(user);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-            
         }
     }
 }

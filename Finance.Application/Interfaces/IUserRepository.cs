@@ -3,13 +3,8 @@ using Finance.Application.ViewModel;
 
 namespace Finance.Application.Interfaces
 {
-    public interface IUserRepository
+    public interface IUserRepository : IBaseRepository<User, int>
     {
-        Task<IEnumerable<User?>> GetAllAsync();
-        Task<User?> GetByIdAsync(int id);
-        Task AddAsync(User dto);
-        Task DeleteAsync(int IdTransaction);
-        Task UpdateAsync(int IdTransaction, User dto);
         Task<User?> GetByEmailAsync(string email);
     }
 }
