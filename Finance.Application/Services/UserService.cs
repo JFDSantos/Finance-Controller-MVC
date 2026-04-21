@@ -22,6 +22,22 @@ namespace Finance.Application.Services
         {
             _userRepository = userRepository;
         }
+        public override async Task<UserSelectDto> AddAsync(UserCreateDto dto)
+        {
+            var validationResult = await _validator.ValidateAsync(dto);
+            if (!validationResult.IsValid)
+                throw new ValidationException(validationResult.Errors);
+
+            var user = _mapper.Map<User>(dto);
+
+
+            user.password = BCrypt.Net.BCrypt.HashPassword(user.password);
+
+            await _userRepository.AddAsync(user);
+            await _uow.CommitAsync();
+
+            return _mapper.Map<UserSelectDto>(user);
+        }
 
         public async Task<UserSelectDto?> ValidLoginUserAsync(string email, string password)
         {

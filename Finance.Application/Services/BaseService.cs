@@ -31,7 +31,7 @@ namespace Finance.Application.Services
             _validator = validator;
         }
 
-        public async Task<TSelectDto> AddAsync(TCreateDto dto)
+        public virtual async Task<TSelectDto> AddAsync(TCreateDto dto)
         {
             var validationResult = await _validator.ValidateAsync(dto);
             if (!validationResult.IsValid)

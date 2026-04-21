@@ -1,3 +1,4 @@
+using Finance.API.Middleware;
 using Finance.Application.Interfaces;
 using Finance.Application.Mappings;
 using Finance.Application.Services;
@@ -58,19 +59,34 @@ builder.Services.AddAutoMapper(
 );
 
 builder.Services.AddControllers();
-builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
-builder.Services.AddScoped<IIncomeRepository, IncomeRepository>();
-builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<IExpenseRepository, ExpenseRepository>();
+
+builder.Services.AddScoped<IBaseRepository<Category, int>, CategoryRepository>();
+builder.Services.AddScoped<IBaseRepository<Expense, int>, ExpenseRepository>();
+builder.Services.AddScoped<IBaseRepository<Income, int>, IncomeRepository>();
+builder.Services.AddScoped<IBaseRepository<User, int>, UserRepository>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 
 var services = builder.Services;
 
-services.AddScoped<IExpenseService, ExpenseService>(); 
+// Generic Services (for extensibility)
+services.AddScoped<IBaseService<Expense,ExpenseCreateDto,ExpenseSelectDto>, ExpenseService>(); 
+services.AddScoped<IBaseService<Income,IncomeCreateDto,IncomeSelectDto>, IncomeService>();
+services.AddScoped<IBaseService<Category,CategoryCreateDto,CategorySelectDto>, CategoryService>();
+services.AddScoped<IBaseService<User,UserCreateDto,UserSelectDto>, UserService>();
+
+// Specific Services (for backward compatibility with Controllers)
+services.AddScoped<IExpenseService, ExpenseService>();
 services.AddScoped<IIncomeService, IncomeService>();
 services.AddScoped<ICategoryService, CategoryService>();
 services.AddScoped<IUserService, UserService>();
+
+// Specific Repositories (for backward compatibility)
+services.AddScoped<ICategoryRepository>(sp => sp.GetRequiredService<IBaseRepository<Category, int>>() as ICategoryRepository ?? throw new InvalidOperationException());
+services.AddScoped<IExpenseRepository>(sp => sp.GetRequiredService<IBaseRepository<Expense, int>>() as IExpenseRepository ?? throw new InvalidOperationException());
+services.AddScoped<IIncomeRepository>(sp => sp.GetRequiredService<IBaseRepository<Income, int>>() as IIncomeRepository ?? throw new InvalidOperationException());
+services.AddScoped<IUserRepository>(sp => sp.GetRequiredService<IBaseRepository<User, int>>() as IUserRepository ?? throw new InvalidOperationException());
+
 services.AddScoped<IJWTService, JWTService>();
 
 // FluentValidation

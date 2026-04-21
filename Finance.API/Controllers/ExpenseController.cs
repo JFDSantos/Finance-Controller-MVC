@@ -42,7 +42,7 @@ namespace Finance.API.Controllers
 
         [Authorize]
         [HttpPut]
-        public async Task<IActionResult> Update(int id, [FromBody] ExpenseDto dto)
+        public async Task<IActionResult> Update(int id, [FromBody] ExpenseCreateDto dto)
         {
             var updateExpense = await _expService.UpdateAsync(id, dto);
             return Ok(updateExpense);
