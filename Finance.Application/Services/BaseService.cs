@@ -65,7 +65,7 @@ namespace Finance.Application.Services
             return _mapper.Map<TSelectDto>(entity);
         }
 
-        public async Task<TSelectDto> UpdateAsync(int id, TCreateDto dto)
+        public virtual async Task<TSelectDto> UpdateAsync(int id, TCreateDto dto)
         {
             var existingEntity = await _repository.GetByIdAsync(id) ?? throw new KeyNotFoundException("Entity not found");
 

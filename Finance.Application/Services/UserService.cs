@@ -39,6 +39,19 @@ namespace Finance.Application.Services
             return _mapper.Map<UserSelectDto>(user);
         }
 
+        public override async Task<UserSelectDto> UpdateAsync(int id, UserCreateDto dto)
+        {
+            var existingEntity = await _repository.GetByIdAsync(id) ?? throw new KeyNotFoundException("User not found");
+
+            var user = _mapper.Map<User>(dto);
+            user.password = BCrypt.Net.BCrypt.HashPassword(user.password);
+
+            await _userRepository.UpdateAsync(id, user);
+            await _uow.CommitAsync();
+
+            return _mapper.Map<UserSelectDto>(user);
+        }
+
         public async Task<UserSelectDto?> ValidLoginUserAsync(string email, string password)
         {
                 var user = await _userRepository.GetByEmailAsync(email);
