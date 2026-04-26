@@ -177,19 +177,31 @@ dotnet test /p:CollectCoverage=true
 
 ---
 
+## 📚 Documentação
+
+Toda documentação do projeto está em [docs/](./docs/README.md):
+- [SOLID Principles](./docs/architecture/SOLID-Principles.md) — Princípios arquiteturais
+- [Roadmap](./docs/Roadmap.md) — Plano de desenvolvimento em sprints
+- [Development Guide](./docs/development/README.md) — Como contribuir
+- [Testing Guide](./docs/testing/README.md) — Estratégia de testes
+- [DevOps Guide](./docs/devops/README.md) — Deploy e infraestrutura
+- [Quick Reference](./docs/guides/README.md) — Troubleshooting e tips
+
+---
+
 ## 🎓 Roadmap Gamificado
 
 Este projeto segue um **roadmap estruturado em sprints**, com foco em aprendizado prático e boas práticas:
 
 ### 📋 Sprints
-- **Sprint 1**: O Despertar do Dev (MVP, Setup, Autenticação)
-- **Sprint 2**: O Caminho do Código Limpo (SOLID, DDD, Testes)
-- **Sprint 3**: O Frontend do Herói (SPA Responsiva)
-- **Sprint 4**: O DevOps Desbravador (Docker, CI/CD)
-- **Sprint 5**: O Mestre da Escalabilidade (Cache, Monitoramento)
-- **Sprint Final**: O Guardião da Produção (Segurança, Deploy)
+- **Sprint 1-5**: SOLID Principles ✅ COMPLETO
+- **Sprint 6-7**: Testes Unitários & Integração 🔄
+- **Sprint 8**: Frontend do Herói 🔄
+- **Sprint 9**: DevOps Desbravador 🔄
+- **Sprint 10**: Escalabilidade & Monitoramento 🔄
+- **Sprint Final**: Guardião da Produção 🔄
 
-📖 Veja o roadmap completo em [FinanceController-Roadmap.md](./FinanceController-Roadmap.md)
+📖 Veja o roadmap completo em [docs/Roadmap.md](./docs/Roadmap.md)
 
 ---
 
