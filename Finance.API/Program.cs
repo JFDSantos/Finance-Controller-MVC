@@ -9,6 +9,7 @@ using Finance.Infrastructure.Data;
 using Finance.Infrastructure.Repositories;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -111,7 +112,18 @@ services.AddScoped<IValidator<IncomeCreateDto>, IncomeCreateDtoValidator>();
 services.AddScoped<IValidator<CategoryCreateDto>, CategoryCreateDtoValidator>();
 services.AddScoped<IValidator<UserCreateDto>, UserCreateDtoValidator>();
 
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+    // The hosting proxy is trusted.
+    options.KnownNetworks.Clear();
+    options.KnownProxies.Clear();
+});
+
 var app = builder.Build();
+
+// Must be first so scheme/IP are corrected before HTTPS redirection and everything else.
+app.UseForwardedHeaders();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -123,6 +135,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();
+app.UseMiddleware<RequireJsonMiddleware>();
 
 app.UseAuthentication();
 app.UseAuthorization();

@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Finance.API.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class CategoryController : ControllerBase
     {
         private readonly ICategoryService _catService;

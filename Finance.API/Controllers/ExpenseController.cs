@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Finance.API.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class ExpenseController : ControllerBase
     {
         private readonly IExpenseService _expService;

@@ -11,7 +11,7 @@ using System.Text;
 namespace Finance.API.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class AuthController : Controller
     {
         private readonly IUserService _userService;
