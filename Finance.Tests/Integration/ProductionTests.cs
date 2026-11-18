@@ -250,12 +250,37 @@ public class ProductionTests
     }
 
     [Fact]
+    public async Task DemoSeeding_DoesNotBlockStartup_WhenDatabaseUnreachable()
+    {
+        await using var f = new ApiFactory(new Dictionary<string, string?>
+        {
+            ["Demo__Enabled"] = "true", ["Demo__Password"] = DemoPass,
+            ["ConnectionStrings__DefaultConnection"] = "Host=invalid-host-xyz;Database=nope;Timeout=1",
+        });
+        var sw = System.Diagnostics.Stopwatch.StartNew();
+        var r = await f.CreateClient().GetAsync("/health");
+        Assert.Equal(HttpStatusCode.OK, r.StatusCode);
+        Assert.True(sw.Elapsed < TimeSpan.FromSeconds(10), $"Startup took {sw.Elapsed}");
+    }
+
+    [Fact]
     public async Task DemoSeeder_CanLogIn()
     {
         await using (var plain = new ApiFactory()) await plain.ResetDatabaseAsync();
         await using var f = new ApiFactory(new Dictionary<string, string?>
         { ["Demo__Enabled"] = "true", ["Demo__Password"] = DemoPass });
         var client = f.CreateCookieClient();
+        // Seeding runs in the background after startup: wait for the demo user to appear.
+        var deadline = DateTime.UtcNow.AddSeconds(15);
+        while (true)
+        {
+            using var scope = f.Services.CreateScope();
+            var db = scope.ServiceProvider.GetRequiredService<FinanceContext>();
+            if (await db.User.AnyAsync(u => u.Email == DemoEmail) && await db.Categories.IgnoreQueryFilters().CountAsync() >= 7) break;
+            Assert.True(DateTime.UtcNow < deadline, "Demo user was not seeded in time");
+            await Task.Delay(200);
+        }
+        await Task.Delay(500); // let the movements batch finish
         var login = await client.PostAsJsonAsync("/api/Auth/login", new { email = DemoEmail, password = DemoPass });
         Assert.Equal(HttpStatusCode.OK, login.StatusCode);
         var now = DateTime.UtcNow;

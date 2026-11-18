@@ -242,20 +242,34 @@ app.MapFallback("{*path}", async (HttpContext ctx, IWebHostEnvironment env) =>
     await ctx.Response.SendFileAsync(index);
 });
 
-// Optional demo account. A cold or unreachable database must never prevent startup.
+// Optional demo account. Runs after startup, off the critical path, so a cold or unreachable database
+// never delays startup or /health. Bounded retries let it seed once the database wakes up.
 if (app.Configuration.GetValue<bool>("Demo:Enabled") && !string.IsNullOrWhiteSpace(app.Configuration["Demo:Password"]))
 {
-    try
+    var demoPassword = app.Configuration["Demo:Password"]!;
+    app.Lifetime.ApplicationStarted.Register(() => _ = Task.Run(async () =>
     {
-        using var scope = app.Services.CreateScope();
-        var options = scope.ServiceProvider.GetRequiredService<DbContextOptions<FinanceContext>>();
-        await using var seedContext = new FinanceContext(options, new StartupNoUser());
-        await DemoSeeder.SeedAsync(seedContext, app.Configuration["Demo:Password"]!);
-    }
-    catch (Exception ex)
-    {
-        app.Logger.LogError(ex, "Demo account seeding failed; continuing startup");
-    }
+        const int maxAttempts = 5;
+        var stopping = app.Lifetime.ApplicationStopping;
+        for (var attempt = 1; attempt <= maxAttempts && !stopping.IsCancellationRequested; attempt++)
+        {
+            try
+            {
+                using var scope = app.Services.CreateScope();
+                var options = scope.ServiceProvider.GetRequiredService<DbContextOptions<FinanceContext>>();
+                await using var seedContext = new FinanceContext(options, new StartupNoUser());
+                await DemoSeeder.SeedAsync(seedContext, demoPassword);
+                return;
+            }
+            catch (Exception ex)
+            {
+                // Never log the password; the exception comes from the database layer, not from the argument.
+                app.Logger.LogError(ex, "Demo account seeding failed (attempt {Attempt}/{Max})", attempt, maxAttempts);
+                try { await Task.Delay(TimeSpan.FromSeconds(10 * attempt), stopping); }
+                catch (OperationCanceledException) { return; }
+            }
+        }
+    }));
 }
 
 app.Run();
