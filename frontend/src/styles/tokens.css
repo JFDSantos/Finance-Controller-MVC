@@ -1,0 +1,79 @@
+/*
+ * Finance Controller design tokens.
+ * World: azulejo tile panels (Athos Bulcão, Portinari). Glazed white ground,
+ * cobalt glaze for the shell, ochre as the second glaze, ink near cobalt-black.
+ */
+:root {
+  /* Glaze and ink */
+  --color-glaze: #f3f6fb;          /* page ground: cool glazed white, never cream */
+  --color-surface: #ffffff;        /* forms, menus, dialogs */
+  --color-ink: #172036;            /* primary text */
+  --color-ink-muted: #4a5573;      /* secondary text, hints */
+  --color-line: #d3dbea;           /* hairlines, dividers */
+  --color-field-border: #7483a3;   /* input borders (3:1 on white) */
+
+  /* Cobalt glaze: the committed shell colour */
+  --color-cobalt: #1d44a6;
+  --color-cobalt-deep: #15347f;    /* hover / pressed on cobalt actions */
+  --color-cobalt-grout: #13307a;   /* grout lines between tiles */
+  --color-cobalt-wash: #e6edfb;    /* info notices, hover rows on white */
+  --color-on-cobalt: #ffffff;
+  --color-on-cobalt-muted: #c9d6f5;
+
+  /* Ochre glaze: selection and the active mark */
+  --color-ochre: #e3a51f;
+  --color-ochre-wash: #fbefd2;
+
+  /* State */
+  --color-danger: #b3261e;
+  --color-danger-deep: #8f1d17;
+  --color-danger-wash: #fcebea;
+  --color-income: #18794e;
+  --color-expense: #b3261e;
+
+  /* Type */
+  --font-sans: "Public Sans Variable", "Public Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --text-xs: 0.8125rem;   /* 13px */
+  --text-sm: 0.875rem;    /* 14px */
+  --text-base: 1rem;      /* 16px */
+  --text-lg: 1.125rem;    /* 18px */
+  --text-xl: 1.5rem;      /* 24px */
+  --text-2xl: 1.75rem;    /* 28px */
+  --text-3xl: 2rem;       /* 32px */
+  --leading-tight: 1.2;
+  --leading-normal: 1.5;
+
+  /* Space: 4px base */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  --space-8: 4rem;
+
+  /* Shape */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 10px;
+
+  /* Depth: floating layers only */
+  --shadow-float: 0 10px 28px rgb(23 32 54 / 0.16), 0 2px 6px rgb(23 32 54 / 0.08);
+
+  /* Motion */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --duration-fast: 120ms;
+  --duration-base: 200ms;
+
+  /* Layout */
+  --gutter: var(--space-4);
+  --content-max: 70rem;
+  --control-height: 2.75rem; /* 44px touch target */
+}
+
+@media (min-width: 48rem) {
+  :root {
+    --gutter: var(--space-6);
+  }
+}
