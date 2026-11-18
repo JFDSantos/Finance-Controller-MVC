@@ -54,7 +54,11 @@ export const UserMenu = forwardRef<HTMLButtonElement | null, UserMenuProps>(func
       className="user-menu"
       ref={rootRef}
       onBlur={(event) => {
-        if (open && !rootRef.current?.contains(event.relatedTarget as Node | null)) setOpen(false);
+        // Close only when focus is known to have moved elsewhere. A null relatedTarget is what Safari and
+        // Firefox on macOS report when a mouse click lands on a button (they do not focus it); closing
+        // then would hide the item before its click arrives. Outside clicks are handled by pointerdown.
+        const next = event.relatedTarget as Node | null;
+        if (open && next && !rootRef.current?.contains(next)) setOpen(false);
       }}
     >
       <button
