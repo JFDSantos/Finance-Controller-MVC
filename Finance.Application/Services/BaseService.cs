@@ -45,7 +45,7 @@ namespace Finance.Application.Services
             return _mapper.Map<TSelectDto>(entity);
         }
 
-        public async Task DeleteAsync(int id)
+        public virtual async Task DeleteAsync(int id)
         {
             var existingEntity = await _repository.GetByIdAsync(id) ?? throw new KeyNotFoundException("Entity not found");
 
@@ -67,6 +67,12 @@ namespace Finance.Application.Services
 
         public virtual async Task<TSelectDto> UpdateAsync(int id, TCreateDto dto)
         {
+            var validationResult = await _validator.ValidateAsync(dto);
+            if (!validationResult.IsValid)
+            {
+                throw new ValidationException(validationResult.Errors);
+            }
+
             var existing = await _repository.GetByIdAsync(id) ?? throw new KeyNotFoundException("Entity not found");
 
             // Map onto the tracked entity so Id and UserId are preserved.

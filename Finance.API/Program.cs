@@ -80,6 +80,7 @@ builder.Services.AddScoped<IBaseRepository<Expense, int>, ExpenseRepository>();
 builder.Services.AddScoped<IBaseRepository<Income, int>, IncomeRepository>();
 builder.Services.AddScoped<IBaseRepository<User, int>, UserRepository>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<Finance.Application.Interfaces.IMovementReadRepository, MovementReadRepository>();
 
 
 var services = builder.Services;

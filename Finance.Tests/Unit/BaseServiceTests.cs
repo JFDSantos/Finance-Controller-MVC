@@ -75,4 +75,20 @@ public class BaseServiceTests
         Assert.NotEqual("NewPass#1", existing.Password);
         Assert.True(BCrypt.Net.BCrypt.Verify("NewPass#1", existing.Password));
     }
+
+    [Fact]
+    public async Task UpdateAsync_InvalidDto_ThrowsValidation()
+    {
+        var existing = new Income { Id = 5, UserId = 2, CategoryId = 1, Value = 1m, Description = "old" };
+        var repo = new Mock<IBaseRepository<Income, int>>();
+        repo.Setup(r => r.GetByIdAsync(5)).ReturnsAsync(existing);
+        var validator = new InlineValidator<IncomeCreateDto>();
+        validator.RuleFor(x => x.Value).GreaterThan(0);
+        var service = new IncomeService(repo.Object, Mock.Of<IUnitOfWork>(), Mapper(), validator);
+
+        await Assert.ThrowsAsync<ValidationException>(() =>
+            service.UpdateAsync(5, new IncomeCreateDto { Value = 0m }));
+        Assert.Equal(1m, existing.Value);
+        repo.Verify(r => r.UpdateAsync(It.IsAny<int>(), It.IsAny<Income>()), Times.Never);
+    }
 }

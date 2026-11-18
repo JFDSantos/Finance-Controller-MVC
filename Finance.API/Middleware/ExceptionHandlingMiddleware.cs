@@ -1,3 +1,4 @@
+using Finance.Application.Exceptions;
 using FluentValidation;
 using System.Net;
 using System.Text.Json;
@@ -28,6 +29,8 @@ namespace Finance.API.Middleware
             }
         }
 
+        private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web);
+
         private static Task HandleExceptionAsync(HttpContext context, Exception exception)
         {
             context.Response.ContentType = "application/json";
@@ -38,28 +41,39 @@ namespace Finance.API.Middleware
             {
                 case KeyNotFoundException:
                     context.Response.StatusCode = StatusCodes.Status404NotFound;
+                    response["code"] = "NOT_FOUND";
                     response["message"] = exception.Message;
                     break;
 
                 case ValidationException validationEx:
                     context.Response.StatusCode = StatusCodes.Status400BadRequest;
+                    response["code"] = "VALIDATION_FAILED";
                     response["message"] = "Validation failed";
-                    response["errors"] = validationEx.Errors.Select(e => new { e.PropertyName, e.ErrorMessage });
+                    response["errors"] = validationEx.Errors
+                        .Select(e => new { e.PropertyName, e.ErrorMessage, e.ErrorCode })
+                        .ToList();
+                    break;
+
+                case ConflictException conflict:
+                    context.Response.StatusCode = StatusCodes.Status409Conflict;
+                    response["code"] = conflict.Code;
+                    response["message"] = conflict.Message;
                     break;
 
                 case UnauthorizedAccessException:
                     context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                    response["code"] = "UNAUTHORIZED";
                     response["message"] = exception.Message;
                     break;
 
                 default:
                     context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+                    response["code"] = "INTERNAL_ERROR";
                     response["message"] = "Internal server error";
                     break;
             }
 
-            var jsonResponse = JsonSerializer.Serialize(response);
-            return context.Response.WriteAsync(jsonResponse);
+            return context.Response.WriteAsync(JsonSerializer.Serialize(response, JsonOptions));
         }
     }
 }

@@ -1,3 +1,4 @@
+using Moq;
 using Finance.Application.Validators;
 using Finance.Application.ViewModel;
 
@@ -5,6 +6,13 @@ namespace Finance.Tests.Unit;
 
 public class ValidatorTests
 {
+    private static Finance.Application.Interfaces.ICategoryRepository Repo()
+    {
+        var m = new Mock<Finance.Application.Interfaces.ICategoryRepository>();
+        m.Setup(r => r.GetByIdAsync(It.IsAny<int>())).ReturnsAsync(new Finance.Domain.Models.Category { Id = 1, Name = "c" });
+        return m.Object;
+    }
+
     private static IncomeCreateDto Income(decimal value) => new()
     {
         Description = "Salario",
@@ -15,23 +23,23 @@ public class ValidatorTests
     };
 
     [Fact]
-    public void IncomeValidator_RejectsZeroValue()
-        => Assert.False(new IncomeCreateDtoValidator().Validate(Income(0m)).IsValid);
+    public async Task IncomeValidator_RejectsZeroValue()
+        => Assert.False((await new IncomeCreateDtoValidator(Repo()).ValidateAsync(Income(0m))).IsValid);
 
     [Fact]
-    public void IncomeValidator_RejectsNegativeValue()
-        => Assert.False(new IncomeCreateDtoValidator().Validate(Income(-5m)).IsValid);
+    public async Task IncomeValidator_RejectsNegativeValue()
+        => Assert.False((await new IncomeCreateDtoValidator(Repo()).ValidateAsync(Income(-5m))).IsValid);
 
     [Fact]
-    public void IncomeValidator_RejectsThreeDecimalPlaces()
-        => Assert.False(new IncomeCreateDtoValidator().Validate(Income(10.005m)).IsValid);
+    public async Task IncomeValidator_RejectsThreeDecimalPlaces()
+        => Assert.False((await new IncomeCreateDtoValidator(Repo()).ValidateAsync(Income(10.005m))).IsValid);
 
     [Fact]
-    public void IncomeValidator_AcceptsTwoDecimalPlaces()
-        => Assert.True(new IncomeCreateDtoValidator().Validate(Income(10.05m)).IsValid);
+    public async Task IncomeValidator_AcceptsTwoDecimalPlaces()
+        => Assert.True((await new IncomeCreateDtoValidator(Repo()).ValidateAsync(Income(10.05m))).IsValid);
 
     [Fact]
-    public void ExpenseValidator_RejectsThreeDecimalPlaces()
+    public async Task ExpenseValidator_RejectsThreeDecimalPlaces()
     {
         var dto = new ExpenseCreateDto
         {
@@ -40,7 +48,7 @@ public class ValidatorTests
             CategoryId = 1,
             Value = 10.005m
         };
-        Assert.False(new ExpenseCreateDtoValidator().Validate(dto).IsValid);
+        Assert.False((await new ExpenseCreateDtoValidator(Repo()).ValidateAsync(dto)).IsValid);
     }
 
     [Fact]
