@@ -129,6 +129,33 @@ arquitetura limpa, testes, CI/CD e deploy, e não apenas "funcionar na minha má
   de dados (ER) e fluxo de deploy. Vão para `docs/architecture/`.
 - **Idioma da interface:** português do Brasil.
 
+## Escolhas minhas após a revisão do documento (o dono pode corrigir)
+
+- **Categorias:** por usuário. Todo cadastro novo recebe um conjunto padrão (Alimentação,
+  Moradia, Transporte, Saúde, Lazer, Salário, Outros). Nome único por usuário
+  (índice único em `UserId` + `Name`). Excluir uma categoria que ainda tem movimentações
+  é bloqueado com erro 409; nada é apagado em cascata.
+- **Modelo de movimentação:** mantém herança de tabela única (`Income` e `Expense`) com
+  discriminador. O valor `Base` do enum sai, porque nunca deve existir uma linha base.
+  `Value` é sempre positivo, `decimal(18,2)`; o tipo da linha define se soma ou subtrai.
+- **Datas:** `MovimentDate` vira `DateOnly` (coluna `date` no Postgres). O mês do filtro
+  e do dashboard é o mês da própria data, sem fuso horário.
+- **Autenticação:** continua cookie JWT. A expiração passa para 8 horas, sem renovação.
+  O CSRF é coberto por `SameSite=Strict` mais exigir `Content-Type: application/json`
+  nas escritas. Atrás do proxy da hospedagem, a API configura `ForwardedHeaders` para
+  que `Secure` e o redirect HTTPS funcionem. O logout só apaga o cookie, sem revogação no
+  servidor. O rate limit do login é por IP, 5 tentativas por minuto.
+- **Papel admin:** o enum fica, mas nenhum endpoint ou tela usa admin nesta versão e não
+  há seed. Todo usuário é `user`.
+- **Mensagens da API:** a API devolve erros em inglês com códigos estáveis; o frontend os
+  traduz para português. A série de 12 meses vem completa, com zero nos meses sem dados.
+- **Free tier:** o plano tolera partida a frio (retry de conexão no startup e `/health`
+  que não consulta o banco). Migrations usam uma connection string direta, sem pooler;
+  o app usa a string com pooler. O deploy tem, portanto, dois segredos de banco.
+  Escolho Neon como Postgres.
+- **Histórico do git:** não é reescrito. A chave antiga é só substituída e tratada como
+  comprometida. Nenhum force-push.
+
 ## Restrições
 
 - .NET 8, projetos existentes mantidos (arquitetura em camadas e SOLID do Roadmap).
