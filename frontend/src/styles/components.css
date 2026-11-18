@@ -106,7 +106,19 @@
 
 .button:disabled {
   cursor: not-allowed;
-  opacity: 0.6;
+}
+
+/* Waiting on the server: keep the action's colour so the label change reads as progress. */
+.button[data-pending]:disabled {
+  cursor: progress;
+  opacity: 0.75;
+}
+
+/* Not available yet: a neutral glaze, so a disabled red button never looks like a faded alarm. */
+.button:disabled:not([data-pending]) {
+  border-color: var(--color-line);
+  background: var(--color-glaze);
+  color: var(--color-ink-muted);
 }
 
 .button--block {

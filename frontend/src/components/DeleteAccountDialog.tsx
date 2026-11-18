@@ -96,6 +96,7 @@ export function DeleteAccountDialog({ open, email, onCancel, onConfirm, returnFo
             className="button button--danger"
             onClick={() => void confirm()}
             disabled={!acknowledged || pending}
+            data-pending={pending || undefined}
           >
             {pending ? "Excluindo…" : "Excluir conta"}
           </button>

@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import type { FormEvent, RefObject } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { ApiError } from "../api/client";
 import { SignInAfterRegisterError, useAuth } from "../auth/AuthContext";
 import type { AuthRedirectState } from "../auth/guards";
@@ -34,6 +34,7 @@ export default function Register() {
   const { register } = useAuth();
   usePageTitle("Criar conta");
   const navigate = useNavigate();
+  const from = (useLocation().state as AuthRedirectState | null)?.from;
   const [values, setValues] = useState({ userName: "", email: "", password: "" });
   const [errors, setErrors] = useState<Errors>({});
   const [pending, setPending] = useState(false);
@@ -72,11 +73,11 @@ export default function Register() {
     setErrors({});
     try {
       await register(dto);
-      navigate("/", { replace: true });
+      navigate(from ?? "/", { replace: true });
     } catch (error) {
       setPending(false);
       if (error instanceof SignInAfterRegisterError) {
-        navigate("/login", { replace: true, state: { registeredEmail: dto.email } satisfies AuthRedirectState });
+        navigate("/login", { replace: true, state: { registeredEmail: dto.email, from } satisfies AuthRedirectState });
         return;
       }
       const mapped = serverErrors(error);
@@ -133,13 +134,20 @@ export default function Register() {
           revealable
           required
         />
-        <button className="button button--primary button--block" type="submit" disabled={pending}>
+        <button
+          className="button button--primary button--block"
+          type="submit"
+          disabled={pending}
+          data-pending={pending || undefined}
+        >
           {pending ? "Criando conta…" : "Criar conta"}
         </button>
       </form>
 
       <p className="auth-form__switch">
-        Já tem conta? <Link to="/login">Entrar</Link>
+        Já tem conta? <Link to="/login" state={from ? { from } : undefined}>
+          Entrar
+        </Link>
       </p>
     </AuthLayout>
   );

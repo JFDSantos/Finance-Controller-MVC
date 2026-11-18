@@ -107,7 +107,12 @@ export default function Login() {
           revealable
           required
         />
-        <button className="button button--primary button--block" type="submit" disabled={pending !== null}>
+        <button
+          className="button button--primary button--block"
+          type="submit"
+          disabled={pending !== null}
+          data-pending={pending === "form" || undefined}
+        >
           {pending === "form" ? "Entrando…" : "Entrar"}
         </button>
       </form>
@@ -121,6 +126,7 @@ export default function Login() {
             type="button"
             className="button button--secondary button--block"
             disabled={pending !== null}
+            data-pending={pending === "demo" || undefined}
             onClick={() => void signIn({ email: DEMO_EMAIL!, password: DEMO_PASSWORD! }, "demo")}
             aria-describedby="demo-note"
           >
@@ -133,7 +139,9 @@ export default function Login() {
       ) : null}
 
       <p className="auth-form__switch">
-        Ainda não tem conta? <Link to="/register">Criar conta</Link>
+        Ainda não tem conta? <Link to="/register" state={state?.from ? { from: state.from } : undefined}>
+          Criar conta
+        </Link>
       </p>
     </AuthLayout>
   );
