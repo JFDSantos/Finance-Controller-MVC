@@ -3,12 +3,12 @@ using System;
 using Finance.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace Finance.Web.Migrations
+namespace Finance.Infrastructure.Migrations
 {
     [DbContext(typeof(FinanceContext))]
     partial class FinanceContextModelSnapshot : ModelSnapshot
@@ -17,119 +17,149 @@ namespace Finance.Web.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.6")
-                .HasAnnotation("Relational:MaxIdentifierLength", 128);
+                .HasAnnotation("ProductVersion", "9.0.10")
+                .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+            NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("Finance.Web.Models.Category", b =>
+            modelBuilder.Entity("Finance.Domain.Models.Category", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId", "Name")
+                        .IsUnique();
 
                     b.ToTable("Categories");
                 });
 
-            modelBuilder.Entity("Finance.Web.Models.Moviment", b =>
+            modelBuilder.Entity("Finance.Domain.Models.Moviment", b =>
                 {
-                    b.Property<int>("id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("categoryId")
-                        .HasColumnType("int");
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("integer");
 
-                    b.Property<string>("description")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
 
-                    b.Property<bool>("isAppellant")
-                        .HasColumnType("bit");
+                    b.Property<bool>("IsRecurring")
+                        .HasColumnType("boolean");
 
-                    b.Property<DateTime>("movimentDate")
-                        .HasColumnType("datetime2");
+                    b.Property<DateOnly>("MovimentDate")
+                        .HasColumnType("date");
 
-                    b.Property<int>("type")
-                        .HasColumnType("int");
+                    b.Property<int>("Type")
+                        .HasColumnType("integer");
 
-                    b.Property<decimal>("value")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
 
-                    b.HasKey("id");
+                    b.Property<decimal>("Value")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)");
 
-                    b.HasIndex("categoryId");
+                    b.HasKey("Id");
+
+                    b.HasIndex("CategoryId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Moviments");
 
-                    b.HasDiscriminator<int>("type").HasValue(0);
+                    b.HasDiscriminator<int>("Type");
 
                     b.UseTphMappingStrategy();
                 });
 
-            modelBuilder.Entity("Finance.Web.Models.User", b =>
+            modelBuilder.Entity("Finance.Domain.Models.User", b =>
                 {
-                    b.Property<int>("id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("email")
+                    b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
-                    b.Property<string>("password")
+                    b.Property<string>("Password")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
-                    b.Property<int>("role")
-                        .HasColumnType("int");
+                    b.Property<int>("Role")
+                        .HasColumnType("integer");
 
-                    b.Property<string>("user")
+                    b.Property<string>("UserName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
-                    b.HasKey("id");
+                    b.HasKey("Id");
 
-                    b.ToTable("User");
+                    b.HasIndex("Email")
+                        .IsUnique();
+
+                    b.ToTable("User", (string)null);
                 });
 
-            modelBuilder.Entity("Finance.Web.Models.Expense", b =>
+            modelBuilder.Entity("Finance.Domain.Models.Expense", b =>
                 {
-                    b.HasBaseType("Finance.Web.Models.Moviment");
+                    b.HasBaseType("Finance.Domain.Models.Moviment");
 
                     b.HasDiscriminator().HasValue(2);
                 });
 
-            modelBuilder.Entity("Finance.Web.Models.Income", b =>
+            modelBuilder.Entity("Finance.Domain.Models.Income", b =>
                 {
-                    b.HasBaseType("Finance.Web.Models.Moviment");
+                    b.HasBaseType("Finance.Domain.Models.Moviment");
 
                     b.HasDiscriminator().HasValue(1);
                 });
 
-            modelBuilder.Entity("Finance.Web.Models.Moviment", b =>
+            modelBuilder.Entity("Finance.Domain.Models.Category", b =>
                 {
-                    b.HasOne("Finance.Web.Models.Category", "Category")
+                    b.HasOne("Finance.Domain.Models.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Finance.Domain.Models.Moviment", b =>
+                {
+                    b.HasOne("Finance.Domain.Models.Category", "Category")
                         .WithMany("Moviments")
-                        .HasForeignKey("categoryId")
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Finance.Domain.Models.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Category");
                 });
 
-            modelBuilder.Entity("Finance.Web.Models.Category", b =>
+            modelBuilder.Entity("Finance.Domain.Models.Category", b =>
                 {
                     b.Navigation("Moviments");
                 });
