@@ -56,7 +56,7 @@ namespace Finance.API.Controllers
         {
             var createdUser = await _userService.AddAsync(dto); 
 
-            return CreatedAtAction(nameof(Login), new { username = createdUser.user }, createdUser);
+            return CreatedAtAction(nameof(Login), new { username = createdUser.UserName }, createdUser);
         }
 
     }

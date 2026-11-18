@@ -31,7 +31,7 @@ namespace Finance.Application.Services
             var user = _mapper.Map<User>(dto);
 
 
-            user.password = BCrypt.Net.BCrypt.HashPassword(user.password);
+            user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
 
             await _userRepository.AddAsync(user);
             await _uow.CommitAsync();
@@ -44,7 +44,7 @@ namespace Finance.Application.Services
             var existingEntity = await _repository.GetByIdAsync(id) ?? throw new KeyNotFoundException("User not found");
 
             var user = _mapper.Map<User>(dto);
-            user.password = BCrypt.Net.BCrypt.HashPassword(user.password);
+            user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
 
             await _userRepository.UpdateAsync(id, user);
             await _uow.CommitAsync();
@@ -59,7 +59,7 @@ namespace Finance.Application.Services
                 if (user == null)
                     return null;
 
-                bool isValid = BCrypt.Net.BCrypt.Verify(password, user.password);
+                bool isValid = BCrypt.Net.BCrypt.Verify(password, user.Password);
 
                 if (!isValid)
                     return null;

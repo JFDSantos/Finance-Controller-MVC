@@ -17,7 +17,8 @@ namespace Finance.Application.Validators
                 .MaximumLength(100);
 
             RuleFor(x => x.Value)
-                .GreaterThan(0);
+                .GreaterThan(0)
+                .PrecisionScale(18, 2, false);
         }
     }
 }

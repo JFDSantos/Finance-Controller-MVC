@@ -16,10 +16,8 @@ namespace Finance.Infrastructure.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // Define o campo "type" como discriminador explícito
             modelBuilder.Entity<Moviment>()
-                .HasDiscriminator<EMovimentType>("type")
-                .HasValue<Moviment>(EMovimentType.Base)
+                .HasDiscriminator(m => m.Type)
                 .HasValue<Income>(EMovimentType.Income)
                 .HasValue<Expense>(EMovimentType.Expense);
 
@@ -27,7 +25,7 @@ namespace Finance.Infrastructure.Data
             modelBuilder.Entity<Moviment>()
                 .HasOne(m => m.Category)
                 .WithMany(c => c.Moviments)
-                .HasForeignKey(m => m.categoryId);
+                .HasForeignKey(m => m.CategoryId);
         }
     }
 }

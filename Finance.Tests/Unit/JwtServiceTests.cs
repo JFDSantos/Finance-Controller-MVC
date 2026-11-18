@@ -19,9 +19,9 @@ public class JwtServiceTests
         var token = CreateService().GenerateToken(new UserSelectDto
         {
             Id = id,
-            user = "ana",
-            email = "ana@example.com",
-            role = default(EUserRole),
+            UserName = "ana",
+            Email = "ana@example.com",
+            Role = default(EUserRole),
         });
         return new JwtSecurityTokenHandler().ReadJwtToken(token);
     }

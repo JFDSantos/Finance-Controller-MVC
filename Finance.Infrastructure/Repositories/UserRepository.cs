@@ -15,7 +15,7 @@ namespace Finance.Infrastructure.Repositories
 
         public async Task<User?> GetByEmailAsync(string email)
         {
-            return await _context.User.AsNoTracking().FirstOrDefaultAsync(i => i.email == email);
+            return await _context.User.AsNoTracking().FirstOrDefaultAsync(i => i.Email == email);
         }
     }
 }

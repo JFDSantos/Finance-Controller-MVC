@@ -12,15 +12,16 @@ namespace Finance.Application.Validators
     {
         public UserCreateDtoValidator()
         {
-            RuleFor(x => x.email)
+            RuleFor(x => x.Email)
                 .NotEmpty()
                 .MaximumLength(100);
 
-            RuleFor(x => x.password)
+            RuleFor(x => x.Password)
                 .NotEmpty()
+                .MinimumLength(8)
                 .MaximumLength(100);
 
-            RuleFor(x => x.user)
+            RuleFor(x => x.UserName)
                 .NotEmpty()
                 .MaximumLength(100);
         }
