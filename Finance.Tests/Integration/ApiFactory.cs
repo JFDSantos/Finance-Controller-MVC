@@ -11,7 +11,7 @@ namespace Finance.Tests.Integration;
 
 public class ApiFactory : WebApplicationFactory<Program>
 {
-    public const string TestJwtKey = "test-only-jwt-key-0123456789-abcdefghij"; // 40 chars
+    public const string TestJwtKey = "test-only-jwt-key-0123456789-abcdefghijk"; // 40 chars
     public const string DefaultPassword = "Senha#12345";
 
     private readonly Dictionary<string, string?> _overrides;
