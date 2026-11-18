@@ -361,3 +361,7 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+# Frontend (Vite) dependencies and build output
+frontend/node_modules/
+frontend/dist/
+Finance.API/wwwroot/
