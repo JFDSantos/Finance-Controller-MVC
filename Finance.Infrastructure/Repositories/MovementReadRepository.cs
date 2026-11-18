@@ -39,7 +39,7 @@ namespace Finance.Infrastructure.Repositories
                 .GroupBy(m => new { m.CategoryId, m.Category!.Name, m.Type })
                 .Select(g => new { g.Key.CategoryId, g.Key.Name, g.Key.Type, Total = g.Sum(m => m.Value) })
                 .ToListAsync();
-            return rows.OrderBy(r => r.Type).ThenBy(r => r.Name)
+            return rows.OrderBy(r => r.Type).ThenBy(r => r.Name).ThenBy(r => r.CategoryId)
                 .Select(r => new CategoryTotalDto(r.CategoryId, r.Name, r.Type, r.Total)).ToList();
         }
 

@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Hosting;
 using System.Net;
 using System.Text;
 using System.Text.Json;
@@ -10,7 +11,7 @@ public class HttpRulesTests : IDisposable
     private readonly ApiFactory _factory = new();
     public void Dispose() => _factory.Dispose();
 
-    private HttpClient Client(ApiFactory? f = null) =>
+    private HttpClient Client(WebApplicationFactory<Program>? f = null) =>
         (f ?? _factory).CreateClient(new WebApplicationFactoryClientOptions { AllowAutoRedirect = false });
 
     [Fact]
@@ -60,7 +61,9 @@ public class HttpRulesTests : IDisposable
     [Fact]
     public async Task ForwardedProtoHttps_IsHonoredByHttpsRedirection()
     {
-        using var f = new ApiFactory(new Dictionary<string, string?> { ["HTTPS_PORT"] = "443" });
+        using var baseFactory = new ApiFactory(new Dictionary<string, string?> { ["HTTPS_PORT"] = "443" });
+        // HTTPS redirection is enabled only outside Development.
+        using var f = baseFactory.WithWebHostBuilder(b => b.UseEnvironment("Production"));
         var c = Client(f);
 
         // Plain http without the proxy header is redirected to https.

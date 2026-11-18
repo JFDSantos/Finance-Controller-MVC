@@ -36,6 +36,7 @@ namespace Finance.API.Controllers
 
         [HttpPost("register")]
         [AllowAnonymous]
+        [EnableRateLimiting("register")]
         public async Task<IActionResult> Register(UserCreateDto dto)
         {
             var created = await _userService.RegisterAsync(dto);

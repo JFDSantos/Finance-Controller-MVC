@@ -2,7 +2,7 @@ namespace Finance.Tests.Integration;
 
 public class SmokeTests
 {
-    [Fact(Skip = "until Task 10")]
+    [Fact]
     public async Task Smoke_ApiStarts()
     {
         await using var factory = new ApiFactory();

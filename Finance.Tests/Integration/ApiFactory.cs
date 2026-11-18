@@ -26,6 +26,7 @@ public class ApiFactory : WebApplicationFactory<Program>
             ["Jwt__Key"] = TestJwtKey,
             // Very high by default so tests can log in repeatedly; the 429 test overrides it with null (real default).
             ["RateLimit__LoginPerMinute"] = "1000000",
+            ["RateLimit__RegisterPerHour"] = "1000000",
             ["ConnectionStrings__DefaultConnection"] =
                 Environment.GetEnvironmentVariable("TEST_DB_CONNECTION")
                 ?? "Host=localhost;Database=finance_test;Username=postgres;Password=postgres",

@@ -27,12 +27,20 @@ namespace Finance.Application.Services
             }
         }
 
-        public async Task<T> ExecuteInTransactionAsync<T>(Func<Task<T>> work)
+        public Task<T> ExecuteInTransactionAsync<T>(Func<Task<T>> work)
         {
-            await using var tx = await _context.Database.BeginTransactionAsync();
-            var result = await work();
-            await tx.CommitAsync();
-            return result; // disposing an uncommitted transaction (exception path) rolls it back
+            // With EnableRetryOnFailure, user-initiated transactions must run inside the execution strategy.
+            // The whole block (including `work`) is re-run on a transient failure, so `work` must create its
+            // entities itself, and the change tracker is cleared so a retry never re-adds tracked entities.
+            var strategy = _context.Database.CreateExecutionStrategy();
+            return strategy.ExecuteAsync(async () =>
+            {
+                _context.ChangeTracker.Clear();
+                await using var tx = await _context.Database.BeginTransactionAsync();
+                var result = await work();
+                await tx.CommitAsync();
+                return result; // disposing an uncommitted transaction (exception path) rolls it back
+            });
         }
     }
 }

@@ -45,19 +45,22 @@ namespace Finance.Application.Services
             if (await _userRepository.GetByEmailAsync(email) != null)
                 throw taken;
 
-            // Role is never taken from the request: public registration always creates a regular user.
-            var user = new User
-            {
-                UserName = dto.UserName.Trim(),
-                Email = email,
-                Password = BCrypt.Net.BCrypt.HashPassword(dto.Password),
-                Role = EUserRole.user
-            };
+            var userName = dto.UserName.Trim();
+            var passwordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password);
 
             try
             {
                 return await _uow.ExecuteInTransactionAsync(async () =>
                 {
+                    // Created inside the delegate: it may run more than once (connection retry).
+                    // Role is never taken from the request: public registration always creates a regular user.
+                    var user = new User
+                    {
+                        UserName = userName,
+                        Email = email,
+                        Password = passwordHash,
+                        Role = EUserRole.user
+                    };
                     await _userRepository.AddAsync(user);
                     await _uow.CommitAsync(); // assigns user.Id
 

@@ -16,6 +16,14 @@ namespace Finance.API.Controllers
         [HttpGet]
         public async Task<IActionResult> List(
             [FromQuery] int? year, [FromQuery] int? month, [FromQuery] int? categoryId, [FromQuery] EMovimentType? type)
-            => Ok(await _service.ListAsync(year, month, categoryId, type));
+        {
+            // Model binding accepts any integer for an enum (type=5); reject undefined values.
+            if (type is not null && !Enum.IsDefined(type.Value))
+                throw new FluentValidation.ValidationException(new[]
+                {
+                    new FluentValidation.Results.ValidationFailure("type", "The value is not a valid movement type.") { ErrorCode = "INVALID_VALUE" }
+                });
+            return Ok(await _service.ListAsync(year, month, categoryId, type));
+        }
     }
 }
