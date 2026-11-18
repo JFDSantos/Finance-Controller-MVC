@@ -42,6 +42,7 @@ export type StableErrorCode =
   | "UNAUTHORIZED"
   | "INTERNAL_ERROR"
   | "CATEGORY_IN_USE"
+  | "CATEGORY_NAME_TAKEN"
   | "CATEGORY_NOT_FOUND"
   | "INVALID_MONTH"
   | "INVALID_YEAR"

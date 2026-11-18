@@ -13,6 +13,7 @@ const MESSAGES: Record<StableErrorCode, string> = {
   INTERNAL_ERROR: "Tivemos um problema no servidor. Tente novamente em instantes.",
   CATEGORY_IN_USE:
     "Esta categoria tem movimentações e não pode ser excluída. Mova ou exclua as movimentações antes.",
+  CATEGORY_NAME_TAKEN: "Você já tem uma categoria com esse nome.",
   CATEGORY_NOT_FOUND: "Esta categoria não existe mais. Escolha outra.",
   INVALID_MONTH: "Escolha um mês entre janeiro e dezembro.",
   INVALID_YEAR: "Escolha um ano válido.",

@@ -227,6 +227,40 @@ public class ProductionTests
     }
 
     [Fact]
+    public async Task DemoSeeder_RefreshesPasswordWhenChanged()
+    {
+        await using var f = new ApiFactory();
+        await f.ResetDatabaseAsync();
+        using (var scope = f.Services.CreateScope())
+            await DemoSeeder.SeedAsync(scope.ServiceProvider.GetRequiredService<FinanceContext>(), "A-throwaway-Demo#1");
+        using (var scope = f.Services.CreateScope())
+            await DemoSeeder.SeedAsync(scope.ServiceProvider.GetRequiredService<FinanceContext>(), "B-throwaway-Demo#2");
+        using var check = f.Services.CreateScope();
+        var db = check.ServiceProvider.GetRequiredService<FinanceContext>();
+        var hash = (await db.User.SingleAsync(u => u.Email == DemoEmail)).Password;
+        Assert.True(BCrypt.Net.BCrypt.Verify("B-throwaway-Demo#2", hash));
+        Assert.False(BCrypt.Net.BCrypt.Verify("A-throwaway-Demo#1", hash));
+    }
+
+    [Fact]
+    public async Task DemoSeeder_SamePassword_DoesNotRehash()
+    {
+        await using var f = new ApiFactory();
+        await f.ResetDatabaseAsync();
+        using (var scope = f.Services.CreateScope())
+            await DemoSeeder.SeedAsync(scope.ServiceProvider.GetRequiredService<FinanceContext>(), DemoPass);
+        string Hash()
+        {
+            using var s = f.Services.CreateScope();
+            return s.ServiceProvider.GetRequiredService<FinanceContext>().User.Single(u => u.Email == DemoEmail).Password;
+        }
+        var before = Hash();
+        using (var scope = f.Services.CreateScope())
+            await DemoSeeder.SeedAsync(scope.ServiceProvider.GetRequiredService<FinanceContext>(), DemoPass);
+        Assert.Equal(before, Hash());
+    }
+
+    [Fact]
     public async Task DemoSeeder_Disabled_ByDefault()
     {
         await using var f = new ApiFactory();

@@ -107,6 +107,27 @@ describe("Categories page", () => {
     expect(screen.getByRole("list", { name: "Suas categorias" })).toHaveTextContent("Moradia");
   });
 
+  it("Categories page shows CATEGORY_NAME_TAKEN message", async () => {
+    mockFetch({
+      "GET /api/Category": { status: 200, body: defaults },
+      "POST /api/Category": { status: 409, body: { code: "CATEGORY_NAME_TAKEN", message: "taken" } },
+      "PUT /api/Category/1": { status: 409, body: { code: "CATEGORY_NAME_TAKEN", message: "taken" } },
+    });
+    const user = userEvent.setup();
+    renderPage();
+
+    const input = await screen.findByLabelText("Nova categoria");
+    await user.type(input, "Viagens");
+    await user.click(screen.getByRole("button", { name: "Adicionar" }));
+    await waitFor(() => expect(input).toHaveAccessibleDescription("Você já tem uma categoria com esse nome."));
+
+    await user.click(screen.getByRole("button", { name: "Renomear Moradia" }));
+    const rename = screen.getByLabelText("Novo nome para Moradia");
+    await user.clear(rename);
+    await user.type(rename, "Casa{Enter}");
+    await waitFor(() => expect(rename).toHaveAccessibleDescription("Você já tem uma categoria com esse nome."));
+  });
+
   it("deletes an unused category", async () => {
     mockFetch({
       "GET /api/Category": { status: 200, body: defaults },

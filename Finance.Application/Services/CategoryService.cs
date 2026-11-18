@@ -22,6 +22,51 @@ namespace Finance.Application.Services
 
         private readonly IMovementReadRepository _movements;
 
+        private const string NameTakenCode = "CATEGORY_NAME_TAKEN";
+        private const string NameTakenMessage = "A category with this name already exists.";
+
+        public override async Task<CategorySelectDto> AddAsync(CategoryCreateDto dto)
+        {
+            var clean = Trimmed(dto);
+            await EnsureNameFreeAsync(clean.Name, null);
+            try
+            {
+                return await base.AddAsync(clean);
+            }
+            catch (UniqueConstraintException)
+            {
+                throw new ConflictException(NameTakenCode, NameTakenMessage);
+            }
+        }
+
+        public override async Task<CategorySelectDto> UpdateAsync(int id, CategoryCreateDto dto)
+        {
+            // Existence/ownership first: a category that is not the caller's is a 404, never a 409.
+            _ = await _repository.GetByIdAsync(id) ?? throw new KeyNotFoundException("Entity not found");
+
+            var clean = Trimmed(dto);
+            await EnsureNameFreeAsync(clean.Name, id);
+            try
+            {
+                return await base.UpdateAsync(id, clean);
+            }
+            catch (UniqueConstraintException)
+            {
+                throw new ConflictException(NameTakenCode, NameTakenMessage);
+            }
+        }
+
+        private static CategoryCreateDto Trimmed(CategoryCreateDto dto) => new() { Name = dto.Name?.Trim()! };
+
+        // The repository is filtered by the current user, so this only sees the caller's categories.
+        private async Task EnsureNameFreeAsync(string? name, int? ownId)
+        {
+            if (string.IsNullOrEmpty(name)) return; // the validator reports empty names
+            var all = await _repository.GetAllAsync();
+            if (all.Any(c => c.Id != ownId && string.Equals(c.Name?.Trim(), name, StringComparison.OrdinalIgnoreCase)))
+                throw new ConflictException(NameTakenCode, NameTakenMessage);
+        }
+
         public override async Task DeleteAsync(int id)
         {
             _ = await _repository.GetByIdAsync(id) ?? throw new KeyNotFoundException("Entity not found");

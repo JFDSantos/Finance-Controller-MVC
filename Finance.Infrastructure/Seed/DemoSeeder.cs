@@ -32,6 +32,12 @@ namespace Finance.Infrastructure.Seed
                 context.User.Add(user);
                 await context.SaveChangesAsync();
             }
+            else if (!BCrypt.Net.BCrypt.Verify(demoPassword, user.Password))
+            {
+                // The operator rotated Demo__Password: keep the public demo button working.
+                user.Password = BCrypt.Net.BCrypt.HashPassword(demoPassword);
+                await context.SaveChangesAsync();
+            }
 
             var existing = await context.Categories.IgnoreQueryFilters()
                 .Where(c => c.UserId == user.Id).ToListAsync();
