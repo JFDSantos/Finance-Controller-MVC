@@ -156,6 +156,16 @@ arquitetura limpa, testes, CI/CD e deploy, e não apenas "funcionar na minha má
 - **Histórico do git:** não é reescrito. A chave antiga é só substituída e tratada como
   comprometida. Nenhum force-push.
 
+## Respostas do dono às perguntas da revisão
+
+- **`IsRecurring`:** "movimentação recorrente", confirmado pelo dono. Esta versão trata
+  como uma flag que marca o registro e aparece na lista e nos filtros. Não gera
+  lançamentos automáticos; isso fica para uma versão futura (decisão minha de
+  interpretação, já que o dono não pediu geração automática).
+- **Cadastro aberto:** entram uma **conta demo** com dados de exemplo e a **exclusão da
+  própria conta** (LGPD), incluindo todos os dados do usuário. Ficam de fora verificação
+  de email e recuperação de senha, documentadas como limitação conhecida.
+
 ## Restrições
 
 - .NET 8, projetos existentes mantidos (arquitetura em camadas e SOLID do Roadmap).
