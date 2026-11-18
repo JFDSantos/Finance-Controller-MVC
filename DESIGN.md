@@ -137,6 +137,42 @@ components:
     textColor: "{colors.ink}"
     rounded: "{rounded.lg}"
     padding: "24px"
+  button-quiet:
+    backgroundColor: "transparent"
+    textColor: "{colors.ink-muted}"
+    rounded: "{rounded.md}"
+    padding: "0 12px"
+    height: "44px"
+  button-quiet-hover:
+    backgroundColor: "{colors.cobalt-wash}"
+    textColor: "{colors.cobalt-deep}"
+  icon-button:
+    backgroundColor: "transparent"
+    textColor: "{colors.ink-muted}"
+    rounded: "{rounded.md}"
+    size: "44px"
+  segmented-option-selected:
+    backgroundColor: "{colors.cobalt}"
+    textColor: "{colors.on-cobalt}"
+    height: "44px"
+  segmented-option:
+    backgroundColor: "{colors.surface}"
+    textColor: "{colors.ink-muted}"
+    height: "44px"
+  tag-recurring:
+    backgroundColor: "{colors.cobalt-wash}"
+    textColor: "{colors.cobalt-deep}"
+    rounded: "{rounded.sm}"
+    padding: "2px 8px"
+  ledger:
+    backgroundColor: "{colors.surface}"
+    textColor: "{colors.ink}"
+    rounded: "{rounded.lg}"
+  state-panel:
+    backgroundColor: "{colors.surface}"
+    textColor: "{colors.ink}"
+    rounded: "{rounded.lg}"
+    padding: "48px 24px"
 ---
 
 # Design System: Finance Controller
@@ -263,6 +299,37 @@ A pill button (ochre initial avatar, name hidden below 48rem, chevron that turns
 
 ### Dialog
 Native modal `<dialog>`: 10px radius, float shadow, 24 to 32px padding. The delete-account dialog states exactly what is lost, names the account, requires a checkbox before the red button enables, shows server errors in place, and returns focus to the user-menu button when it closes.
+
+### Select
+A native `<select>` (`SelectField`) dressed exactly like a text field: same edge, height, focus, hint and error wiring, with the drawn chevron at the right instead of the browser arrow. Used for category choice and the month and year pickers.
+
+### Segmented control
+A radio group drawn as joined buttons (`Segmented`): 44px, field-edge borders, the chosen option in cobalt with white text. The real radio covers each option, so arrow keys, touch and screen readers get native behaviour; focus draws a cobalt ring 2px outside the option. Used for the type filter (Todas / Receitas / Despesas) and the movement type (Despesa / Receita). Disabled (edit mode, where the API cannot change a movement's type), unchosen options turn glaze with a strike-through and the chosen one turns cobalt wash, with a hint saying why.
+
+### Quiet, icon and link buttons
+- **Quiet** (`button--quiet`): row actions with a label ("Renomear", "Excluir"); transparent, muted ink, cobalt wash on hover, red wash for the destructive one. Below 30rem the label is hidden and the button is a 44px square; the accessible name always carries the item ("Renomear Moradia").
+- **Icon** (`icon-button`): 44px square, drawn icon only, `aria-label` names action and item. The framed variant (white with the secondary-button edge) is used for previous/next month.
+- **Link button** (`link-button`): a text action inside running copy ("Limpar filtros", "Voltar ao mês atual"), cobalt and underlined like a link.
+
+### Ledger (movements list)
+One semantic table on every width (explicit ARIA roles keep it a table when CSS changes its display). From 48rem: a white panel with hairline rows, columns Data, Descrição, Categoria, Valor (right-aligned, tabular) and the two row actions. Below 48rem each row becomes a two-line entry: description and amount on top, date, category and actions below. Amounts carry a sign and a hidden type word as well as colour (green `+R$` income, red `−R$` expense), so meaning never rests on colour alone. Recurring movements carry a small cobalt-wash **Recorrente** tag with the repeat icon. While a new filter loads the old rows stay, dimmed to 60%.
+
+Above the ledger, the period heading (the month, first letter capitalised) with the count, and the **totals** for the filtered list: Receitas, Despesas and Saldo in bold tabular figures (only the matching total when a type filter is on). On phones the totals sit in their own white panel.
+
+### Filters
+Period (previous/next buttons around month and year selects; a "Voltar ao mês atual" link when away from it), Categoria select and the Tipo segmented control, on one row from 48rem and stacked on phones, closed by a hairline. The filters live in the address (`?mes=2028-01&categoria=3&tipo=despesas`).
+
+### States
+- **Empty:** a white panel with a 7×1 strip of tiles (one week; the tile module as identity, never animated on working screens), the title "Nenhuma movimentação em …", one sentence and the primary action. When filters cause the emptiness, no tiles: the title says so and offers "Limpar filtros".
+- **Error:** a danger notice with the pt-BR message and a secondary "Tentar novamente" button.
+- **Loading:** skeleton rows (flat glaze bars in a white panel) that fade in only after 300ms, so fast answers never flash.
+- **Success:** a calm info notice in a `role="status"` region ("Despesa salva em fevereiro de 2028."), which also explains why the view moved to another month.
+
+### Forms in dialogs
+Create and edit a movement in the wide dialog (34rem): Tipo, Descrição, Valor and Data side by side from 30rem, Categoria, then the Recorrente checkbox with a note that it marks a repeating movement and creates nothing automatically. Destructive confirmations (`ConfirmDialog`) put Cancelar first (it takes initial focus), name exactly what is lost, and when the server says retrying cannot help (`CATEGORY_IN_USE`) the red button goes away and Cancelar reads "Entendi". Focus returns to the opener, or to the section heading when the opener's row is gone.
+
+### Category list
+A white panel with hairline rows: name on the left, quiet Renomear and Excluir on the right. Renaming happens in place: the row turns glaze and becomes a field with Cancelar and Salvar; Enter saves, Escape cancels, focus returns to that row's Renomear button. Creating sits above the list as one field and an "Adicionar" button.
 
 ### Tile Panel (signature)
 An SVG grid of 100-unit square tiles with 6-unit grout, each tile one of three figures in one of four rotations, chosen by a seeded generator so the panel is identical on every render. Figures are glaze white, about one in six ochre, on cobalt tile grounds. It plays one quarter-turn entrance per page load (900ms, exponential ease-out, 22ms stagger), skipped under `prefers-reduced-motion`. Sizes in use: 7×5 (auth, desktop), 7×1 (auth, phone), 3×3 with the centre tile missing (404). The mark is a 2×2 of the same module whose quarter-discs meet in one disc, one quarter ochre.

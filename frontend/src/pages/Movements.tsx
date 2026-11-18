@@ -233,6 +233,11 @@ export default function Movements() {
             <h2 className="ledger__title" id="ledger-title" ref={headingRef} tabIndex={-1}>
               {period}
             </h2>
+            {movements.status === "ready" && movements.data.length > 0 ? (
+              <p className="ledger__count">
+                {movements.data.length} {movements.data.length === 1 ? "movimentação" : "movimentações"}
+              </p>
+            ) : null}
             {hasFilters ? (
               <p className="ledger__filters">
                 Mostrando{" "}
@@ -369,11 +374,8 @@ function Totals({ items, type }: { items: Movement[]; type: TypeFilter }) {
   const income = sumMoney(items.filter((m) => m.type === "Income").map((m) => m.value));
   const expense = sumMoney(items.filter((m) => m.type === "Expense").map((m) => m.value));
   const balance = sumMoney([income, -expense]);
-  const count = `${items.length} ${items.length === 1 ? "movimentação" : "movimentações"}`;
-
   return (
     <div className="totals" role="group" aria-label="Totais do período">
-      <p className="totals__count">{count}</p>
       <dl className="totals__list">
         {type !== "expense" ? (
           <div className="totals__item totals__item--income">

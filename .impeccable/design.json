@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-18T23:32:57+00:00",
+  "generatedAt": "2026-11-18T23:59:00+00:00",
   "title": "Design System: Finance Controller",
   "extensions": {
     "colorMeta": {
@@ -296,6 +296,38 @@
       "description": "Signature: square tiles with a quarter-disc, half-disc or diagonal, rotated in 90 degree steps, separated by grout.",
       "html": "<svg class=\"ds-tiles\" viewBox=\"0 0 318 100\"><rect width=\"100\" height=\"100\" fill=\"#1d44a6\"/><path d=\"M0 0H100A100 100 0 0 1 0 100Z\" fill=\"#f3f6fb\"/><g transform=\"translate(106 0)\"><rect width=\"100\" height=\"100\" fill=\"#1d44a6\"/><path d=\"M0 100A50 50 0 0 1 100 100Z\" fill=\"#e3a51f\"/></g><g transform=\"translate(212 0)\"><rect width=\"100\" height=\"100\" fill=\"#1d44a6\"/><path d=\"M0 0H100L0 100Z\" fill=\"#f3f6fb\"/></g></svg>",
       "css": ".ds-tiles{display:block;width:240px;background:#13307a;padding:6px}"
+    },
+    {
+      "name": "Segmented Control",
+      "kind": "custom",
+      "refersTo": "segmented-option-selected",
+      "description": "Radio group drawn as joined 44px buttons; chosen option in cobalt.",
+      "html": "<div class=\"ds-seg\"><span class=\"on\">Todas</span><span>Receitas</span><span>Despesas</span></div>",
+      "css": ".ds-seg{display:inline-flex;font:600 15px/1 'Public Sans Variable',system-ui,sans-serif}.ds-seg span{display:flex;align-items:center;min-height:44px;padding:0 16px;border:1px solid #7483a3;margin-left:-1px;background:#fff;color:#4a5573}.ds-seg span:first-child{border-radius:6px 0 0 6px;margin-left:0}.ds-seg span:last-child{border-radius:0 6px 6px 0}.ds-seg .on{background:#1d44a6;border-color:#1d44a6;color:#fff;position:relative}"
+    },
+    {
+      "name": "Recorrente Tag",
+      "kind": "custom",
+      "refersTo": "tag-recurring",
+      "description": "Marks a recurring movement in the ledger.",
+      "html": "<span class=\"ds-tag\">Recorrente</span>",
+      "css": ".ds-tag{display:inline-flex;padding:2px 8px;border-radius:4px;background:#e6edfb;color:#15347f;font:600 13px/1.4 'Public Sans Variable',system-ui,sans-serif}"
+    },
+    {
+      "name": "Ledger Row",
+      "kind": "custom",
+      "refersTo": "ledger",
+      "description": "Movement row: date, description, category, signed amount coloured by type, row actions. Stacks into two lines below 48rem.",
+      "html": "<div class=\"ds-row\"><span class=\"d\">05/11/2026</span><span class=\"t\">Aluguel</span><span class=\"c\">Moradia</span><span class=\"v\">−R$ 2.300,00</span></div>",
+      "css": ".ds-row{display:grid;grid-template-columns:7.5rem 1fr 10rem 9rem;gap:16px;align-items:center;padding:12px 16px;background:#fff;border:1px solid #d3dbea;border-radius:10px;font:400 16px/1.5 'Public Sans Variable',system-ui,sans-serif;font-variant-numeric:tabular-nums}.ds-row .d,.ds-row .c{color:#4a5573}.ds-row .t{font-weight:500;color:#172036}.ds-row .v{font-weight:700;color:#b3261e;text-align:right}"
+    },
+    {
+      "name": "Empty State",
+      "kind": "custom",
+      "refersTo": "state-panel",
+      "description": "White panel with a 7x1 tile strip, a title, one sentence and the primary action.",
+      "html": "<div class=\"ds-empty\"><strong>Nenhuma movimentação em março de 2020</strong><p>Registre uma receita ou despesa para acompanhar como o mês está indo.</p></div>",
+      "css": ".ds-empty{display:grid;justify-items:center;gap:12px;padding:48px 24px;background:#fff;border:1px solid #d3dbea;border-radius:10px;text-align:center;font:400 16px/1.5 'Public Sans Variable',system-ui,sans-serif;color:#172036}.ds-empty p{margin:0;color:#4a5573;max-width:44ch}"
     }
   ],
   "narrative": {

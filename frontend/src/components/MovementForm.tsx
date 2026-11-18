@@ -200,6 +200,7 @@ export function MovementForm({ categories, movement, defaultDate, onSaved, onCan
         value={categoryId}
         onChange={(e) => setCategoryId(e.target.value)}
         error={errors.categoryId}
+        hint={options.length === 0 ? "Você ainda não tem categorias. Crie uma na página Categorias." : undefined}
         disabled={pending}
       >
         <option value="" disabled>
