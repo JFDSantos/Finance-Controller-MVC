@@ -1,0 +1,358 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-18T23:32:57+00:00",
+  "title": "Design System: Finance Controller",
+  "extensions": {
+    "colorMeta": {
+      "cobalt": {
+        "role": "primary",
+        "displayName": "Cobalt Glaze",
+        "canonical": "#1d44a6",
+        "tonalRamp": [
+          "oklch(15% 0.071 264)",
+          "oklch(25% 0.099 264)",
+          "oklch(35% 0.128 264)",
+          "oklch(45% 0.156 264)",
+          "oklch(55% 0.156 264)",
+          "oklch(65% 0.128 264)",
+          "oklch(80% 0.085 264)",
+          "oklch(95% 0.043 264)"
+        ]
+      },
+      "cobalt-deep": {
+        "role": "primary",
+        "displayName": "Deep Cobalt",
+        "canonical": "#15347f",
+        "tonalRamp": [
+          "oklch(15% 0.058 264)",
+          "oklch(25% 0.082 264)",
+          "oklch(35% 0.105 264)",
+          "oklch(45% 0.128 264)",
+          "oklch(55% 0.128 264)",
+          "oklch(65% 0.105 264)",
+          "oklch(80% 0.07 264)",
+          "oklch(95% 0.035 264)"
+        ]
+      },
+      "cobalt-grout": {
+        "role": "primary",
+        "displayName": "Grout Cobalt",
+        "canonical": "#13307a",
+        "tonalRamp": [
+          "oklch(15% 0.058 264)",
+          "oklch(25% 0.082 264)",
+          "oklch(35% 0.105 264)",
+          "oklch(45% 0.128 264)",
+          "oklch(55% 0.128 264)",
+          "oklch(65% 0.105 264)",
+          "oklch(80% 0.07 264)",
+          "oklch(95% 0.035 264)"
+        ]
+      },
+      "cobalt-wash": {
+        "role": "primary",
+        "displayName": "Cobalt Wash",
+        "canonical": "#e6edfb",
+        "tonalRamp": [
+          "oklch(15% 0.017 264)",
+          "oklch(25% 0.023 264)",
+          "oklch(35% 0.03 264)",
+          "oklch(45% 0.037 264)",
+          "oklch(55% 0.037 264)",
+          "oklch(65% 0.03 264)",
+          "oklch(80% 0.02 264)",
+          "oklch(95% 0.01 264)"
+        ]
+      },
+      "ochre": {
+        "role": "secondary",
+        "displayName": "Bulcão Ochre",
+        "canonical": "#e3a51f",
+        "tonalRamp": [
+          "oklch(15% 0.062 75)",
+          "oklch(25% 0.087 75)",
+          "oklch(35% 0.112 75)",
+          "oklch(45% 0.137 75)",
+          "oklch(55% 0.137 75)",
+          "oklch(65% 0.112 75)",
+          "oklch(80% 0.075 75)",
+          "oklch(95% 0.037 75)"
+        ]
+      },
+      "ochre-wash": {
+        "role": "secondary",
+        "displayName": "Ochre Wash",
+        "canonical": "#fbefd2",
+        "tonalRamp": [
+          "oklch(15% 0.021 85)",
+          "oklch(25% 0.029 85)",
+          "oklch(35% 0.038 85)",
+          "oklch(45% 0.046 85)",
+          "oklch(55% 0.046 85)",
+          "oklch(65% 0.038 85)",
+          "oklch(80% 0.025 85)",
+          "oklch(95% 0.013 85)"
+        ]
+      },
+      "danger": {
+        "role": "tertiary",
+        "displayName": "Alarm Red",
+        "canonical": "#b3261e",
+        "tonalRamp": [
+          "oklch(15% 0.075 28)",
+          "oklch(25% 0.105 28)",
+          "oklch(35% 0.135 28)",
+          "oklch(45% 0.165 28)",
+          "oklch(55% 0.165 28)",
+          "oklch(65% 0.135 28)",
+          "oklch(80% 0.09 28)",
+          "oklch(95% 0.045 28)"
+        ]
+      },
+      "income": {
+        "role": "tertiary",
+        "displayName": "Ledger Green",
+        "canonical": "#18794e",
+        "tonalRamp": [
+          "oklch(15% 0.05 158)",
+          "oklch(25% 0.07 158)",
+          "oklch(35% 0.09 158)",
+          "oklch(45% 0.11 158)",
+          "oklch(55% 0.11 158)",
+          "oklch(65% 0.09 158)",
+          "oklch(80% 0.06 158)",
+          "oklch(95% 0.03 158)"
+        ]
+      },
+      "glaze": {
+        "role": "neutral",
+        "displayName": "Glazed White",
+        "canonical": "#f3f6fb",
+        "tonalRamp": [
+          "oklch(15% 0.004 255)",
+          "oklch(25% 0.006 255)",
+          "oklch(35% 0.007 255)",
+          "oklch(45% 0.009 255)",
+          "oklch(55% 0.009 255)",
+          "oklch(65% 0.007 255)",
+          "oklch(80% 0.005 255)",
+          "oklch(95% 0.003 255)"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Cobalt Ink",
+        "canonical": "#172036",
+        "tonalRamp": [
+          "oklch(15% 0.017 266)",
+          "oklch(25% 0.023 266)",
+          "oklch(35% 0.03 266)",
+          "oklch(45% 0.037 266)",
+          "oklch(55% 0.037 266)",
+          "oklch(65% 0.03 266)",
+          "oklch(80% 0.02 266)",
+          "oklch(95% 0.01 266)"
+        ]
+      },
+      "ink-muted": {
+        "role": "neutral",
+        "displayName": "Muted Ink",
+        "canonical": "#4a5573",
+        "tonalRamp": [
+          "oklch(15% 0.017 266)",
+          "oklch(25% 0.023 266)",
+          "oklch(35% 0.03 266)",
+          "oklch(45% 0.037 266)",
+          "oklch(55% 0.037 266)",
+          "oklch(65% 0.03 266)",
+          "oklch(80% 0.02 266)",
+          "oklch(95% 0.01 266)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "page-title": {
+        "displayName": "Page title",
+        "purpose": "One per page; 1.75rem on phones, 2rem from 48rem."
+      },
+      "auth-title": {
+        "displayName": "Auth title",
+        "purpose": "Entrar / Criar conta."
+      },
+      "dialog-title": {
+        "displayName": "Dialog title",
+        "purpose": "The question a dialog asks."
+      },
+      "lead": {
+        "displayName": "Lead",
+        "purpose": "The sentence under a title, muted ink."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Everything else; tabular figures."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Field labels."
+      },
+      "wordmark": {
+        "displayName": "Wordmark",
+        "purpose": "Finance Controller beside the tile mark."
+      }
+    },
+    "shadows": [
+      {
+        "name": "float",
+        "value": "0 10px 28px rgb(23 32 54 / 0.16), 0 2px 6px rgb(23 32 54 / 0.08)",
+        "purpose": "Menus and dialogs only."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-out",
+        "value": "cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "Tile entrance and chevron turn."
+      },
+      {
+        "name": "duration-fast",
+        "value": "120ms",
+        "purpose": "Hover colour changes."
+      },
+      {
+        "name": "duration-base",
+        "value": "200ms",
+        "purpose": "Chevron rotation."
+      },
+      {
+        "name": "tile-turn",
+        "value": "900ms ease-out, 22ms stagger per tile, once per page load",
+        "purpose": "The signature quarter-turn entrance of the auth tile panel; off under prefers-reduced-motion."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "md",
+        "value": "48rem"
+      },
+      {
+        "name": "lg",
+        "value": "60rem"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The one main action of a form.",
+      "html": "<button class=\"ds-btn-primary\">Entrar</button>",
+      "css": ".ds-btn-primary{min-height:44px;padding:0 24px;border:1px solid transparent;border-radius:6px;background:#1d44a6;color:#fff;font:600 16px/1.2 'Public Sans Variable',system-ui,sans-serif;cursor:pointer;transition:background-color 120ms ease-out}.ds-btn-primary:hover{background:#15347f}.ds-btn-primary:focus-visible{outline:2px solid #1d44a6;outline-offset:2px}.ds-btn-primary:active{transform:translateY(1px)}"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Alternative actions (demo account, cancel).",
+      "html": "<button class=\"ds-btn-secondary\">Experimentar com a conta demo</button>",
+      "css": ".ds-btn-secondary{min-height:44px;padding:0 24px;border:1px solid #b4c0d8;border-radius:6px;background:#fff;color:#1d44a6;font:600 16px/1.2 'Public Sans Variable',system-ui,sans-serif;cursor:pointer}.ds-btn-secondary:hover{background:#e6edfb;border-color:#1d44a6;color:#15347f}.ds-btn-secondary:focus-visible{outline:2px solid #1d44a6;outline-offset:2px}"
+    },
+    {
+      "name": "Danger Button",
+      "kind": "button",
+      "refersTo": "button-danger",
+      "description": "The final destructive action, only inside a confirmation.",
+      "html": "<button class=\"ds-btn-danger\">Excluir conta</button>",
+      "css": ".ds-btn-danger{min-height:44px;padding:0 24px;border:0;border-radius:6px;background:#b3261e;color:#fff;font:600 16px/1.2 'Public Sans Variable',system-ui,sans-serif;cursor:pointer}.ds-btn-danger:hover{background:#8f1d17}.ds-btn-danger:focus-visible{outline:2px solid #1d44a6;outline-offset:2px}"
+    },
+    {
+      "name": "Text Field",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Labelled field with error state.",
+      "html": "<label class=\"ds-field\"><span class=\"ds-field-label\">Email</span><input class=\"ds-field-input\" type=\"email\" placeholder=\"nome@exemplo.com\"></label>",
+      "css": ".ds-field{display:grid;gap:8px;font-family:'Public Sans Variable',system-ui,sans-serif;color:#172036}.ds-field-label{font-size:14px;font-weight:600}.ds-field-input{min-height:44px;padding:0 12px;border:1px solid #7483a3;border-radius:6px;background:#fff;font:16px 'Public Sans Variable',system-ui,sans-serif}.ds-field-input:hover{border-color:#4a5573}.ds-field-input:focus-visible{border-color:#1d44a6;outline:2px solid #1d44a6;outline-offset:0}"
+    },
+    {
+      "name": "Shell Navigation",
+      "kind": "nav",
+      "refersTo": "nav-link",
+      "description": "Cobalt header links with the ochre active bar.",
+      "html": "<nav class=\"ds-nav\"><a class=\"ds-nav-link ds-active\" href=\"#\">Painel</a><a class=\"ds-nav-link\" href=\"#\">Movimentações</a><a class=\"ds-nav-link\" href=\"#\">Categorias</a></nav>",
+      "css": ".ds-nav{display:flex;background:#1d44a6;padding:0 20px;font:600 15px 'Public Sans Variable',system-ui,sans-serif}.ds-nav-link{position:relative;display:flex;align-items:center;min-height:64px;padding:0 12px;color:#c9d6f5;text-decoration:none}.ds-nav-link:hover,.ds-active{color:#fff}.ds-active::after{content:'';position:absolute;left:12px;right:12px;bottom:0;height:3px;border-radius:2px 2px 0 0;background:#e3a51f}.ds-nav-link:focus-visible{outline:2px solid #e3a51f;outline-offset:-4px}"
+    },
+    {
+      "name": "Notice",
+      "kind": "custom",
+      "refersTo": "notice-info",
+      "description": "Flat wash message block (info or danger), no side stripe.",
+      "html": "<div class=\"ds-notice\">Sua sessão expirou. Entre novamente para continuar.</div>",
+      "css": ".ds-notice{padding:12px 16px;border-radius:6px;background:#e6edfb;color:#172036;font:15px/1.45 'Public Sans Variable',system-ui,sans-serif}"
+    },
+    {
+      "name": "Tile Module",
+      "kind": "custom",
+      "refersTo": "tile-panel",
+      "description": "Signature: square tiles with a quarter-disc, half-disc or diagonal, rotated in 90 degree steps, separated by grout.",
+      "html": "<svg class=\"ds-tiles\" viewBox=\"0 0 318 100\"><rect width=\"100\" height=\"100\" fill=\"#1d44a6\"/><path d=\"M0 0H100A100 100 0 0 1 0 100Z\" fill=\"#f3f6fb\"/><g transform=\"translate(106 0)\"><rect width=\"100\" height=\"100\" fill=\"#1d44a6\"/><path d=\"M0 100A50 50 0 0 1 100 100Z\" fill=\"#e3a51f\"/></g><g transform=\"translate(212 0)\"><rect width=\"100\" height=\"100\" fill=\"#1d44a6\"/><path d=\"M0 0H100L0 100Z\" fill=\"#f3f6fb\"/></g></svg>",
+      "css": ".ds-tiles{display:block;width:240px;background:#13307a;padding:6px}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Tile Panel",
+    "overview": "In Brazilian Portuguese a *painel* is both a dashboard and an azulejo tile panel, like the ones Athos Bulcão set into Brasília's buildings: a handful of square modules, each a simple figure, rotated and repeated until they add up to a wall. Finance Controller is built the same way. The shell is cobalt glaze, the ground is glazed white, ochre is the second glaze that marks where you are, and the one figure that carries the identity is the tile module (a square holding a quarter-disc, a half-disc or a diagonal, turned in steps of 90 degrees). A month is seven tiles wide.\n\nThis is an Operate surface: the world contributes type, palette, density and that one module, never the layout or the controls. Navigation reads as navigation, forms are plain labelled fields, and the numbers (tabular figures everywhere) stay the loudest thing on any data screen. The product brief rules out the purple/blue fintech gradient, stock illustration and emoji decoration; the flat cobalt here is glaze, not gradient, and nothing glows.\n\nLight only for now. The scene is a phone in daylight or a laptop in the evening at home; the glazed white ground serves both. A dark theme is optional per PRODUCT.md and has not been designed: do not ship one by inverting tokens.",
+    "keyCharacteristics": [
+      "Cobalt shell (header, auth panel) over a cool glazed-white ground; never cream.",
+      "One signature module (the tile) used as identity on the auth panel, the mark and the 404 panel, and reserved for data in the dashboard.",
+      "Public Sans, self-hosted, with tabular numerals on by default.",
+      "Flat glaze: hairline borders, 4 to 10px radii, a single soft shadow only for layers that float.",
+      "Every state designed: pending labels, field errors, form errors, notices, disabled, empty."
+    ],
+    "rules": [
+      {
+        "name": "The Glaze Not Gradient Rule",
+        "body": "Every colour field is flat. No gradients, glows, glass or blur anywhere; depth comes from grout and hairlines.",
+        "section": "colors"
+      },
+      {
+        "name": "The Second Glaze Rule",
+        "body": "Ochre marks one thing at a time: where you are (active nav), who you are (avatar), or a single tile in a panel. It never carries text or a button.",
+        "section": "colors"
+      },
+      {
+        "name": "The Meaning-Only Red Rule",
+        "body": "Red appears only for errors, destructive actions and expenses. A disabled destructive button turns neutral glaze, never faded red.",
+        "section": "colors"
+      },
+      {
+        "name": "The Tabular Rule",
+        "body": "Figures are tabular everywhere so amounts align in columns. Money is formatted `R$ 1.234,50`, dates `dd/mm/aaaa`.",
+        "section": "typography"
+      },
+      {
+        "name": "The No Eyebrow Rule",
+        "body": "Headings stand alone: no kicker, eyebrow or section number above them.",
+        "section": "typography"
+      },
+      {
+        "name": "The Grout Rule",
+        "body": "Tiles never get shadows or borders. They are separated by grout: the surface colour showing through a 6% gap (6 units on a 100-unit tile).",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "**Do** put the shell on cobalt (`cobalt`) and the work on glazed white (`glaze`) and white surfaces.",
+      "**Do** use the tile module for data when the dashboard arrives: a month rendered as a 7-column grid of tiles, each day's tile carrying that day's movement.",
+      "**Do** keep figures tabular and money in `R$ 1.234,50`.",
+      "**Do** give every async action a pending label and every failure a pt-BR message from `errorMessage`.",
+      "**Do** keep touch targets at 44px and focus rings visible: cobalt on light, ochre on cobalt."
+    ],
+    "donts": [
+      "**Don't** use gradients, glows, glass or stock illustration; the product brief rules out the purple/blue fintech template and emoji decoration.",
+      "**Don't** add a kicker or eyebrow above headings, or a coloured border-left on notices or cards.",
+      "**Don't** use ochre for text or buttons, or red for anything that is not an error, a destructive action or an expense.",
+      "**Don't** scatter the tile panel as ornament across working screens; it is identity on the auth, mark and empty/error surfaces and data on the dashboard, nothing else.",
+      "**Don't** add a second typeface or a dark theme by token inversion."
+    ]
+  }
+}
