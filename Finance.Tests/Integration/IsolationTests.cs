@@ -4,7 +4,6 @@ using System.Text.Json;
 
 namespace Finance.Tests.Integration;
 
-// Skipped until register/login endpoints arrive in Task 8; remove Skip there.
 [Collection("Database")]
 public class IsolationTests : IClassFixture<ApiFactory>
 {
@@ -35,7 +34,7 @@ public class IsolationTests : IClassFixture<ApiFactory>
                 await _factory.CreateLoggedInClientAsync("b@example.com"));
     }
 
-    [Fact(Skip = "needs Task 8")]
+    [Fact]
     public async Task UserB_CannotGetUserA_Income()
     {
         var (a, b) = await TwoUsersAsync();
@@ -44,7 +43,7 @@ public class IsolationTests : IClassFixture<ApiFactory>
         Assert.Equal(HttpStatusCode.NotFound, (await b.GetAsync($"/api/Income/{id}")).StatusCode);
     }
 
-    [Fact(Skip = "needs Task 8")]
+    [Fact]
     public async Task UserB_CannotUpdateUserA_Income()
     {
         var (a, b) = await TwoUsersAsync();
@@ -59,7 +58,7 @@ public class IsolationTests : IClassFixture<ApiFactory>
         Assert.Equal(10m, still.GetProperty("value").GetDecimal());
     }
 
-    [Fact(Skip = "needs Task 8")]
+    [Fact]
     public async Task UserB_CannotDeleteUserA_Income()
     {
         var (a, b) = await TwoUsersAsync();
@@ -68,7 +67,7 @@ public class IsolationTests : IClassFixture<ApiFactory>
         Assert.Equal(HttpStatusCode.OK, (await a.GetAsync($"/api/Income/{id}")).StatusCode);
     }
 
-    [Fact(Skip = "needs Task 8")]
+    [Fact]
     public async Task GetAll_ReturnsOnlyOwnRecords()
     {
         var (a, b) = await TwoUsersAsync();
@@ -80,7 +79,7 @@ public class IsolationTests : IClassFixture<ApiFactory>
         Assert.DoesNotContain(idB, idsA);
     }
 
-    [Fact(Skip = "needs Task 8")]
+    [Fact]
     public async Task UserB_CannotSeeUserA_Categories()
     {
         var (a, b) = await TwoUsersAsync();

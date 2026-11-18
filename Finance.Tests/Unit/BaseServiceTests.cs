@@ -64,7 +64,7 @@ public class BaseServiceTests
         repo.Setup(r => r.GetByIdAsync(7)).ReturnsAsync(existing);
         var userRepo = new Mock<IUserRepository>();
         var service = new UserService(repo.Object, userRepo.Object, Mock.Of<IUnitOfWork>(), Mapper(),
-            new InlineValidator<UserCreateDto>());
+            new InlineValidator<UserCreateDto>(), Mock.Of<ICategoryRepository>());
 
         await service.UpdateAsync(7, new UserCreateDto { UserName = "new", Email = "new@example.com", Password = "NewPass#1" });
 

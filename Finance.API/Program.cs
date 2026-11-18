@@ -10,6 +10,8 @@ using Finance.Infrastructure.Repositories;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.RateLimiting;
+using System.Threading.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -111,6 +113,32 @@ services.AddScoped<IValidator<ExpenseCreateDto>, ExpenseCreateDtoValidator>();
 services.AddScoped<IValidator<IncomeCreateDto>, IncomeCreateDtoValidator>();
 services.AddScoped<IValidator<CategoryCreateDto>, CategoryCreateDtoValidator>();
 services.AddScoped<IValidator<UserCreateDto>, UserCreateDtoValidator>();
+services.AddScoped<IValidator<LoginDto>, LoginDtoValidator>();
+
+// Rate limiting: "login" policy, fixed window per client IP. The limit is read lazily from configuration.
+builder.Services.AddRateLimiter(options =>
+{
+    options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+    options.OnRejected = async (context, token) =>
+    {
+        context.HttpContext.Response.StatusCode = StatusCodes.Status429TooManyRequests;
+        await context.HttpContext.Response.WriteAsJsonAsync(
+            new { code = "RATE_LIMITED", message = "Too many requests. Try again in a minute." }, token);
+    };
+});
+builder.Services.AddOptions<RateLimiterOptions>().Configure<IConfiguration>((options, config) =>
+{
+    var permitLimit = config.GetValue<int?>("RateLimit:LoginPerMinute") ?? 5;
+    options.AddPolicy("login", httpContext =>
+        RateLimitPartition.GetFixedWindowLimiter(
+            httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+            _ => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = permitLimit,
+                Window = TimeSpan.FromMinutes(1),
+                QueueLimit = 0
+            }));
+});
 
 builder.Services.Configure<ForwardedHeadersOptions>(options =>
 {
@@ -136,6 +164,9 @@ app.UseHttpsRedirection();
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseMiddleware<RequireJsonMiddleware>();
+
+app.UseRouting();
+app.UseRateLimiter();
 
 app.UseAuthentication();
 app.UseAuthorization();

@@ -31,7 +31,7 @@ namespace Finance.API.Controllers
             return Ok(result);
         }
 
-        [Authorize(Roles = "admin")]
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> Create(CategoryCreateDto cat)
         {
@@ -40,7 +40,7 @@ namespace Finance.API.Controllers
         }
 
         [Authorize]
-        [HttpPut]
+        [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] CategoryCreateDto dto)
         {
             var updateCategory = await _catService.UpdateAsync(id, dto);
@@ -48,7 +48,7 @@ namespace Finance.API.Controllers
         }
 
         [Authorize]
-        [HttpDelete]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
             await _catService.DeleteAsync(id);

@@ -41,7 +41,7 @@ namespace Finance.API.Controllers
         }
 
         [Authorize]
-        [HttpDelete]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
             await _IncomeService.DeleteAsync(id);
@@ -49,7 +49,7 @@ namespace Finance.API.Controllers
         }
 
         [Authorize]
-        [HttpPut]
+        [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] IncomeCreateDto dto)
         {
             var income = await _IncomeService.UpdateAsync(id,dto);

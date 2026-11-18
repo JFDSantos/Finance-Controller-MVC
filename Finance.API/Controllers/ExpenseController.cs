@@ -32,7 +32,7 @@ namespace Finance.API.Controllers
             return Ok(result);
         }
 
-        [Authorize(Roles = "admin")]
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> Create(ExpenseCreateDto dto)
         {
@@ -41,7 +41,7 @@ namespace Finance.API.Controllers
         }
 
         [Authorize]
-        [HttpPut]
+        [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] ExpenseCreateDto dto)
         {
             var updateExpense = await _expService.UpdateAsync(id, dto);
@@ -49,7 +49,7 @@ namespace Finance.API.Controllers
         }
 
         [Authorize]
-        [HttpDelete]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
             await _expService.DeleteAsync(id);

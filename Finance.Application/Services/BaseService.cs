@@ -67,13 +67,14 @@ namespace Finance.Application.Services
 
         public virtual async Task<TSelectDto> UpdateAsync(int id, TCreateDto dto)
         {
+            // Existence/ownership first: a record that is not the caller's is a 404 before any body validation.
+            var existing = await _repository.GetByIdAsync(id) ?? throw new KeyNotFoundException("Entity not found");
+
             var validationResult = await _validator.ValidateAsync(dto);
             if (!validationResult.IsValid)
             {
                 throw new ValidationException(validationResult.Errors);
             }
-
-            var existing = await _repository.GetByIdAsync(id) ?? throw new KeyNotFoundException("Entity not found");
 
             // Map onto the tracked entity so Id and UserId are preserved.
             _mapper.Map(dto, existing);

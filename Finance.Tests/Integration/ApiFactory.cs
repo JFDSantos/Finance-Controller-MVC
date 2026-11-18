@@ -17,11 +17,15 @@ public class ApiFactory : WebApplicationFactory<Program>
     private readonly Dictionary<string, string?> _overrides;
 
     /// <param name="configOverrides">Extra/overriding configuration; a null value removes the key (e.g. ["Jwt__Key"] = null).</param>
-    public ApiFactory(IDictionary<string, string?>? configOverrides = null)
+    public ApiFactory() : this(null) { } // parameterless ctor required by xunit class fixtures
+
+    internal ApiFactory(IDictionary<string, string?>? configOverrides)
     {
         _overrides = new Dictionary<string, string?>
         {
             ["Jwt__Key"] = TestJwtKey,
+            // Very high by default so tests can log in repeatedly; the 429 test overrides it with null (real default).
+            ["RateLimit__LoginPerMinute"] = "1000000",
             ["ConnectionStrings__DefaultConnection"] =
                 Environment.GetEnvironmentVariable("TEST_DB_CONNECTION")
                 ?? "Host=localhost;Database=finance_test;Username=postgres;Password=postgres",
@@ -41,15 +45,19 @@ public class ApiFactory : WebApplicationFactory<Program>
         });
     }
 
+    /// <summary>Client that keeps cookies. Base address is https because the jwt cookie is Secure.</summary>
+    public HttpClient CreateCookieClient() => CreateClient(new WebApplicationFactoryClientOptions
+    {
+        BaseAddress = new Uri("https://localhost"),
+        AllowAutoRedirect = false,
+        HandleCookies = true,
+    });
+
     public async Task<HttpClient> CreateLoggedInClientAsync(string email, string password = DefaultPassword)
     {
-        var client = CreateClient(new WebApplicationFactoryClientOptions
-        {
-            AllowAutoRedirect = false,
-            HandleCookies = true,
-        });
+        var client = CreateCookieClient();
         // Register may return 4xx if the user already exists; login decides.
-        await client.PostAsJsonAsync("/api/Auth/register", new { email, password });
+        await client.PostAsJsonAsync("/api/Auth/register", new { userName = email.Split('@')[0], email, password });
         var login = await client.PostAsJsonAsync("/api/Auth/login", new { email, password });
         login.EnsureSuccessStatusCode();
         return client;

@@ -45,7 +45,7 @@ public class HttpRulesTests : IDisposable
     [Fact]
     public async Task Delete_WithoutBody_IsNotBlockedByJsonRule()
     {
-        var res = await Client().DeleteAsync("/api/Income?id=1");
+        var res = await Client().DeleteAsync("/api/Income/1");
         Assert.Equal(HttpStatusCode.Unauthorized, res.StatusCode);
     }
 
