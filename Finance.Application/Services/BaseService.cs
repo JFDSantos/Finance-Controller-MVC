@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Finance.Application.Interfaces;
 using Finance.Application.ViewModel;
 using Finance.Domain.Models;
@@ -67,14 +67,15 @@ namespace Finance.Application.Services
 
         public virtual async Task<TSelectDto> UpdateAsync(int id, TCreateDto dto)
         {
-            var existingEntity = await _repository.GetByIdAsync(id) ?? throw new KeyNotFoundException("Entity not found");
+            var existing = await _repository.GetByIdAsync(id) ?? throw new KeyNotFoundException("Entity not found");
 
-            var entity = _mapper.Map<TEntity>(dto);
+            // Map onto the tracked entity so Id and UserId are preserved.
+            _mapper.Map(dto, existing);
 
-            await _repository.UpdateAsync(id, entity);
+            await _repository.UpdateAsync(id, existing);
             await _uow.CommitAsync();
 
-            return _mapper.Map<TSelectDto>(entity);
+            return _mapper.Map<TSelectDto>(existing);
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using Finance.Application.ViewModel;
+using Finance.Application.ViewModel;
 using Finance.Infrastructure.Data;
 using Finance.Application;
 using Finance.Application.Interfaces;
@@ -9,7 +9,7 @@ namespace Finance.Infrastructure.Repositories
 {
     public class UserRepository : BaseRepository<User, int>, IUserRepository
     {
-        public UserRepository(FinanceContext context) : base(context)
+        public UserRepository(FinanceContext context, ICurrentUser currentUser) : base(context, currentUser)
         {
         }
 

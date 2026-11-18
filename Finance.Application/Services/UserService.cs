@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Finance.Application.Interfaces;
 using Finance.Application.ViewModel;
 using Finance.Domain.Models;
@@ -41,15 +41,16 @@ namespace Finance.Application.Services
 
         public override async Task<UserSelectDto> UpdateAsync(int id, UserCreateDto dto)
         {
-            var existingEntity = await _repository.GetByIdAsync(id) ?? throw new KeyNotFoundException("User not found");
+            var existing = await _repository.GetByIdAsync(id) ?? throw new KeyNotFoundException("User not found");
 
-            var user = _mapper.Map<User>(dto);
-            user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
+            // Map onto the tracked entity: Id and Role (not in the DTO) are preserved.
+            _mapper.Map(dto, existing);
+            existing.Password = BCrypt.Net.BCrypt.HashPassword(dto.Password);
 
-            await _userRepository.UpdateAsync(id, user);
+            await _repository.UpdateAsync(id, existing);
             await _uow.CommitAsync();
 
-            return _mapper.Map<UserSelectDto>(user);
+            return _mapper.Map<UserSelectDto>(existing);
         }
 
         public async Task<UserSelectDto?> ValidLoginUserAsync(string email, string password)

@@ -1,4 +1,4 @@
-﻿using Finance.Infrastructure.Data;
+using Finance.Infrastructure.Data;
 using Finance.Domain.Models;
 using Finance.Application.Interfaces;
 using Finance.Application.ViewModel;
@@ -9,6 +9,6 @@ namespace Finance.Infrastructure.Repositories
 {
     public class IncomeRepository : BaseRepository<Income, int>, IIncomeRepository
     {
-        public IncomeRepository(FinanceContext context) : base(context) { }
+        public IncomeRepository(FinanceContext context, ICurrentUser currentUser) : base(context, currentUser) { }
     }
 }
