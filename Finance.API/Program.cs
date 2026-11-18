@@ -10,13 +10,19 @@ using Finance.Infrastructure.Repositories;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
 
 var builder = WebApplication.CreateBuilder(args);
 
-var jwtKey = builder.Configuration["Jwt:Key"] ?? "chave-super-secreta-123!";
+// The signing key comes only from configuration (env var Jwt__Key); no fallback.
+builder.Services.AddOptions<JwtOptions>()
+    .BindConfiguration(JwtOptions.SectionName)
+    .Validate(o => !string.IsNullOrWhiteSpace(o.Key) && o.Key.Length >= JwtOptions.MinKeyLength,
+        $"Jwt:Key must be set (env var Jwt__Key) and have at least {JwtOptions.MinKeyLength} characters.")
+    .ValidateOnStart();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -26,8 +32,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateIssuer = false,
             ValidateAudience = false,
             ValidateLifetime = true,
-            ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
+            ValidateIssuerSigningKey = true
         };
 
         options.Events = new JwtBearerEvents
@@ -40,6 +45,14 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 return Task.CompletedTask;
             }
         };
+    });
+
+// Registered after AddJwtBearer so it runs after TokenValidationParameters is assigned.
+builder.Services.AddOptions<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme)
+    .Configure<IOptions<JwtOptions>>((options, jwt) =>
+    {
+        options.TokenValidationParameters.IssuerSigningKey =
+            new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwt.Value.Key));
     });
 
 builder.Services.AddAuthorization();
@@ -55,7 +68,7 @@ builder.Services.AddAutoMapper(
     cfg => {
         cfg.AddProfile<FinanceMappingProfile>();
     }, 
-    AppDomain.CurrentDomain.GetAssemblies()
+    typeof(FinanceMappingProfile).Assembly
 );
 
 builder.Services.AddControllers();

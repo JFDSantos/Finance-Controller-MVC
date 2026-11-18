@@ -1,7 +1,7 @@
 ﻿using Finance.Application.Interfaces;
 using Finance.Application.ViewModel;
 using Finance.Domain.Models;
-using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
@@ -15,30 +15,31 @@ namespace Finance.Application.Services
 {
     public class JWTService : IJWTService
     {
-        private readonly IConfiguration _config;
+        private readonly JwtOptions _options;
 
-        public JWTService(IConfiguration config)
+        public JWTService(IOptions<JwtOptions> options)
         {
-            _config = config;
+            _options = options.Value;
         }
 
         public string GenerateToken(UserSelectDto user)
         {
             var claims = new[]
             {
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new Claim(ClaimTypes.Email, user.email),
                 new Claim(ClaimTypes.Role, user.role.ToString()),
                 new Claim(ClaimTypes.Name, user.user)
             };
 
             var key = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(_config["Jwt:key"]!)
+                Encoding.UTF8.GetBytes(_options.Key)
             );
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var token = new JwtSecurityToken(
                 claims: claims,
-                expires: DateTime.UtcNow.AddHours(1),
+                expires: DateTime.UtcNow.AddHours(8),
                 signingCredentials: creds
             );
 

@@ -135,6 +135,28 @@ https://localhost:5150/swagger/index.html
 
 ---
 
+## Variáveis de ambiente
+
+| Variável | Obrigatória | Descrição |
+|---|---|---|
+| `Jwt__Key` | Sim | Chave de assinatura dos tokens JWT. Mínimo de 32 caracteres. Não há valor padrão: a API não inicia sem ela. |
+
+Gere uma chave com:
+```bash
+openssl rand -base64 48
+```
+
+Em desenvolvimento local, use `dotnet user-secrets` ou a variável de ambiente:
+```bash
+cd Finance.API
+dotnet user-secrets set "Jwt:Key" "$(openssl rand -base64 48)"
+# ou
+export Jwt__Key="$(openssl rand -base64 48)"
+```
+Nunca versione a chave no repositório.
+
+---
+
 ## 📚 Funcionalidades Principais
 
 ### Controllers Implementados
@@ -213,12 +235,7 @@ Este projeto segue um **roadmap estruturado em sprints**, com foco em aprendizad
 - ✅ CORS configurado
 - ⚠️ Review de segurança (OWASP) planejado para Sprint Final
 
-### Variáveis de Ambiente Obrigatórias
-Crie um arquivo `.env` com:
-```env
-JWT_KEY=sua-chave-secreta-super-segura
-DATABASE_CONNECTION=Server=...
-```
+Veja a seção [Variáveis de ambiente](#variáveis-de-ambiente).
 
 ---
 
