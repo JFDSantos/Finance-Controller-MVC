@@ -50,3 +50,43 @@ export type StableErrorCode =
 
 /** Codes produced by the client itself. */
 export type ClientErrorCode = "UNKNOWN" | "NETWORK_ERROR";
+
+export interface Category {
+  id: number;
+  name: string;
+}
+
+export interface CategoryInput {
+  name: string;
+}
+
+export type MovementType = "Income" | "Expense";
+
+/** One row of `GET /api/Movement`. `movimentDate` is "yyyy-MM-dd". */
+export interface Movement {
+  id: number;
+  type: MovementType;
+  description: string | null;
+  movimentDate: string;
+  isRecurring: boolean;
+  categoryId: number;
+  categoryName: string;
+  value: number;
+}
+
+/** Body of `POST`/`PUT /api/Income` and `/api/Expense`. */
+export interface MovementInput {
+  description: string;
+  movimentDate: string;
+  isRecurring: boolean;
+  categoryId: number;
+  value: number;
+}
+
+export interface MovementFilter {
+  year: number;
+  /** 1-12; requires `year`. */
+  month?: number;
+  categoryId?: number;
+  type?: MovementType;
+}

@@ -11,7 +11,8 @@ const MESSAGES: Record<StableErrorCode, string> = {
   NOT_FOUND: "Não encontramos o que você procurava. Pode ter sido excluído.",
   UNAUTHORIZED: "Sua sessão expirou. Entre novamente para continuar.",
   INTERNAL_ERROR: "Tivemos um problema no servidor. Tente novamente em instantes.",
-  CATEGORY_IN_USE: "Esta categoria tem movimentações e não pode ser excluída.",
+  CATEGORY_IN_USE:
+    "Esta categoria tem movimentações e não pode ser excluída. Mova ou exclua as movimentações antes.",
   CATEGORY_NOT_FOUND: "Esta categoria não existe mais. Escolha outra.",
   INVALID_MONTH: "Escolha um mês entre janeiro e dezembro.",
   INVALID_YEAR: "Escolha um ano válido.",
