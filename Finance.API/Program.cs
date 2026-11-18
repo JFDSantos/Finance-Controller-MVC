@@ -107,6 +107,9 @@ services.AddScoped<IIncomeRepository>(sp => sp.GetRequiredService<IBaseRepositor
 services.AddScoped<IUserRepository>(sp => sp.GetRequiredService<IBaseRepository<User, int>>() as IUserRepository ?? throw new InvalidOperationException());
 
 services.AddScoped<IJWTService, JWTService>();
+services.AddSingleton(TimeProvider.System);
+services.AddScoped<ISummaryService, SummaryService>();
+services.AddScoped<IMovementQueryService, MovementQueryService>();
 
 // FluentValidation
 services.AddScoped<IValidator<ExpenseCreateDto>, ExpenseCreateDtoValidator>();
