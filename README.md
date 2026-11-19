@@ -1,250 +1,191 @@
-# 💰 Finance Controller MVC
+# 💰 Finance Controller
 
-Um sistema completo de controle financeiro pessoal construído com **C#**, **ASP.NET Core** e arquitetura em camadas, aplicando as melhores práticas do mercado.
+Controle financeiro pessoal: receitas, despesas, categorias e um dashboard mensal. API em **ASP.NET Core 8** com arquitetura em camadas, frontend em **React + TypeScript** servido pela própria API, banco **PostgreSQL**, imagem **Docker** e deploy automático com **GitHub Actions** no **Render** + **Neon**.
 
----
-
-## 🎯 Sobre o Projeto
-
-Finance Controller é uma aplicação fullstack para gerenciar receitas, despesas e categorias financeiras. O projeto foi desenvolvido seguindo princípios de **Clean Architecture**, **SOLID** e **DDD**, com foco em aprendizado prático e excelência técnica.
-
-### Principais Objetivos
-- ✅ Gerenciar receitas e despesas de forma simples e intuitiva
-- ✅ Aprender arquitetura limpa, testes automatizados e DevOps
-- ✅ Implementar autenticação segura com JWT
-- ✅ Criar um pipeline de CI/CD profissional
-- ✅ Escalar para um projeto pronto para produção
+**URL pública:** preencher após o primeiro deploy.
 
 ---
 
-## 🛠️ Tecnologias
+## 🛠️ Stack
 
-### Backend
-- **Linguagem**: C# 12+
-- **Framework**: ASP.NET Core 8+
-- **ORM**: Entity Framework Core
-- **Banco de Dados**: SQL Server Express
-- **Autenticação**: JWT (JSON Web Tokens)
-- **Validação**: FluentValidation
-- **Mapeamento**: AutoMapper
-- **API**: RESTful com Swagger/OpenAPI
-
-### Frontend (Em Desenvolvimento)
-- **Framework**: React, Angular ou Vue (A definir)
-- **Estilos**: Responsivo e acessível
-
-### DevOps (Roadmap)
-- **Containerização**: Docker
-- **CI/CD**: GitHub Actions
-- **Deploy**: Azure / Vercel
-- **Monitoramento**: Prometheus + Grafana
+| Parte | Tecnologia |
+|---|---|
+| API | C# 12, ASP.NET Core 8, FluentValidation, AutoMapper, BCrypt |
+| Dados | PostgreSQL, Entity Framework Core 9 + Npgsql, migrations do EF Core |
+| Autenticação | JWT em cookie `HttpOnly` (`Secure`, `SameSite=Strict`) |
+| Frontend | React 19, TypeScript, Vite, React Router; gráficos em SVG feitos à mão |
+| Testes | xUnit (unidade e integração com Postgres real), Vitest + Testing Library |
+| Entrega | Docker multi-stage, GitHub Actions (CI e deploy), Render (web service free), Neon (Postgres free) |
 
 ---
 
-## 📁 Estrutura do Projeto
+## 🗺️ Diagramas
+
+| | |
+|---|---|
+| [Arquitetura em camadas](docs/architecture/diagrams/architecture.svg) | Caminho de uma requisição e direção das dependências entre as camadas |
+| [Modelo de dados](docs/architecture/diagrams/data-model.svg) | Tabelas, tipos, índices únicos e comportamento das chaves estrangeiras |
+| [Fluxo de deploy](docs/architecture/diagrams/deploy-flow.svg) | Do push ao container no Render, e onde cada segredo fica |
+
+![Arquitetura em camadas](docs/architecture/diagrams/architecture.svg)
+
+Explicação de cada diagrama em [docs/architecture](docs/architecture/README.md#diagramas-do-sistema).
+
+---
+
+## ✨ Funcionalidades
+
+- Cadastro, login e logout. O cadastro cria as categorias padrão (Alimentação, Moradia, Transporte, Saúde, Lazer, Salário, Outros).
+- CRUD de categorias, receitas e despesas, sempre restrito ao usuário logado. Nomes de categoria são únicos por usuário; uma categoria com movimentações não pode ser apagada.
+- Lista de movimentações com filtro por mês, categoria e tipo.
+- Dashboard: saldo, receitas e despesas do mês, gráfico de despesas por categoria e gráfico mês a mês.
+- Exclusão da própria conta, que apaga todos os dados do usuário.
+- Conta demo opcional (botão "Experimentar com a conta demo"), ligada por configuração.
+
+---
+
+## 📁 Estrutura
 
 ```
 Finance-Controller-MVC/
-├── Finance.API/                 # REST API & Controllers
-│   ├── Controllers/             # Endpoints
-│   ├── Middleware/              # Exception Handling
-│   └── Program.cs               # Configuração da API
-│
-├── Finance.Application/         # Lógica de Negócio
-│   ├── Services/                # Serviços de aplicação
-│   ├── Interfaces/              # Contratos
-│   ├── Validators/              # Validação (FluentValidation)
-│   ├── ViewModel/               # DTOs
-│   └── Mappings/                # AutoMapper Profiles
-│
-├── Finance.Domain/              # Entidades & Modelos
-│   └── Models/                  # Domain Models
-│
-├── Finance.Infrastructure/      # Persistência & Dados
-│   ├── Repositories/            # Implementação de repositories
-│   ├── Data/                    # DbContext
-│   └── Migrations/              # EF Core Migrations
-│
-└── Finance.Web/                 # Frontend (Projeto Futuro)
-    └── Views/                   # Interface de usuário
-```
-
-### Arquitetura em Camadas
-
-```
-┌─────────────────────────────────┐
-│      Finance.API (Presentation) │  ← Controllers, Middleware
-├─────────────────────────────────┤
-│    Finance.Application (Domain) │  ← Services, Validators
-├─────────────────────────────────┤
-│  Finance.Domain (Core Business) │  ← Models, Interfaces
-├─────────────────────────────────┤
-│  Finance.Infrastructure (Data)  │  ← Repositories, DbContext
-└─────────────────────────────────┘
+├── Finance.Domain/          # Entidades (User, Category, Moviment → Income/Expense), IOwnedEntity, enums
+├── Finance.Application/     # Services, validators, DTOs, interfaces (ICurrentUser, repositórios), exceções, mappings
+├── Finance.Infrastructure/  # FinanceContext (EF Core + Npgsql, filtro global por usuário), repositórios,
+│                            # UnitOfWork, DemoSeeder, Migrations
+├── Finance.API/             # Controllers (/api/*), middlewares, /health, autenticação, wwwroot (build do React)
+├── Finance.Tests/           # xUnit: Unit/ e Integration/ (Postgres real via TEST_DB_CONNECTION)
+├── frontend/                # React + TypeScript + Vite (build vai para Finance.API/wwwroot)
+├── docs/                    # Documentação, diagramas, guia de deploy
+├── scripts/dev-env.sh       # Ambiente local de testes (Postgres + TEST_DB_CONNECTION)
+├── Dockerfile               # Build do frontend, publish da API e imagem final
+├── render.yaml              # Blueprint do serviço no Render
+└── .github/workflows/       # ci.yml e deploy.yml
 ```
 
 ---
 
-## 🚀 Começando
+## 🚀 Rodando localmente
 
 ### Pré-requisitos
-- **.NET SDK 8.0+** - [Download](https://dotnet.microsoft.com/download)
-- **SQL Server Express** - [Download](https://www.microsoft.com/pt-br/sql-server/sql-server-express)
-- **Git**
 
-### Instalação
+- [.NET 8 SDK](https://dotnet.microsoft.com/download) e a ferramenta `dotnet-ef` 9 (`dotnet tool install -g dotnet-ef --version 9.0.10`)
+- [Node.js 22](https://nodejs.org/)
+- PostgreSQL 14 ou mais novo, rodando localmente
 
-1. **Clone o repositório**
-```bash
-git clone https://github.com/seu-usuario/Finance-Controller-MVC.git
-cd Finance-Controller-MVC
-```
+### 1. Configuração
 
-2. **Restaure as dependências**
-```bash
-dotnet restore
-```
-
-3. **Configure o banco de dados**
-   - Atualize a string de conexão em `Finance.API/appsettings.json`:
-   ```json
-   "ConnectionStrings": {
-     "DefaultConnection": "Server=seu-servidor\\SQLEXPRESS;Database=FinanceControllerDB;Trusted_Connection=true;Encrypt=False;"
-   }
-   ```
-
-4. **Execute as migrations**
-```bash
-cd Finance.Infrastructure
-dotnet ef database update --startup-project ../Finance.API
-```
-
-5. **Inicie a API**
-```bash
-cd Finance.API
-dotnet run
-```
-
-A API estará disponível em `https://localhost:5150` (ou a porta configurada).
-
-### Documentação da API
-Acesse a documentação interativa do Swagger:
-```
-https://localhost:5150/swagger/index.html
-```
-
----
-
-## Variáveis de ambiente
+A API lê tudo de configuração; nada de segredo fica no repositório. Use variáveis de ambiente (ou `dotnet user-secrets` no projeto `Finance.API`):
 
 | Variável | Obrigatória | Descrição |
 |---|---|---|
-| `Jwt__Key` | Sim | Chave de assinatura dos tokens JWT. Mínimo de 32 caracteres. Não há valor padrão: a API não inicia sem ela. |
+| `Jwt__Key` | sim | Chave de assinatura do JWT, mínimo de 32 caracteres. Sem ela a API não inicia. Gere com `openssl rand -base64 48` |
+| `ConnectionStrings__DefaultConnection` | sim | String Npgsql, por exemplo `Host=localhost;Database=finance;Username=postgres;Password=...` |
+| `Demo__Enabled` / `Demo__Password` | não | Cria a conta demo ao iniciar |
+| `RateLimit__LoginPerMinute` / `RateLimit__RegisterPerHour` | não | Padrões `5` e `10` |
 
-Gere uma chave com:
 ```bash
-openssl rand -base64 48
-```
-
-Em desenvolvimento local, use `dotnet user-secrets` ou a variável de ambiente:
-```bash
-cd Finance.API
-dotnet user-secrets set "Jwt:Key" "$(openssl rand -base64 48)"
-# ou
 export Jwt__Key="$(openssl rand -base64 48)"
+export ConnectionStrings__DefaultConnection="Host=localhost;Database=finance;Username=postgres;Password=postgres"
 ```
-Nunca versione a chave no repositório.
 
----
+### 2. Banco de dados
 
-## 📚 Funcionalidades Principais
+```bash
+dotnet ef database update --project Finance.Infrastructure --startup-project Finance.API
+```
 
-### Controllers Implementados
+### 3. API
 
-#### 🔐 Auth Controller
-- `POST /api/auth/register` - Registrar novo usuário
-- `POST /api/auth/login` - Fazer login
+```bash
+dotnet dev-certs https --trust   # uma vez, para o perfil https
+dotnet run --project Finance.API --launch-profile https
+```
 
-#### 💰 Category Controller
-- `GET /api/categories` - Listar categorias
-- `POST /api/categories` - Criar categoria
-- `PUT /api/categories/{id}` - Atualizar categoria
-- `DELETE /api/categories/{id}` - Deletar categoria
+A API sobe em `https://localhost:7113` (Swagger em `/swagger` no ambiente Development). O cookie de sessão é `Secure`, por isso use o perfil `https`.
 
-#### 💳 Expense Controller
-- `GET /api/expenses` - Listar despesas
-- `POST /api/expenses` - Criar despesa
-- `PUT /api/expenses/{id}` - Atualizar despesa
-- `DELETE /api/expenses/{id}` - Deletar despesa
+### 4. Frontend
 
-#### 💵 Income Controller
-- `GET /api/incomes` - Listar receitas
-- `POST /api/incomes` - Criar receita
-- `PUT /api/incomes/{id}` - Atualizar receita
-- `DELETE /api/incomes/{id}` - Deletar receita
+Modo desenvolvimento, com o proxy do Vite encaminhando `/api` para a API (`VITE_API_PROXY_TARGET` muda o destino):
+
+```bash
+cd frontend
+npm ci
+npm run dev
+```
+
+Ou gere o build dentro de `Finance.API/wwwroot` e use só a API, como em produção:
+
+```bash
+cd frontend && npm ci && npm run build
+```
+
+### Docker
+
+```bash
+docker build -t finance-controller .
+docker run -p 8080:8080 -e Jwt__Key=... -e ConnectionStrings__DefaultConnection=... finance-controller
+```
 
 ---
 
 ## 🧪 Testes
 
-### Executar testes unitários
 ```bash
+# Backend: precisa de um Postgres de teste em TEST_DB_CONNECTION
+export TEST_DB_CONNECTION="Host=localhost;Database=finance_test;Username=postgres;Password=postgres"
 dotnet test
+
+# Frontend
+cd frontend && npm test
 ```
 
-### Executar com cobertura de código
-```bash
-dotnet test /p:CollectCoverage=true
-```
+`scripts/dev-env.sh` (use com `source`) prepara um Postgres local e exporta `TEST_DB_CONNECTION`. No CI, o job `backend` usa um serviço `postgres:16`.
 
 ---
 
-## 📚 Documentação
+## 📚 Endpoints
 
-Toda documentação do projeto está em [docs/](./docs/README.md):
-- [SOLID Principles](./docs/architecture/SOLID-Principles.md) — Princípios arquiteturais
-- [Roadmap](./docs/Roadmap.md) — Plano de desenvolvimento em sprints
-- [Development Guide](./docs/development/README.md) — Como contribuir
-- [Testing Guide](./docs/testing/README.md) — Estratégia de testes
-- [DevOps Guide](./docs/devops/README.md) — Deploy e infraestrutura
-- [Quick Reference](./docs/guides/README.md) — Troubleshooting e tips
+Todos sob `/api`, em JSON. Exceto registro, login e logout, todos exigem o cookie de sessão.
 
----
-
-## 🎓 Roadmap Gamificado
-
-Este projeto segue um **roadmap estruturado em sprints**, com foco em aprendizado prático e boas práticas:
-
-### 📋 Sprints
-- **Sprint 1-5**: SOLID Principles ✅ COMPLETO
-- **Sprint 6-7**: Testes Unitários & Integração 🔄
-- **Sprint 8**: Frontend do Herói 🔄
-- **Sprint 9**: DevOps Desbravador 🔄
-- **Sprint 10**: Escalabilidade & Monitoramento 🔄
-- **Sprint Final**: Guardião da Produção 🔄
-
-📖 Veja o roadmap completo em [docs/Roadmap.md](./docs/Roadmap.md)
+| Método e rota | Descrição |
+|---|---|
+| `POST /api/Auth/register` | Cria a conta (10 por hora por IP) |
+| `POST /api/Auth/login` | Valida e grava o cookie `jwt` (5 por minuto por IP) |
+| `POST /api/Auth/logout` | Remove o cookie |
+| `GET /api/Auth/me` | Usuário logado |
+| `DELETE /api/Auth/me` | Exclui a conta e todos os dados |
+| `GET /api/Category`, `GET /api/Category/{id}` | Lista ou busca categorias |
+| `POST /api/Category`, `PUT /api/Category/{id}`, `DELETE /api/Category/{id}` | Cria, altera ou remove categoria |
+| `GET`, `POST /api/Income`; `GET`, `PUT`, `DELETE /api/Income/{id}` | Receitas |
+| `GET`, `POST /api/Expense`; `GET`, `PUT`, `DELETE /api/Expense/{id}` | Despesas |
+| `GET /api/Movement?year=&month=&categoryId=&type=` | Movimentações filtradas |
+| `GET /api/Summary?year=&month=` | Totais e despesas por categoria do mês |
+| `GET /api/Summary/series?months=12` | Série mês a mês |
+| `GET /health` | Liveness (não consulta o banco) |
 
 ---
 
 ## 🔐 Segurança
 
-- ✅ Autenticação com JWT
-- ✅ Senhas hasheadas com bcrypt
-- ✅ Validação de entrada com FluentValidation
-- ✅ CORS configurado
-- ⚠️ Review de segurança (OWASP) planejado para Sprint Final
-
-Veja a seção [Variáveis de ambiente](#variáveis-de-ambiente).
+- **Isolamento por usuário:** `Category` e `Moviment` têm `UserId`, e o `FinanceContext` aplica um filtro global (`HasQueryFilter`) com o usuário do token; nenhum dado de outra conta aparece em consultas.
+- **Sessão:** JWT de 8 horas em cookie `HttpOnly`, `Secure`, `SameSite=Strict`; a chave vem só de `Jwt__Key`.
+- **Senhas** com BCrypt; o cadastro não aceita papel (role) vindo do cliente.
+- **Rate limit** por IP: login 5/min, cadastro 10/h. A API aceita apenas JSON em escritas sob `/api` (415 caso contrário).
+- HSTS e redirecionamento para HTTPS fora de Development; `X-Forwarded-*` confiável porque o app só é exposto pelo proxy do Render.
+- **Limitações conhecidas:** não há verificação de e-mail nem recuperação de senha.
 
 ---
 
-## 📖 Padrões de Projeto Implementados
+## ☁️ Deploy
 
-- **Repository Pattern** - Abstração de dados
-- **Unit of Work** - Gerenciamento de transações
-- **Dependency Injection** - Inversão de controle
-- **DTO (Data Transfer Object)** - Transfer de dados entre camadas
-- **Validator Pattern** - Validação centralizada
-- **Exception Handling Middleware** - Tratamento global de erros
+Push na `main` → CI verde → workflow `Deploy` aplica as migrations no Neon (conexão direta), chama o Deploy Hook do Render e espera `/health`. Passo a passo, variáveis e segredos em [docs/devops/DEPLOY.md](docs/devops/DEPLOY.md).
 
+---
+
+## 📖 Documentação
+
+- [docs/](docs/README.md) — índice
+- [Arquitetura e diagramas](docs/architecture/README.md)
+- [Roadmap](docs/Roadmap.md)
+- [Deploy](docs/devops/DEPLOY.md)
+- [Testes](docs/testing/README.md)

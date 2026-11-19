@@ -30,14 +30,11 @@ Contém:
 
 ---
 
-### Layer Architecture (Em Progresso)
-**Status**: 🔄 Planejado
+### [Diagramas do sistema](#diagramas-do-sistema)
+**Status**: ✅ Completo
+**Última Atualização**: 19/11/2026
 
-Documentar as 4 camadas do projeto:
-- Domain Layer (modelos ricos)
-- Application Layer (services)
-- Infrastructure Layer (repositories)
-- API Layer (controllers)
+Arquitetura em camadas, modelo de dados e fluxo de deploy, em `diagrams/` (`.svg` para leitura no GitHub, `.html` autocontido como fonte).
 
 ---
 
@@ -64,25 +61,37 @@ Se é novo no projeto:
 
 ---
 
-## 📊 Arquitetura Atual
+## Diagramas do sistema
 
-```
-┌─────────────────────────────────────┐
-│        Finance.API (Controllers)     │
-│  ↓ depende de                        │
-├─────────────────────────────────────┤
-│   Finance.Application (Services)     │
-│  ↓ depende de                        │
-├─────────────────────────────────────┤
-│  Finance.Infrastructure (Repos)      │
-│  ↓ depende de                        │
-├─────────────────────────────────────┤
-│   Finance.Domain (Models)            │
-└─────────────────────────────────────┘
+Os três diagramas foram feitos com a skill `diagram-design`, usando as cores e a fonte do produto (cobalto, ocre e glaze do `DESIGN.md`, Public Sans). Cada um tem uma versão `.html` autocontida (abra no navegador; no celular o diagrama rola na horizontal) e uma exportação `.svg`.
 
-Cada camada é isolada e trocável
-(Dependency Inversion: abstração em cima, concrição embaixo)
-```
+### Arquitetura em camadas
+
+![Arquitetura em camadas](diagrams/architecture.svg)
+
+Uma requisição sai do navegador, passa pelo proxy do Render (TLS e `X-Forwarded-*`) e entra no pipeline de middlewares da `Finance.API`, na ordem de `Program.cs`: ForwardedHeaders, HSTS e redirecionamento HTTPS (fora de Development), ExceptionHandling, arquivos estáticos, RequireJson, Routing, RateLimiter, Authentication (JWT lido do cookie `jwt`) e Authorization. Rotas `/api/*` chegam aos controllers, que chamam os services da `Finance.Application`; os services usam interfaces de repositório que a `Finance.Infrastructure` implementa sobre o `FinanceContext` (EF Core + Npgsql). É no `FinanceContext` que mora o isolamento por usuário: um filtro global (`HasQueryFilter`) em `Category` e `Moviment` compara `UserId` com o `ICurrentUser` da requisição. As demais rotas `GET` caem nos arquivos do build do React em `wwwroot` ou no fallback para `index.html`. Todas as camadas dependem de `Finance.Domain`, que não depende de nenhuma. [HTML](diagrams/architecture.html) · [SVG](diagrams/architecture.svg)
+
+### Modelo de dados
+
+![Modelo de dados](diagrams/data-model.svg)
+
+São três tabelas no PostgreSQL. `Income` e `Expense` herdam da classe abstrata `Moviment` e ficam juntas na tabela `Moviments` (TPH), separadas pela coluna `Type` (1 = Income, 2 = Expense). Valores são `numeric(18,2)` e datas são `date`. Há índice único em `User(Email)` e em `Categories(UserId, Name)`. Apagar um usuário apaga em cascata as categorias e os movimentos dele (é assim que funciona a exclusão de conta); a chave de `Moviments.CategoryId` é `NO ACTION`, e o service responde 409 ao tentar apagar uma categoria com movimentos. [HTML](diagrams/data-model.html) · [SVG](diagrams/data-model.svg)
+
+### Fluxo de deploy
+
+![Fluxo de deploy](diagrams/deploy-flow.svg)
+
+Todo push e todo PR rodam o workflow `CI` (jobs `backend` com um Postgres de serviço, `frontend`, e `docker`, que só confere o build da imagem). Quando o CI de um push na `main` deste repositório termina verde (ou numa execução manual a partir da `main`), o workflow `Deploy` gera o bundle de migrations do EF Core, aplica-o no Neon pela conexão **direta** (`DATABASE_URL_DIRECT`), chama o Deploy Hook do Render (`RENDER_DEPLOY_HOOK_URL`) e consulta `APP_URL/health` até receber 200. O Render constrói a imagem a partir do `Dockerfile` e o app conecta no Neon pela conexão **pooled**. Os segredos do deploy ficam no environment `production` do GitHub; os do app (`Jwt__Key`, `ConnectionStrings__DefaultConnection`, `Demo__Password`) ficam nas variáveis do serviço no Render. Detalhes em [DEPLOY.md](../devops/DEPLOY.md). [HTML](diagrams/deploy-flow.html) · [SVG](diagrams/deploy-flow.svg)
+
+### Dependências entre projetos
+
+| Projeto | Referencia |
+|---|---|
+| `Finance.Domain` | nenhum |
+| `Finance.Application` | Domain |
+| `Finance.Infrastructure` | Application, Domain (implementa as interfaces da Application) |
+| `Finance.API` | Application, Infrastructure, Domain (raiz de composição: registra tudo no DI em `Program.cs`) |
+| `Finance.Tests` | API, Application, Infrastructure |
 
 ---
 
@@ -135,4 +144,4 @@ Ao implementar novo feature:
 ---
 
 **Mantido por**: Jeferson Santos  
-**Última Atualização**: 26 de Abril de 2026
+**Última Atualização**: 19 de Novembro de 2026
