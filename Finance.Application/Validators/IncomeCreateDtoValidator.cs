@@ -1,5 +1,6 @@
 using Finance.Application.Interfaces;
 using Finance.Application.ViewModel;
+using Finance.Application.Services;
 using FluentValidation;
 using System;
 using System.Collections.Generic;
@@ -20,6 +21,11 @@ namespace Finance.Application.Validators
             RuleFor(x => x.Value)
                 .GreaterThan(0)
                 .PrecisionScale(18, 2, false);
+
+            RuleFor(x => x.MovimentDate)
+                .Must(d => d.Year >= PeriodValidation.MinYear && d.Year <= PeriodValidation.MaxYear)
+                .WithErrorCode("INVALID_DATE")
+                .WithMessage($"Date must be between {PeriodValidation.MinYear} and {PeriodValidation.MaxYear}.");
 
             RuleFor(x => x.CategoryId)
                 .MustAsync(async (id, ct) => await categories.GetByIdAsync(id) != null)
