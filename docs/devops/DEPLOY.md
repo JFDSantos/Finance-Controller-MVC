@@ -47,7 +47,7 @@ Não há região do Render no Brasil; `oregon` é a região padrão do plano gra
 ## 3. GitHub (segredos, variáveis e ambiente)
 
 1. **Settings > Environments > New environment**: `production`. Recomendado (defesa em profundidade, não obrigatório): ative **Required reviewers** nesse ambiente, para que todo deploy exija aprovação manual.
-   O workflow `Deploy` só roda para `push` na `main` deste mesmo repositório (verifica `event == 'push'`, `head_repository == github.repository` e `head_branch == 'main'`), assim um PR vindo de fork, mesmo de um branch chamado `main`, nunca executa código com os segredos de produção.
+   O workflow `Deploy` só roda para `push` na `main` deste mesmo repositório (verifica `event == 'push'`, `head_repository == github.repository` e `head_branch == 'main'`), assim um PR vindo de fork, mesmo de um branch chamado `main`, nunca executa código com os segredos de produção. A execução manual (**Run workflow**) também só é aceita a partir da `main`; disparada de outro branch, o job é ignorado.
 2. No ambiente `production` (ou em Settings > Secrets and variables > Actions), cadastre:
    - Secret `DATABASE_URL_DIRECT`: string Npgsql **direta** do Neon, com `SSL Mode=Require`.
    - Secret `RENDER_DEPLOY_HOOK_URL`: URL do Deploy Hook do Render.
