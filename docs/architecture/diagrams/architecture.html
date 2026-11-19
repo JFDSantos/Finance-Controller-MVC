@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Arquitetura em camadas</title>
+  <link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,400;0,600;0,700;1,400&amp;family=Geist+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --color-paper:  #f3f6fb;   /* glaze */
+      --color-ink:    #172036;   /* ink */
+      --color-muted:  #4a5573;   /* ink-muted */
+      --color-accent: #1d44a6;   /* cobalt */
+      --color-rule:   rgba(23,32,54,0.12);
+      --font-sans:    'Public Sans', system-ui, sans-serif;
+      --font-mono:    'Geist Mono', ui-monospace, monospace;
+    }
+    body {
+      font-family: var(--font-sans);
+      background: var(--color-paper);
+      color: var(--color-ink);
+      min-height: 100vh;
+      padding: 3rem 2rem;
+    }
+    .frame { max-width: 1280px; width: 100%; margin: 0 auto; }
+    .diagram-container { width: 100%; overflow-x: auto; }
+    .eyebrow {
+      font-family: var(--font-mono); font-size: 0.66rem; font-weight: 500;
+      letter-spacing: 0.18em; text-transform: uppercase; color: var(--color-muted); margin-bottom: 0.5rem;
+    }
+    h1 {
+      font-family: var(--font-sans); font-size: clamp(1.5rem, 2.4vw + 0.75rem, 2rem); font-weight: 700;
+      letter-spacing: -0.02em; line-height: 1.2; color: var(--color-ink); margin-bottom: 0.5rem;
+    }
+    .lead { color: var(--color-muted); font-size: 1rem; line-height: 1.5; max-width: 60rem; margin-bottom: 1.5rem; }
+    .hint { display: none; font-family: var(--font-mono); font-size: 0.75rem; color: var(--color-muted); margin-bottom: 0.5rem; }
+    footer { margin-top: 1.5rem; padding-top: 0.75rem; border-top: 1px solid var(--color-rule);
+      font-family: var(--font-mono); font-size: 0.75rem; line-height: 1.6; color: var(--color-muted); overflow-wrap: anywhere; }
+    footer code { font-family: inherit; color: var(--color-ink); }
+    svg { width: 100%; min-width: 1280px; display: block; }
+    @media (max-width: 48rem) {
+      body { padding: 1.5rem 1rem; }
+      .hint { display: block; }
+    }
+    @media print {
+      .diagram-container { overflow-x: visible; }
+      svg { min-width: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="frame">
+    <p class="eyebrow">Arquitetura · Finance Controller</p>
+    <h1>Arquitetura em camadas</h1>
+    <p class="lead">Uma requisição do navegador passa pelo proxy do Render, pelo pipeline de middlewares da API, pelos controllers, pelos services e pelo <code>FinanceContext</code> até o PostgreSQL. A mesma API serve o build do React a partir de <code>wwwroot</code>. Todas as camadas apontam para <code>Finance.Domain</code>.</p>
+    <p class="hint">Arraste o diagrama para o lado para ver tudo.</p>
+    <div class="diagram-container">
+      <svg viewBox="0 40 1280 560" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="architecture-title architecture-desc">
+        <title id="architecture-title">Arquitetura em camadas do Finance Controller</title>
+        <desc id="architecture-desc">Caminho de uma requisição do navegador, pelo proxy do Render e pelo pipeline de middlewares da Finance.API, até controllers, services da Finance.Application, o FinanceContext da Finance.Infrastructure com o filtro global por usuário e o PostgreSQL no Neon, com todas as camadas dependendo de Finance.Domain.</desc>
+<defs>
+  <marker id="arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#4a5573"/></marker>
+  <marker id="arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#1d44a6"/></marker>
+  <marker id="arrow-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#8a5a00"/></marker>
+</defs>
+<rect width="100%" height="100%" fill="#f3f6fb"/>
+<rect x="200" y="80" width="440" height="320" rx="8" fill="rgba(23,32,54,0.02)" stroke="rgba(23,32,54,0.14)" stroke-width="0.8"/>
+<rect x="208" y="84" width="72" height="12" rx="2" fill="#f3f6fb"/>
+<text x="244" y="93" fill="#56617f" font-size="7" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle" letter-spacing="0.14em">FINANCE.API</text>
+<rect x="672" y="80" width="176" height="320" rx="8" fill="rgba(23,32,54,0.02)" stroke="rgba(23,32,54,0.14)" stroke-width="0.8"/>
+<rect x="680" y="84" width="116" height="12" rx="2" fill="#f3f6fb"/>
+<text x="738" y="93" fill="#56617f" font-size="7" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle" letter-spacing="0.14em">FINANCE.APPLICATION</text>
+<rect x="880" y="80" width="204" height="320" rx="8" fill="rgba(23,32,54,0.02)" stroke="rgba(23,32,54,0.14)" stroke-width="0.8"/>
+<rect x="888" y="84" width="132" height="12" rx="2" fill="#f3f6fb"/>
+<text x="954" y="93" fill="#56617f" font-size="7" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle" letter-spacing="0.14em">FINANCE.INFRASTRUCTURE</text>
+<path d="M104,176 V240" fill="none" stroke="#8a5a00" stroke-width="1.2" marker-end="url(#arrow-link)"/>
+<path d="M168,272 H220" fill="none" stroke="#8a5a00" stroke-width="1.2" marker-end="url(#arrow-link)"/>
+<path d="M396,208 H444" fill="none" stroke="#4a5573" stroke-width="1.2" marker-end="url(#arrow)"/>
+<path d="M396,320 H444" fill="none" stroke="#4a5573" stroke-width="1.2" marker-end="url(#arrow)"/>
+<path d="M620,208 H692" fill="none" stroke="#4a5573" stroke-width="1.2" marker-end="url(#arrow)"/>
+<path d="M828,200 H896" fill="none" stroke="#4a5573" stroke-width="1.2" marker-end="url(#arrow)"/>
+<path d="M896,224 H828" fill="none" stroke="#4a5573" stroke-width="1" stroke-dasharray="5,4" marker-end="url(#arrow)"/>
+<path d="M1064,208 H1104" fill="none" stroke="#8a5a00" stroke-width="1.2" marker-end="url(#arrow-link)"/>
+<path d="M420,400 V448" fill="none" stroke="#4a5573" stroke-width="1" stroke-dasharray="5,4" marker-end="url(#arrow)"/>
+<path d="M760,400 V448" fill="none" stroke="#4a5573" stroke-width="1" stroke-dasharray="5,4" marker-end="url(#arrow)"/>
+<path d="M980,400 V448" fill="none" stroke="#4a5573" stroke-width="1" stroke-dasharray="5,4" marker-end="url(#arrow)"/>
+<rect x="112" y="202" width="36" height="12" rx="2" fill="#f3f6fb"/><text x="130" y="211" fill="#56617f" font-size="8" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle" letter-spacing="0.06em">HTTPS</text>
+<rect x="176" y="254" width="36" height="12" rx="2" fill="#f3f6fb"/>
+<text x="194" y="263" fill="#56617f" font-size="8" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle" letter-spacing="0.06em">:8080</text>
+<rect x="398" y="190" width="44" height="12" rx="2" fill="#f3f6fb"/>
+<text x="420" y="199" fill="#56617f" font-size="8" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle" letter-spacing="0.06em">/API/*</text>
+<rect x="398" y="302" width="44" height="12" rx="2" fill="#f3f6fb"/>
+<text x="420" y="311" fill="#56617f" font-size="8" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle" letter-spacing="0.06em">GET /*</text>
+<rect x="830" y="232" width="64" height="12" rx="2" fill="#f3f6fb"/>
+<text x="862" y="241" fill="#56617f" font-size="8" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle" letter-spacing="0.06em">IMPLEMENTA</text>
+<rect x="1070" y="190" width="28" height="12" rx="2" fill="#f3f6fb"/>
+<text x="1084" y="199" fill="#56617f" font-size="8" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle" letter-spacing="0.06em">SQL</text>
+<rect x="40" y="112" width="128" height="64" rx="6" fill="#f3f6fb"/>
+<rect x="40" y="112" width="128" height="64" rx="6" fill="rgba(74,85,115,0.10)" stroke="#56617f" stroke-width="1"/>
+<rect x="48" y="118" width="44" height="12" rx="2" fill="none" stroke="#172036" stroke-opacity="0.45" stroke-width="0.8"/>
+<text x="70" y="127" fill="#172036" font-size="7" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle" letter-spacing="0.08em">CLIENTE</text>
+<text x="104" y="153" fill="#172036" font-size="12" font-weight="600" font-family="'Public Sans', system-ui, sans-serif" text-anchor="middle">Navegador</text>
+<text x="104" y="167" fill="#4a5573" font-size="9" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle">React · Vite · TS</text>
+<rect x="40" y="240" width="128" height="64" rx="6" fill="#f3f6fb"/>
+<rect x="40" y="240" width="128" height="64" rx="6" fill="rgba(23,32,54,0.03)" stroke="rgba(23,32,54,0.3)" stroke-width="1"/>
+<rect x="48" y="246" width="40" height="12" rx="2" fill="none" stroke="#172036" stroke-opacity="0.45" stroke-width="0.8"/>
+<text x="68" y="255" fill="#172036" font-size="7" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle" letter-spacing="0.08em">RENDER</text>
+<text x="104" y="281" fill="#172036" font-size="12" font-weight="600" font-family="'Public Sans', system-ui, sans-serif" text-anchor="middle">Proxy do Render</text>
+<text x="104" y="295" fill="#4a5573" font-size="9" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle">TLS · X-Forwarded-*</text>
+<rect x="220" y="112" width="176" height="256" rx="6" fill="#f3f6fb"/>
+<rect x="220" y="112" width="176" height="256" rx="6" fill="#ffffff" stroke="#172036" stroke-width="1"/>
+<rect x="228" y="118" width="60" height="12" rx="2" fill="none" stroke="#172036" stroke-opacity="0.45" stroke-width="0.8"/>
+<text x="258" y="127" fill="#172036" font-size="7" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle" letter-spacing="0.08em">MIDDLEWARE</text>
+<text x="232" y="156" fill="#172036" font-size="12" font-weight="600" font-family="'Public Sans', system-ui, sans-serif" text-anchor="start">Pipeline (em ordem)</text>
+<text x="232" y="176" fill="#4a5573" font-size="9" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="start">1 ForwardedHeaders</text>
+<text x="232" y="196" fill="#4a5573" font-size="9" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="start">2 HSTS + HTTPS *</text>
+<text x="232" y="216" fill="#4a5573" font-size="9" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="start">3 ExceptionHandling</text>
+<text x="232" y="236" fill="#4a5573" font-size="9" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="start">4 Default/StaticFiles</text>
+<text x="232" y="256" fill="#4a5573" font-size="9" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="start">5 RequireJson</text>
+<text x="232" y="276" fill="#4a5573" font-size="9" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="start">6 Routing</text>
+<text x="232" y="296" fill="#4a5573" font-size="9" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="start">7 RateLimiter</text>
+<text x="232" y="316" fill="#4a5573" font-size="9" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="start">8 Authentication</text>
+<text x="232" y="336" fill="#4a5573" font-size="9" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="start">9 Authorization</text>
+<text x="232" y="356" fill="#4a5573" font-size="9" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="start">* fora de Development</text>
+<rect x="444" y="164" width="176" height="88" rx="6" fill="#f3f6fb"/>
+<rect x="444" y="164" width="176" height="88" rx="6" fill="#ffffff" stroke="#172036" stroke-width="1"/>
+<rect x="452" y="170" width="56" height="12" rx="2" fill="none" stroke="#172036" stroke-opacity="0.45" stroke-width="0.8"/>
+<text x="480" y="179" fill="#172036" font-size="7" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle" letter-spacing="0.08em">ENDPOINTS</text>
+<text x="532" y="203" fill="#172036" font-size="12" font-weight="600" font-family="'Public Sans', system-ui, sans-serif" text-anchor="middle">Controllers</text>
+<text x="532" y="217" fill="#4a5573" font-size="9" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle">Auth · Category · Income</text>
+<text x="532" y="231" fill="#4a5573" font-size="9" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle">Expense · Movement · Summary</text>
+<text x="532" y="245" fill="#4a5573" font-size="9" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle">+ GET /health</text>
+<rect x="444" y="288" width="176" height="64" rx="6" fill="#f3f6fb"/>
+<rect x="444" y="288" width="176" height="64" rx="6" fill="#ffffff" stroke="#172036" stroke-width="1"/>
+<rect x="452" y="294" width="56" height="12" rx="2" fill="none" stroke="#172036" stroke-opacity="0.45" stroke-width="0.8"/>
+<text x="480" y="303" fill="#172036" font-size="7" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle" letter-spacing="0.08em">ESTÁTICOS</text>
+<text x="532" y="329" fill="#172036" font-size="12" font-weight="600" font-family="'Public Sans', system-ui, sans-serif" text-anchor="middle">Build do React</text>
+<text x="532" y="343" fill="#4a5573" font-size="9" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle">wwwroot · fallback SPA</text>
+<rect x="692" y="172" width="136" height="72" rx="6" fill="#f3f6fb"/>
+<rect x="692" y="172" width="136" height="72" rx="6" fill="#ffffff" stroke="#172036" stroke-width="1"/>
+<rect x="700" y="178" width="40" height="12" rx="2" fill="none" stroke="#172036" stroke-opacity="0.45" stroke-width="0.8"/>
+<text x="720" y="187" fill="#172036" font-size="7" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle" letter-spacing="0.08em">REGRAS</text>
+<text x="760" y="210" fill="#172036" font-size="12" font-weight="600" font-family="'Public Sans', system-ui, sans-serif" text-anchor="middle">Services</text>
+<text x="760" y="224" fill="#4a5573" font-size="9" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle">validators · DTOs</text>
+<text x="760" y="238" fill="#4a5573" font-size="9" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle">ICurrentUser</text>
+<rect x="896" y="168" width="168" height="80" rx="6" fill="#f3f6fb"/>
+<rect x="896" y="168" width="168" height="80" rx="6" fill="rgba(29,68,166,0.08)" stroke="#1d44a6" stroke-width="1.2"/>
+<rect x="904" y="174" width="56" height="12" rx="2" fill="none" stroke="#1d44a6" stroke-opacity="0.45" stroke-width="0.8"/>
+<text x="932" y="183" fill="#1d44a6" font-size="7" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle" letter-spacing="0.08em">EF CORE 9</text>
+<text x="980" y="210" fill="#172036" font-size="12" font-weight="600" font-family="'Public Sans', system-ui, sans-serif" text-anchor="middle">FinanceContext</text>
+<text x="980" y="224" fill="#4a5573" font-size="9" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle">filtro global por UserId</text>
+<text x="980" y="238" fill="#4a5573" font-size="9" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle">repositórios · UnitOfWork</text>
+<rect x="1104" y="176" width="136" height="64" rx="6" fill="#f3f6fb"/>
+<rect x="1104" y="176" width="136" height="64" rx="6" fill="rgba(23,32,54,0.05)" stroke="#4a5573" stroke-width="1"/>
+<rect x="1112" y="182" width="36" height="12" rx="2" fill="none" stroke="#172036" stroke-opacity="0.45" stroke-width="0.8"/>
+<text x="1130" y="191" fill="#172036" font-size="7" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle" letter-spacing="0.08em">BANCO</text>
+<text x="1172" y="217" fill="#172036" font-size="12" font-weight="600" font-family="'Public Sans', system-ui, sans-serif" text-anchor="middle">PostgreSQL</text>
+<text x="1172" y="231" fill="#4a5573" font-size="9" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle">Neon · pooled</text>
+<rect x="220" y="448" width="844" height="56" rx="6" fill="#f3f6fb"/>
+<rect x="220" y="448" width="844" height="56" rx="6" fill="#ffffff" stroke="#172036" stroke-width="1"/>
+<rect x="228" y="454" width="44" height="12" rx="2" fill="none" stroke="#172036" stroke-opacity="0.45" stroke-width="0.8"/>
+<text x="250" y="463" fill="#172036" font-size="7" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle" letter-spacing="0.08em">DOMÍNIO</text>
+<text x="642" y="485" fill="#172036" font-size="12" font-weight="600" font-family="'Public Sans', system-ui, sans-serif" text-anchor="middle">Finance.Domain — não depende de nenhuma camada</text>
+<text x="642" y="499" fill="#4a5573" font-size="9" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle">User · Category · Moviment (Income | Expense) · IOwnedEntity · enums</text>
+<line x1="40" y1="544" x2="1240" y2="544" stroke="rgba(23,32,54,0.1)" stroke-width="0.8"/>
+<text x="40" y="564" fill="#4a5573" font-size="8" font-family="'Geist Mono', ui-monospace, monospace" letter-spacing="0.14em">LEGENDA</text>
+<line x1="132" y1="561" x2="160" y2="561" stroke="#8a5a00" stroke-width="1.2" marker-end="url(#arrow-link)"/>
+<text x="168" y="564" fill="#4a5573" font-size="9" font-family="'Geist Mono', ui-monospace, monospace">HTTP / SQL</text>
+<line x1="252" y1="561" x2="280" y2="561" stroke="#4a5573" stroke-width="1.2" marker-end="url(#arrow)"/>
+<text x="288" y="564" fill="#4a5573" font-size="9" font-family="'Geist Mono', ui-monospace, monospace">chamada interna</text>
+<line x1="400" y1="561" x2="428" y2="561" stroke="#4a5573" stroke-width="1.2" stroke-dasharray="5,4" marker-end="url(#arrow)"/>
+<text x="436" y="564" fill="#4a5573" font-size="9" font-family="'Geist Mono', ui-monospace, monospace">dependência de projeto</text>
+<rect x="588" y="555" width="28" height="12" rx="3" fill="rgba(29,68,166,0.08)" stroke="#1d44a6" stroke-width="1"/>
+<text x="624" y="564" fill="#4a5573" font-size="9" font-family="'Geist Mono', ui-monospace, monospace">isolamento por usuário</text>
+      </svg>
+    </div>
+    <footer>Fonte: <code>Finance.API/Program.cs</code> (ordem do pipeline), <code>Finance.Infrastructure/Data/FinanceContext.cs</code> (<code>HasQueryFilter</code> em <code>Category</code> e <code>Moviment</code>), referências dos <code>.csproj</code>. A Infrastructure implementa as interfaces da Application (<code>IBaseRepository</code>, <code>IUnitOfWork</code>); a API é a raiz de composição e referencia as três outras camadas.</footer>
+  </div>
+</body>
+</html>
