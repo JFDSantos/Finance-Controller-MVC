@@ -2,7 +2,7 @@ import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { SummaryCards } from "./SummaryCards";
 
-const plain = (text: string | null) => (text ?? "").replace(/ /g, " ");
+const plain = (text: string | null) => (text ?? "").replace(/\u00a0/g, " ");
 
 const summary = (income: number, expense: number) => ({
   year: 2028,

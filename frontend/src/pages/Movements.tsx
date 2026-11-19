@@ -16,6 +16,8 @@ import { SelectField } from "../components/SelectField";
 import { TilePanel } from "../components/TilePanel";
 import { errorMessage } from "../i18n/errors";
 import { formatBRL, formatDate, isoDate, monthLabel, sumMoney, todayIso } from "../lib/format";
+import { currentMonth, monthParam, readMonthParam } from "../lib/monthParam";
+import type { YearMonth } from "../lib/monthParam";
 import { usePageTitle } from "./usePageTitle";
 
 type TypeFilter = "all" | "income" | "expense";
@@ -38,14 +40,12 @@ interface PageFilter {
 }
 
 /** Page filters live in the address (?mes=2028-01&categoria=3&tipo=despesas) so reload and back keep them. */
-function readFilter(params: URLSearchParams, current: { year: number; month: number }): PageFilter {
-  const period = /^(\d{4})-(\d{2})$/.exec(params.get("mes") ?? "");
-  const month = period ? Number(period[2]) : 0;
-  const valid = period && month >= 1 && month <= 12;
+function readFilter(params: URLSearchParams, current: YearMonth): PageFilter {
+  const { year, month } = readMonthParam(params, current);
   const category = Number(params.get("categoria"));
   return {
-    year: valid ? Number(period[1]) : current.year,
-    month: valid ? month : current.month,
+    year,
+    month,
     categoryId: Number.isInteger(category) && category > 0 ? category : undefined,
     type: URL_TYPE[params.get("tipo") ?? ""] ?? "all",
   };
@@ -53,7 +53,7 @@ function readFilter(params: URLSearchParams, current: { year: number; month: num
 
 function writeFilter(filter: PageFilter): URLSearchParams {
   const params = new URLSearchParams();
-  params.set("mes", `${filter.year}-${String(filter.month).padStart(2, "0")}`);
+  params.set("mes", monthParam(filter.year, filter.month));
   if (filter.categoryId !== undefined) params.set("categoria", String(filter.categoryId));
   if (filter.type !== "all") params.set("tipo", TYPE_URL[filter.type]);
   return params;
@@ -77,10 +77,7 @@ type Load<T> = { status: "loading" } | { status: "error"; message: string } | { 
 export default function Movements() {
   usePageTitle("Movimentações");
   const [params, setParams] = useSearchParams();
-  const current = useMemo(() => {
-    const now = new Date();
-    return { year: now.getFullYear(), month: now.getMonth() + 1 };
-  }, []);
+  const current = useMemo(() => currentMonth(), []);
   const filter = readFilter(params, current);
   const apiFilter: MovementFilter = {
     year: filter.year,

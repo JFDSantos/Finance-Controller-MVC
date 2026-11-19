@@ -31,6 +31,14 @@
   --color-income: #18794e;
   --color-expense: #b3261e;
 
+  /* Chart marks (validated with the dataviz palette checks against --color-surface; see DESIGN.md) */
+  --chart-income: #16916e;         /* income columns: lighter step of the ledger green, CVD ΔE 10.6 vs expense */
+  --chart-expense: #b3261e;        /* expense columns and the spent meter */
+  --chart-expense-wash: #f2cfcc;   /* unfilled meter tiles: a light step of the same red */
+  --chart-category: #1d44a6;       /* single-series bars (expenses by category): cobalt */
+  --chart-grid: #e6ebf3;           /* hairline gridlines */
+  --chart-baseline: #aab5cb;       /* the zero line */
+
   /* Type */
   --font-sans: "Public Sans Variable", "Public Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --text-xs: 0.8125rem;   /* 13px */

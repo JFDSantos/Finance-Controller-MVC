@@ -6,7 +6,7 @@ import { mockFetch } from "../test/fetchMock";
 import { emptySummary, januarySummary, zeroSeries } from "../test/summaryFixtures";
 import Dashboard from "./Dashboard";
 
-const plain = (text: string | null) => (text ?? "").replace(/ /g, " ");
+const plain = (text: string | null) => (text ?? "").replace(/\u00a0/g, " ");
 
 function Location() {
   const location = useLocation();

@@ -10,6 +10,7 @@ const PATHS = {
   chevronLeft: "M15 18l-6-6 6-6",
   chevronRight: "M9 6l6 6-6 6",
   pencil: "M4 20h4L18.5 9.5a2.1 2.1 0 0 0-3-3L5 17v3zM13.5 8.5l2 2",
+  table: "M4 5h16v14H4zM4 10h16M4 14.5h16M10 10v9",
   repeat: "M17 3l3 3-3 3M4 11V9a3 3 0 0 1 3-3h13M7 21l-3-3 3-3M20 13v2a3 3 0 0 1-3 3H4",
 } as const;
 

@@ -5,7 +5,7 @@ import type { CategoryTotal, MonthPoint } from "../api/types";
 import { CategoryChart } from "./CategoryChart";
 import { MonthlyChart } from "./MonthlyChart";
 
-const plain = (text: string | null) => (text ?? "").replace(/ /g, " ").trim();
+const plain = (text: string | null) => (text ?? "").replace(/\u00a0/g, " ").trim();
 
 const rows: CategoryTotal[] = [
   { categoryId: 1, categoryName: "Moradia", type: "Expense", total: 1800 },

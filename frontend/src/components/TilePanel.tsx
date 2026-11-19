@@ -6,7 +6,7 @@ import type { CSSProperties } from "react";
  * the same on every render. Decorative only.
  */
 
-type Figure = "quarter" | "half" | "diagonal";
+export type Figure = "quarter" | "half" | "diagonal";
 
 const FIGURES: Record<Figure, string> = {
   quarter: "M0 0H100A100 100 0 0 1 0 100Z",
@@ -71,6 +71,28 @@ export function TilePanel({ cols, rows, seed = 1958, animate = false, className,
           </g>
         </g>
       ))}
+    </svg>
+  );
+}
+
+interface TileGlyphProps {
+  figure: Figure;
+  /** Quarter turns, clockwise. A half-disc at 0 sits on the bottom edge (rising); at 180 it hangs from the top. */
+  rotation?: 0 | 90 | 180 | 270;
+  className?: string;
+}
+
+/** One module of the tile panel, used as a glyph beside data (summary tiles). Decorative: the text carries the meaning. */
+export function TileGlyph({ figure, rotation = 0, className }: TileGlyphProps) {
+  return (
+    <svg
+      className={["tile-glyph", className ?? ""].join(" ").trim()}
+      viewBox="0 0 100 100"
+      aria-hidden="true"
+      focusable="false"
+    >
+      <rect className="tile-glyph__ground" width={TILE} height={TILE} />
+      <path className="tile-glyph__figure" d={FIGURES[figure]} transform={`rotate(${rotation} 50 50)`} />
     </svg>
   );
 }
