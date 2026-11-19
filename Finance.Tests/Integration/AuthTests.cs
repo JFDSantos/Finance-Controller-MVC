@@ -206,6 +206,21 @@ public class AuthTests : IClassFixture<ApiFactory>
     }
 
     [Fact]
+    public async Task DeleteMe_DemoUser_Returns403AndCanStillLogIn()
+    {
+        await _factory.ResetDatabaseAsync();
+        var demo = await _factory.CreateLoggedInClientAsync("Demo@FinanceController.app");
+        var res = await demo.DeleteAsync("/api/Auth/me");
+        Assert.Equal(HttpStatusCode.Forbidden, res.StatusCode);
+        Assert.Equal("DEMO_READ_ONLY", await CodeAsync(res));
+        Assert.Equal(1, await WithDb(db => db.User.IgnoreQueryFilters().CountAsync(u => u.Email.ToLower() == "demo@financecontroller.app")));
+
+        var login = await NewClient(_factory).PostAsJsonAsync("/api/Auth/login",
+            new { email = "demo@financecontroller.app", password = ApiFactory.DefaultPassword });
+        Assert.Equal(HttpStatusCode.OK, login.StatusCode);
+    }
+
+    [Fact]
     public async Task DeleteMe_RemovesOwnDataOnly()
     {
         await _factory.ResetDatabaseAsync();

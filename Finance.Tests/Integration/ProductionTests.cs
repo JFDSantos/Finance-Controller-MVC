@@ -21,6 +21,12 @@ public class BoomController : ControllerBase
 {
     [HttpGet]
     public IActionResult Get() => throw new InvalidOperationException("SECRET-INTERNAL-DETAIL");
+
+    [HttpGet("notfound")]
+    public IActionResult NotFoundBoom() => throw new KeyNotFoundException("/var/secret/path-detail");
+
+    [HttpGet("unauthorized")]
+    public IActionResult UnauthorizedBoom() => throw new UnauthorizedAccessException("Access to the path '/etc/secret' is denied.");
 }
 
 [Collection("Database")]
@@ -38,7 +44,23 @@ public class ProductionTests
         { ["ConnectionStrings__DefaultConnection"] = "Host=invalid-host-xyz;Database=nope;Timeout=1" });
         var r = await f.CreateClient().GetAsync("/health");
         Assert.Equal(HttpStatusCode.OK, r.StatusCode);
-        Assert.Equal("ok", (await Json(r)).GetProperty("status").GetString());
+        var body = await Json(r);
+        Assert.Equal("ok", body.GetProperty("status").GetString());
+        Assert.True(body.TryGetProperty("version", out var v) && v.ValueKind == JsonValueKind.String);
+    }
+
+    [Fact]
+    public async Task Health_ReturnsVersionFromEnvironment()
+    {
+        await using var f = new ApiFactory(new Dictionary<string, string?>
+        { ["RENDER_GIT_COMMIT"] = "abc123def456", ["APP_VERSION"] = "ignored-when-render-commit-set" });
+        var body = await Json(await f.CreateClient().GetAsync("/health"));
+        Assert.Equal("ok", body.GetProperty("status").GetString());
+        Assert.Equal("abc123def456", body.GetProperty("version").GetString());
+
+        await using var g = new ApiFactory(new Dictionary<string, string?>
+        { ["RENDER_GIT_COMMIT"] = null, ["APP_VERSION"] = "1.2.3" });
+        Assert.Equal("1.2.3", (await Json(await g.CreateClient().GetAsync("/health"))).GetProperty("version").GetString());
     }
 
     [Theory]
@@ -108,6 +130,22 @@ public class ProductionTests
         Assert.DoesNotContain("SECRET-INTERNAL-DETAIL", body);
         Assert.DoesNotContain("   at ", body);
         Assert.Equal("{\"code\":\"INTERNAL_ERROR\",\"message\":\"Internal server error\"}", body);
+    }
+
+    [Theory]
+    [InlineData("notfound", HttpStatusCode.NotFound, "NOT_FOUND", "Resource not found.")]
+    [InlineData("unauthorized", HttpStatusCode.Unauthorized, "UNAUTHORIZED", "Unauthorized.")]
+    public async Task KeyNotFoundAndUnauthorized_UseFixedMessages(string route, HttpStatusCode status, string code, string message)
+    {
+        await using var f = new ApiFactory();
+        using var boom = f.WithWebHostBuilder(b => b.ConfigureTestServices(s =>
+            s.AddControllers().ConfigureApplicationPartManager(m =>
+                m.ApplicationParts.Add(new AssemblyPart(typeof(BoomController).Assembly)))));
+        var r = await boom.CreateClient().GetAsync("/__test/boom/" + route);
+        Assert.Equal(status, r.StatusCode);
+        var body = await r.Content.ReadAsStringAsync();
+        Assert.DoesNotContain("secret", body);
+        Assert.Equal($"{{\"code\":\"{code}\",\"message\":\"{message}\"}}", body);
     }
 
     // ---- validation contract ----
