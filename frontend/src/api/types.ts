@@ -91,3 +91,29 @@ export interface MovementFilter {
   categoryId?: number;
   type?: MovementType;
 }
+
+/** One category's total in a month, as listed in `GET /api/Summary` (`byCategory`). */
+export interface CategoryTotal {
+  categoryId: number;
+  categoryName: string;
+  type: MovementType;
+  total: number;
+}
+
+/** `GET /api/Summary?year=&month=`. `balance = income − expense`; `byCategory` lists only categories with movements. */
+export interface MonthlySummary {
+  year: number;
+  month: number;
+  income: number;
+  expense: number;
+  balance: number;
+  byCategory: CategoryTotal[];
+}
+
+/** One month of `GET /api/Summary/series`, zero-filled by the API. */
+export interface MonthPoint {
+  year: number;
+  month: number;
+  income: number;
+  expense: number;
+}
