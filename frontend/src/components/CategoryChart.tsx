@@ -28,7 +28,7 @@ export function CategoryChart({ rows, period }: CategoryChartProps) {
       title="Para onde foi o dinheiro"
       description={
         slices.length > 0
-          ? `${formatBRL(total)} em despesas, da maior categoria para a menor.`
+          ? `${formatBRL(total)} em despesas, da maior para a menor.`
           : "Despesas do mês, por categoria."
       }
       hasTable={slices.length > 0}

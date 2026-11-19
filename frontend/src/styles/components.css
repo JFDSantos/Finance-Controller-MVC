@@ -1899,6 +1899,7 @@ h2[tabindex="-1"]:focus {
 
 .chart-panel__error {
   display: grid;
+  padding: 0;
   justify-items: start;
   gap: var(--space-3);
 }

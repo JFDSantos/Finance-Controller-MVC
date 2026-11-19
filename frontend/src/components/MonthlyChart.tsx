@@ -139,7 +139,9 @@ export function MonthlyChart({ points, selected }: MonthlyChartProps) {
         ) : (
           <>
             {point && values ? (
-              <div className="monthly-readout" data-testid="monthly-readout" aria-live="polite">
+              <div className="monthly-readout" data-testid="monthly-readout"
+                // Announce only while the keyboard walks the months; pointer hover would flood a screen reader.
+                aria-live={focused ? "polite" : "off"}>
                 <p className="monthly-readout__month">{monthLabel(point.year, point.month)}</p>
                 <dl className="monthly-readout__list">
                   <div className="monthly-readout__item">
