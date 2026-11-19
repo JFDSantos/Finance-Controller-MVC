@@ -21,7 +21,7 @@ Passo a passo de produção: Neon (Postgres), Render (web service Docker), segre
 ## 🏗️ Infraestrutura atual
 
 - **CI** (`.github/workflows/ci.yml`, todo push e PR): `backend` (build e `dotnet test` com serviço `postgres:16`), `frontend` (`npm ci`, lint, testes, build) e `docker` (build da imagem, sem push).
-- **Deploy** (`.github/workflows/deploy.yml`): roda quando o CI de um push na `main` deste repositório termina verde, ou manualmente a partir da `main`. Gera o bundle de migrations do EF Core, aplica no Neon pela conexão direta, chama o Deploy Hook do Render e espera `/health` responder 200.
+- **Deploy** (`.github/workflows/deploy.yml`): roda quando o CI de um push na branch padrão (hoje `master`) deste repositório termina verde, ou manualmente a partir dela. Gera o bundle de migrations do EF Core, aplica no Neon pela conexão direta, chama o Deploy Hook do Render (com `ref=<sha>`) e espera `/health` responder `ok` com a versão (SHA) esperada.
 - **Imagem** (`Dockerfile`): build do React, publish da API com o build em `wwwroot`, runtime `aspnet:8.0` sem root na porta 8080.
 - **Hospedagem**: Render (web service free, `render.yaml`, auto deploy desligado) e Neon (Postgres free; conexão pooled para o app, direta para migrations).
 

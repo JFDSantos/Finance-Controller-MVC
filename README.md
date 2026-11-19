@@ -178,7 +178,7 @@ Todos sob `/api`, em JSON. Exceto registro, login e logout, todos exigem o cooki
 
 ## ☁️ Deploy
 
-Push na `main` → CI verde → workflow `Deploy` aplica as migrations no Neon (conexão direta), chama o Deploy Hook do Render e espera `/health`. Passo a passo, variáveis e segredos em [docs/devops/DEPLOY.md](docs/devops/DEPLOY.md).
+Push na branch padrão (hoje `master`) → CI verde → workflow `Deploy` aplica as migrations no Neon (conexão direta), chama o Deploy Hook do Render e espera `/health` informar o SHA do commit publicado. Passo a passo, variáveis e segredos em [docs/devops/DEPLOY.md](docs/devops/DEPLOY.md).
 
 ---
 

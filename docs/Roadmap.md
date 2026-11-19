@@ -111,7 +111,7 @@ Bem-vindo ao seu desafio de aprendizado! Aqui está um roadmap gamificado, divid
 **Status:** 🟡 PARCIAL (19/11/2026): pipeline pronto, deploy pendente da configuração das contas
 - ✅ Dockerfile multi-stage (build do frontend, publish da API, imagem runtime sem root)
 - ✅ CI no GitHub Actions: `backend` (com Postgres), `frontend` (lint, testes, build) e `docker` (build da imagem)
-- ✅ Workflow de deploy: guarda (só `main` deste repositório), migrations bundle no Neon pela conexão direta, Deploy Hook do Render e espera de `/health`
+- ✅ Workflow de deploy: guarda (só a branch padrão deste repositório), migrations bundle no Neon pela conexão direta, Deploy Hook do Render e espera de `/health`
 - ✅ Segredos fora do repositório: environment `production` no GitHub e variáveis do serviço no Render ([DEPLOY.md](devops/DEPLOY.md))
 - ⏳ Primeiro deploy: depende de o dono criar as contas no Render e no Neon e cadastrar os segredos
 

@@ -55,7 +55,7 @@
   <div class="frame">
     <p class="eyebrow">DevOps · GitHub Actions, Render e Neon</p>
     <h1>Fluxo de deploy</h1>
-    <p class="lead">Todo push e todo PR rodam o CI. Quando o CI de um push na <code>main</code> termina verde, o workflow de deploy aplica as migrations no Neon pela conexão direta, chama o Deploy Hook do Render e espera <code>/health</code> responder 200. O app em produção usa a conexão pooled do Neon.</p>
+    <p class="lead">Todo push e todo PR rodam o CI. Quando o CI de um push na branch padrão termina verde, o workflow de deploy aplica as migrations no Neon pela conexão direta, chama o Deploy Hook do Render e espera <code>/health</code> responder 200. O app em produção usa a conexão pooled do Neon.</p>
     <p class="hint">Arraste o diagrama para o lado para ver tudo.</p>
     <div class="diagram-container">
       <svg viewBox="32 0 1216 720" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="deploy-flow-title deploy-flow-desc">
@@ -132,10 +132,10 @@
 <rect x="624" y="246" width="20" height="12" rx="2" fill="none" stroke="#172036" stroke-opacity="0.45" stroke-width="0.8"/>
 <text x="634" y="255" fill="#172036" font-size="7" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle" letter-spacing="0.08em">IF</text>
 <text x="704" y="280" fill="#172036" font-size="12" font-weight="600" font-family="'Public Sans', system-ui, sans-serif" text-anchor="middle">Guarda do job</text>
-<text x="704" y="294" fill="#4a5573" font-size="9" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle">CI verde, push na main</text>
+<text x="704" y="294" fill="#4a5573" font-size="9" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle">CI verde, push na padrão</text>
 <text x="704" y="308" fill="#4a5573" font-size="9" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle">do próprio repositório</text>
 <text x="704" y="322" fill="#4a5573" font-size="9" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle">ou execução manual</text>
-<text x="704" y="336" fill="#4a5573" font-size="9" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle">na main</text>
+<text x="704" y="336" fill="#4a5573" font-size="9" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle">na padrão</text>
 <rect x="840" y="240" width="200" height="104" rx="6" fill="#f3f6fb"/>
 <rect x="840" y="240" width="200" height="104" rx="6" fill="rgba(29,68,166,0.08)" stroke="#1d44a6" stroke-width="1.2"/>
 <rect x="848" y="246" width="68" height="12" rx="2" fill="none" stroke="#1d44a6" stroke-opacity="0.45" stroke-width="0.8"/>

@@ -2,7 +2,9 @@
 
 Tudo roda em planos gratuitos: **Neon** (Postgres), **Render** (API + frontend em uma imagem Docker) e **GitHub Actions** (CI e deploy).
 
-Fluxo: push na `main` -> workflow `CI` verde -> workflow `Deploy` aplica as migrations no Neon (conexão direta), chama o Deploy Hook do Render e espera `/health` responder 200.
+Fluxo: push na branch padrão do repositório (hoje `master`) -> workflow `CI` verde -> workflow `Deploy` aplica as migrations no Neon (conexão direta), chama o Deploy Hook do Render (fixando o commit com `ref`) e espera `/health` responder `ok` **com a versão (SHA) desse commit**.
+
+Nenhum arquivo fixa o nome da branch: o workflow compara com `github.event.repository.default_branch` e o `render.yaml` não tem a chave `branch:` (o Render implanta a branch padrão do repositório). Se um dia a branch padrão for renomeada, nada precisa mudar aqui.
 
 > Aviso: as páginas de documentação do Render e do Neon não puderam ser consultadas ao escrever este guia (rede restrita). Os nomes de chaves e menus abaixo vêm de conhecimento prévio; confira nas páginas listadas em "Referências" se algo estiver diferente na tela.
 
@@ -47,7 +49,7 @@ Não há região do Render no Brasil; `oregon` é a região padrão do plano gra
 ## 3. GitHub (segredos, variáveis e ambiente)
 
 1. **Settings > Environments > New environment**: `production`. Recomendado (defesa em profundidade, não obrigatório): ative **Required reviewers** nesse ambiente, para que todo deploy exija aprovação manual.
-   O workflow `Deploy` só roda para `push` na `main` deste mesmo repositório (verifica `event == 'push'`, `head_repository == github.repository` e `head_branch == 'main'`), assim um PR vindo de fork, mesmo de um branch chamado `main`, nunca executa código com os segredos de produção. A execução manual (**Run workflow**) também só é aceita a partir da `main`; disparada de outro branch, o job é ignorado.
+   O workflow `Deploy` só roda para `push` na branch padrão (hoje `master`) deste mesmo repositório (verifica `event == 'push'`, `conclusion == 'success'`, `head_repository == github.repository` e `head_branch == github.event.repository.default_branch`), assim um PR vindo de fork, mesmo de um branch com o mesmo nome da padrão, nunca executa código com os segredos de produção. A execução manual (**Run workflow**) também só é aceita a partir da branch padrão; disparada de outra branch, o job é ignorado (a execução aparece como "skipped", sem efeito).
 2. No ambiente `production` (ou em Settings > Secrets and variables > Actions), cadastre:
    - Secret `DATABASE_URL_DIRECT`: string Npgsql **direta** do Neon, com `SSL Mode=Require`.
    - Secret `RENDER_DEPLOY_HOOK_URL`: URL do Deploy Hook do Render.
@@ -67,14 +69,30 @@ Defina no Render `Demo__Enabled=true`, `Demo__Password=<senha>`, `VITE_DEMO_EMAI
 Ordem: migrations primeiro, depois o app. O workflow `Deploy` já faz nessa ordem. Para o primeiro deploy:
 
 1. Garanta que os segredos do GitHub e as variáveis do Render estão preenchidos.
-2. Faça merge/push na `main` e espere o `CI` ficar verde, ou rode `Deploy` manualmente em **Actions > Deploy > Run workflow**.
+2. Faça merge/push na branch padrão (hoje `master`) e espere o `CI` ficar verde, ou rode `Deploy` manualmente em **Actions > Deploy > Run workflow**.
 3. O Blueprint do Render pode tentar um build inicial ao ser criado; se ele falhar por falta de variáveis, ignore e dispare o deploy pelo workflow.
 
 ## 6. Como verificar
 
-1. `curl https://SEU-APP.onrender.com/health` deve retornar `{"status":"ok"}` (200).
+1. `curl https://SEU-APP.onrender.com/health` deve retornar `{"status":"ok","version":"<sha do commit>"}` (200).
 2. Abra a URL, **registre** uma conta, faça **login** e confira o **dashboard** (a primeira requisição pode demorar, veja limitações).
 3. Se a demo estiver ativa, teste o botão "Experimentar com a conta demo".
+
+### Verifique a versão e o `ref` após o primeiro deploy (NÃO verificado neste ambiente)
+
+O passo "Wait for the new version on /health" só passa quando `/health` responde `status: ok` **e** `version` é o SHA que acabou de ter as migrations aplicadas (aceita prefixo curto de pelo menos 7 caracteres). Isso depende de dois comportamentos do Render que **não foi possível verificar** aqui (sem acesso à documentação nem ao serviço):
+
+- **(a) `RENDER_GIT_COMMIT`**: o Render injeta essa variável de ambiente no serviço, com o SHA do commit implantado. O app a lê na partida (`RENDER_GIT_COMMIT`, depois `APP_VERSION`, senão `"unknown"`).
+- **(b) parâmetro `ref` do Deploy Hook**: o workflow chama o hook com `?ref=<sha>` (ou `&ref=<sha>` se a URL já tiver `?`), para o Render construir exatamente o commit migrado em vez do último da branch.
+
+Após o primeiro deploy, confira: `curl https://SEU-APP.onrender.com/health`. O `version` deve ser o SHA do commit do workflow. Se o workflow falhar por "version differs" ou o `version` vier `unknown`:
+
+- `version` = `unknown`: o Render não definiu `RENDER_GIT_COMMIT`. Defina a variável `APP_VERSION` (como env var do serviço e/ou build arg do Docker) com o SHA a cada deploy, ou ajuste o workflow para comparar só `status`.
+- `version` é outro SHA: o Render ignorou o `ref`. Remova o `?ref=` do passo "Trigger Render deploy" e aceite que o Render implanta o último commit da branch padrão (risco: um push posterior pode ser implantado com migrations ainda não aplicadas).
+
+### Confirme os limites de taxa (IP do cliente)
+
+O limite de tentativas (login 5 por minuto, cadastro 10 por hora) é por `RemoteIpAddress`. Após o primeiro deploy, confirme que, atrás do proxy do Render, esse valor é o IP **real** do visitante e não o IP compartilhado de um proxy; caso contrário os limites viram globais (todos os usuários dividem as mesmas 5 tentativas por minuto). Como conferir: adicione temporariamente uma linha de log (por exemplo `app.Logger.LogInformation("ip {Ip}", ctx.Connection.RemoteIpAddress)` em um middleware logo após `UseForwardedHeaders`), faça deploy, acesse de dois dispositivos/redes diferentes e compare os IPs nos **Logs** do Render. Remova a linha depois. Se o IP for sempre o mesmo, ajuste `ForwardedHeadersOptions` (por exemplo `ForwardLimit` e `KnownProxies`) em `Program.cs`.
 
 ## 7. Rotação de segredos
 
@@ -87,6 +105,9 @@ Ordem: migrations primeiro, depois o app. O workflow `Deploy` já faz nessa orde
 - Render free: a instância hiberna após ~15 min sem tráfego; a primeira requisição depois disso leva em torno de 30 a 60 s. O passo de espera do deploy tolera até 10 min.
 - Neon free: o banco "escala a zero" quando ocioso; a primeira consulta depois disso tem alguns segundos extras.
 - Não há verificação de e-mail nem recuperação de senha.
+- A conta demo é compartilhada e pública: qualquer visitante pode alterar os dados dela. Os dados só são restaurados quando o processo reinicia e o seeding roda de novo (o seeding apenas adiciona o que falta, não desfaz alterações nem remove itens). A conta, porém, não pode ser excluída (`DELETE /api/Auth/me` responde 403 `DEMO_READ_ONLY`).
+- Os limites de taxa por IP só protegem de verdade se o IP visto pelo app for o do cliente real; confira após o primeiro deploy (seção 6, "Confirme os limites de taxa"). Se atrás do proxy todos chegarem com o mesmo IP, os limites de 5 logins por minuto e 10 cadastros por hora passam a valer para todos os usuários juntos.
+- `AutoMapper` 15 ou superior tem licença comercial (há licença comunitária gratuita, que pode exigir registrar uma chave); sem a chave a biblioteca registra um aviso no log.
 - O app confia em `X-Forwarded-For` (rate limit por IP) somente porque só é acessível através do proxy do Render. Não exponha a porta 8080 diretamente em outro ambiente.
 - O auto deploy do Render está desligado (`autoDeployTrigger: "off"`); somente o workflow `Deploy` publica novas versões.
 
