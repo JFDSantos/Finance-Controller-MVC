@@ -1,5 +1,7 @@
+using Finance.Application.Exceptions;
 using Finance.Application.Interfaces;
 using Finance.Application.ViewModel;
+using Finance.Infrastructure.Seed;
 using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -91,6 +93,10 @@ namespace Finance.API.Controllers
         {
             try
             {
+                // The public demo account is shared by every visitor: it must not be deletable.
+                var me = await _userService.GetByIdAsync(_currentUser.UserId);
+                if (string.Equals(me.Email, DemoSeeder.DemoEmail, StringComparison.OrdinalIgnoreCase))
+                    throw new ForbiddenException("DEMO_READ_ONLY", "The demo account cannot be deleted.");
                 await _userService.DeleteAccountAsync(_currentUser.UserId);
             }
             catch (KeyNotFoundException)

@@ -42,7 +42,8 @@ namespace Finance.API.Middleware
                 case KeyNotFoundException:
                     context.Response.StatusCode = StatusCodes.Status404NotFound;
                     response["code"] = "NOT_FOUND";
-                    response["message"] = exception.Message;
+                    // Fixed text: framework/file-system exceptions must never leak their message.
+                    response["message"] = "Resource not found.";
                     break;
 
                 case ValidationException validationEx:
@@ -60,10 +61,16 @@ namespace Finance.API.Middleware
                     response["message"] = conflict.Message;
                     break;
 
+                case ForbiddenException forbidden:
+                    context.Response.StatusCode = StatusCodes.Status403Forbidden;
+                    response["code"] = forbidden.Code;
+                    response["message"] = forbidden.Message;
+                    break;
+
                 case UnauthorizedAccessException:
                     context.Response.StatusCode = StatusCodes.Status401Unauthorized;
                     response["code"] = "UNAUTHORIZED";
-                    response["message"] = exception.Message;
+                    response["message"] = "Unauthorized.";
                     break;
 
                 default:
