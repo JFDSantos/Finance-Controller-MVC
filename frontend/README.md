@@ -20,7 +20,8 @@ npm run dev
 Open http://localhost:5173. The dev server proxies every `/api` request to the
 API (`secure: false` accepts the ASP.NET Core development certificate). To point
 the proxy somewhere else, set `VITE_API_PROXY_TARGET`, for example
-`VITE_API_PROXY_TARGET=https://localhost:5150 npm run dev`.
+`VITE_API_PROXY_TARGET=http://localhost:5195 npm run dev` (the API's `http` launch profile;
+the default is the `https` profile, `https://localhost:7113`).
 
 ## Test
 

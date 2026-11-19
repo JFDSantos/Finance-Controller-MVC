@@ -21,7 +21,7 @@
       background: var(--color-paper);
       color: var(--color-ink);
       min-height: 100vh;
-      padding: 3rem 2rem;
+      padding: 3rem 1.5rem;
     }
     .frame { max-width: 960px; width: 100%; margin: 0 auto; }
     .diagram-container { width: 100%; overflow-x: auto; }
@@ -39,9 +39,11 @@
       font-family: var(--font-mono); font-size: 0.75rem; line-height: 1.6; color: var(--color-muted); overflow-wrap: anywhere; }
     footer code { font-family: inherit; color: var(--color-ink); }
     svg { width: 100%; min-width: 960px; display: block; }
+    @media (max-width: 1022px) {
+      .hint { display: block; }
+    }
     @media (max-width: 48rem) {
       body { padding: 1.5rem 1rem; }
-      .hint { display: block; }
     }
     @media print {
       .diagram-container { overflow-x: visible; }
@@ -53,7 +55,7 @@
   <div class="frame">
     <p class="eyebrow">Banco de dados · PostgreSQL</p>
     <h1>Modelo de dados</h1>
-    <p class="lead">Três tabelas. <code>Income</code> e <code>Expense</code> ficam na mesma tabela <code>Moviments</code>, separadas pela coluna discriminadora <code>Type</code>. Apagar um usuário apaga em cascata as categorias e os movimentos dele; apagar uma categoria com movimentos é bloqueado pela chave estrangeira.</p>
+    <p class="lead">Três tabelas. <code>Income</code> e <code>Expense</code> ficam na mesma tabela <code>Moviments</code>, separadas pela coluna discriminadora <code>Type</code>. Apagar um usuário apaga em cascata as categorias e os movimentos dele; apagar uma categoria com movimentos é recusado pelo <code>CategoryService</code> (409 <code>CATEGORY_IN_USE</code>), com a chave estrangeira <code>NO ACTION</code> como proteção extra no banco.</p>
     <p class="hint">Arraste o diagrama para o lado para ver tudo.</p>
     <div class="diagram-container">
       <svg viewBox="0 0 960 640" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="data-model-title data-model-desc">

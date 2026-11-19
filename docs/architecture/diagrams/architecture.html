@@ -21,9 +21,9 @@
       background: var(--color-paper);
       color: var(--color-ink);
       min-height: 100vh;
-      padding: 3rem 2rem;
+      padding: 3rem 1.5rem;
     }
-    .frame { max-width: 1280px; width: 100%; margin: 0 auto; }
+    .frame { max-width: 1216px; width: 100%; margin: 0 auto; }
     .diagram-container { width: 100%; overflow-x: auto; }
     .eyebrow {
       font-family: var(--font-mono); font-size: 0.66rem; font-weight: 500;
@@ -38,10 +38,12 @@
     footer { margin-top: 1.5rem; padding-top: 0.75rem; border-top: 1px solid var(--color-rule);
       font-family: var(--font-mono); font-size: 0.75rem; line-height: 1.6; color: var(--color-muted); overflow-wrap: anywhere; }
     footer code { font-family: inherit; color: var(--color-ink); }
-    svg { width: 100%; min-width: 1280px; display: block; }
+    svg { width: 100%; min-width: 1216px; display: block; }
+    @media (max-width: 1278px) {
+      .hint { display: block; }
+    }
     @media (max-width: 48rem) {
       body { padding: 1.5rem 1rem; }
-      .hint { display: block; }
     }
     @media print {
       .diagram-container { overflow-x: visible; }
@@ -56,7 +58,7 @@
     <p class="lead">Uma requisição do navegador passa pelo proxy do Render, pelo pipeline de middlewares da API, pelos controllers, pelos services e pelo <code>FinanceContext</code> até o PostgreSQL. A mesma API serve o build do React a partir de <code>wwwroot</code>. Todas as camadas apontam para <code>Finance.Domain</code>.</p>
     <p class="hint">Arraste o diagrama para o lado para ver tudo.</p>
     <div class="diagram-container">
-      <svg viewBox="0 40 1280 560" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="architecture-title architecture-desc">
+      <svg viewBox="32 40 1216 560" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="architecture-title architecture-desc">
         <title id="architecture-title">Arquitetura em camadas do Finance Controller</title>
         <desc id="architecture-desc">Caminho de uma requisição do navegador, pelo proxy do Render e pelo pipeline de middlewares da Finance.API, até controllers, services da Finance.Application, o FinanceContext da Finance.Infrastructure com o filtro global por usuário e o PostgreSQL no Neon, com todas as camadas dependendo de Finance.Domain.</desc>
 <defs>
@@ -88,10 +90,8 @@
 <rect x="112" y="202" width="36" height="12" rx="2" fill="#f3f6fb"/><text x="130" y="211" fill="#56617f" font-size="8" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle" letter-spacing="0.06em">HTTPS</text>
 <rect x="176" y="254" width="36" height="12" rx="2" fill="#f3f6fb"/>
 <text x="194" y="263" fill="#56617f" font-size="8" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle" letter-spacing="0.06em">:8080</text>
-<rect x="398" y="190" width="44" height="12" rx="2" fill="#f3f6fb"/>
-<text x="420" y="199" fill="#56617f" font-size="8" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle" letter-spacing="0.06em">/API/*</text>
-<rect x="398" y="302" width="44" height="12" rx="2" fill="#f3f6fb"/>
-<text x="420" y="311" fill="#56617f" font-size="8" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle" letter-spacing="0.06em">GET /*</text>
+<rect x="406" y="302" width="28" height="12" rx="2" fill="#f3f6fb"/>
+<text x="420" y="311" fill="#56617f" font-size="8" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle" letter-spacing="0.06em">SPA</text>
 <rect x="830" y="232" width="64" height="12" rx="2" fill="#f3f6fb"/>
 <text x="862" y="241" fill="#56617f" font-size="8" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle" letter-spacing="0.06em">IMPLEMENTA</text>
 <rect x="1070" y="190" width="28" height="12" rx="2" fill="#f3f6fb"/>
@@ -125,12 +125,12 @@
 <text x="232" y="356" fill="#4a5573" font-size="9" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="start">* fora de Development</text>
 <rect x="444" y="164" width="176" height="88" rx="6" fill="#f3f6fb"/>
 <rect x="444" y="164" width="176" height="88" rx="6" fill="#ffffff" stroke="#172036" stroke-width="1"/>
-<rect x="452" y="170" width="56" height="12" rx="2" fill="none" stroke="#172036" stroke-opacity="0.45" stroke-width="0.8"/>
-<text x="480" y="179" fill="#172036" font-size="7" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle" letter-spacing="0.08em">ENDPOINTS</text>
-<text x="532" y="203" fill="#172036" font-size="12" font-weight="600" font-family="'Public Sans', system-ui, sans-serif" text-anchor="middle">Controllers</text>
+<rect x="452" y="170" width="64" height="12" rx="2" fill="none" stroke="#172036" stroke-opacity="0.45" stroke-width="0.8"/>
+<text x="484" y="179" fill="#172036" font-size="7" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle" letter-spacing="0.08em">CONTROLLERS</text>
+<text x="532" y="203" fill="#172036" font-size="12" font-weight="600" font-family="'Public Sans', system-ui, sans-serif" text-anchor="middle">Endpoints</text>
 <text x="532" y="217" fill="#4a5573" font-size="9" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle">Auth · Category · Income</text>
 <text x="532" y="231" fill="#4a5573" font-size="9" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle">Expense · Movement · Summary</text>
-<text x="532" y="245" fill="#4a5573" font-size="9" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle">+ GET /health</text>
+<text x="532" y="245" fill="#4a5573" font-size="9" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle">+ /health (minimal API)</text>
 <rect x="444" y="288" width="176" height="64" rx="6" fill="#f3f6fb"/>
 <rect x="444" y="288" width="176" height="64" rx="6" fill="#ffffff" stroke="#172036" stroke-width="1"/>
 <rect x="452" y="294" width="56" height="12" rx="2" fill="none" stroke="#172036" stroke-opacity="0.45" stroke-width="0.8"/>

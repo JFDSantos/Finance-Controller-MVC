@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg viewBox="0 0 1280 720" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="deploy-flow-title deploy-flow-desc" id="deploy-flow-root">
+<svg viewBox="32 0 1216 720" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="deploy-flow-title deploy-flow-desc" id="deploy-flow-root">
         <title id="deploy-flow-title">Fluxo de deploy do Finance Controller</title>
         <desc id="deploy-flow-desc">Swimlane com o CI do GitHub Actions (jobs backend, frontend e docker), o workflow de deploy (guarda, migrations bundle pela conexão direta do Neon, Deploy Hook do Render e poll de /health), o container no Render e o PostgreSQL no Neon, indicando em que lugar cada segredo fica guardado.</desc>
 <defs>
-      <style>@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&amp;family=Geist:wght@400;500;600&amp;family=Geist+Mono:wght@400;500;600&amp;family=Noto+Serif:ital@0;1&amp;family=Noto+Sans+KR:wght@400;500;600&amp;family=Noto+Serif+KR:wght@400&amp;family=Noto+Sans+TC:wght@400;500;600&amp;family=Noto+Serif+TC:wght@400&amp;display=swap');
-      #deploy-flow-root { --color-paper:  #f3f6fb;   
+      <style>#deploy-flow-root { --color-paper:  #f3f6fb;   
       --color-ink:    #172036;   
       --color-muted:  #4a5573;   
       --color-accent: #1d44a6;   
@@ -15,7 +14,7 @@
       #deploy-flow-root .diagram-container { width: 100%; overflow-x: auto; }
       #deploy-flow-root .lead { color: var(--color-muted); font-size: 1rem; line-height: 1.5; max-width: 60rem; margin-bottom: 1.5rem; }
       #deploy-flow-root .hint { display: none; font-family: var(--font-mono); font-size: 0.75rem; color: var(--color-muted); margin-bottom: 0.5rem; }
-      @media (max-width: 48rem) {
+      @media (max-width: 1278px) {
 #deploy-flow-root .hint { display: block; }
 }
       @media print {

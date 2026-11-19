@@ -155,12 +155,6 @@ Bem-vindo ao seu desafio de aprendizado! Aqui está um roadmap gamificado, divid
 
 *Atualizado em 19/11/2026.*
 
-------|---------|--------|-----------|
-| **SOLID Principles** | 1-5 | ✅ COMPLETE | 100% |
-| **Testes & Integração** | 6-7 | 🔄 PRÓXIMA | 0% |
-| **Frontend & DevOps** | 8-10 | 🔄 FUTURA | 0% |
-| **Produção** | Final | 🔄 FUTURA | 0% |
-
 ---
 
 ## 🎓 Dicas de Gameficação

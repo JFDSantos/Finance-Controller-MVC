@@ -21,9 +21,9 @@
       background: var(--color-paper);
       color: var(--color-ink);
       min-height: 100vh;
-      padding: 3rem 2rem;
+      padding: 3rem 1.5rem;
     }
-    .frame { max-width: 1280px; width: 100%; margin: 0 auto; }
+    .frame { max-width: 1216px; width: 100%; margin: 0 auto; }
     .diagram-container { width: 100%; overflow-x: auto; }
     .eyebrow {
       font-family: var(--font-mono); font-size: 0.66rem; font-weight: 500;
@@ -38,10 +38,12 @@
     footer { margin-top: 1.5rem; padding-top: 0.75rem; border-top: 1px solid var(--color-rule);
       font-family: var(--font-mono); font-size: 0.75rem; line-height: 1.6; color: var(--color-muted); overflow-wrap: anywhere; }
     footer code { font-family: inherit; color: var(--color-ink); }
-    svg { width: 100%; min-width: 1280px; display: block; }
+    svg { width: 100%; min-width: 1216px; display: block; }
+    @media (max-width: 1278px) {
+      .hint { display: block; }
+    }
     @media (max-width: 48rem) {
       body { padding: 1.5rem 1rem; }
-      .hint { display: block; }
     }
     @media print {
       .diagram-container { overflow-x: visible; }
@@ -56,7 +58,7 @@
     <p class="lead">Todo push e todo PR rodam o CI. Quando o CI de um push na <code>main</code> termina verde, o workflow de deploy aplica as migrations no Neon pela conexão direta, chama o Deploy Hook do Render e espera <code>/health</code> responder 200. O app em produção usa a conexão pooled do Neon.</p>
     <p class="hint">Arraste o diagrama para o lado para ver tudo.</p>
     <div class="diagram-container">
-      <svg viewBox="0 0 1280 720" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="deploy-flow-title deploy-flow-desc">
+      <svg viewBox="32 0 1216 720" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="deploy-flow-title deploy-flow-desc">
         <title id="deploy-flow-title">Fluxo de deploy do Finance Controller</title>
         <desc id="deploy-flow-desc">Swimlane com o CI do GitHub Actions (jobs backend, frontend e docker), o workflow de deploy (guarda, migrations bundle pela conexão direta do Neon, Deploy Hook do Render e poll de /health), o container no Render e o PostgreSQL no Neon, indicando em que lugar cada segredo fica guardado.</desc>
 <defs>
@@ -182,7 +184,7 @@
 <text x="632" y="692" fill="#4a5573" font-size="9" font-family="'Geist Mono', ui-monospace, monospace">roda antes do app</text>
       </svg>
     </div>
-    <footer>Fonte: <code>.github/workflows/ci.yml</code>, <code>.github/workflows/deploy.yml</code>, <code>render.yaml</code>, <code>Dockerfile</code> e <code>docs/devops/DEPLOY.md</code>. Segredos do deploy ficam no environment <code>production</code> do GitHub (<code>APP_URL</code> pode ser variável ou segredo); os do app ficam nas variáveis de ambiente do serviço no Render (<code>VITE_DEMO_*</code> também, repassadas ao build). O <code>TEST_DB_CONNECTION</code> do CI aponta para um Postgres descartável e não é segredo. O Render constrói a imagem a partir do <code>Dockerfile</code>; o job <code>docker</code> do CI só confere que o build passa.</footer>
+    <footer>Fonte: <code>.github/workflows/ci.yml</code>, <code>.github/workflows/deploy.yml</code>, <code>render.yaml</code>, <code>Dockerfile</code> e <code>docs/devops/DEPLOY.md</code>. Segredos do deploy ficam no environment <code>production</code> do GitHub (<code>APP_URL</code> pode ser variável ou segredo); os do app ficam nas variáveis de ambiente do serviço no Render (<code>VITE_DEMO_*</code> também; que o Render as repasse ao build Docker ainda está a confirmar no primeiro deploy, veja <code>DEPLOY.md</code>). O <code>TEST_DB_CONNECTION</code> do CI aponta para um Postgres descartável e não é segredo. O Render constrói a imagem a partir do <code>Dockerfile</code>; o job <code>docker</code> do CI só confere que o build passa.</footer>
   </div>
 </body>
 </html>
