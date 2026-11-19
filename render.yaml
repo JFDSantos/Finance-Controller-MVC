@@ -5,6 +5,8 @@ services:
     plan: free
     region: oregon
     dockerfilePath: ./Dockerfile
+    # No `branch:` key on purpose: Render then deploys the repository's default branch (today `master`).
+    # The Deploy workflow also passes ?ref=<sha> on the Deploy Hook to pin the exact commit.
     healthCheckPath: /health
     autoDeployTrigger: "off" # deploys come from GitHub Actions via Deploy Hook
     envVars:
