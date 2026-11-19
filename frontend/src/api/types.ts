@@ -47,7 +47,9 @@ export type StableErrorCode =
   | "INVALID_MONTH"
   | "INVALID_YEAR"
   | "INVALID_RANGE"
-  | "INVALID_VALUE";
+  | "INVALID_VALUE"
+  | "INVALID_DATE"
+  | "DEMO_READ_ONLY";
 
 /** Codes produced by the client itself. */
 export type ClientErrorCode = "UNKNOWN" | "NETWORK_ERROR";

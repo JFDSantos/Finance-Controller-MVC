@@ -19,6 +19,8 @@ const MESSAGES: Record<StableErrorCode, string> = {
   INVALID_YEAR: "Escolha um ano válido.",
   INVALID_RANGE: "O período escolhido não é válido. Confira as datas de início e fim.",
   INVALID_VALUE: "Um dos valores informados não é válido. Revise e tente novamente.",
+  INVALID_DATE: "Informe uma data entre 2000 e 2100.",
+  DEMO_READ_ONLY: "A conta de demonstração é compartilhada e não pode ser excluída.",
 };
 
 const CLIENT_MESSAGES: Record<string, string> = {

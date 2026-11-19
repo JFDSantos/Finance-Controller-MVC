@@ -49,7 +49,8 @@ export function isoDate(year: number, month: number, day: number): string {
   return `${year}-${pad(month)}-${pad(day)}`;
 }
 
-const GROUPED = /^\d{1,3}(\.\d{3})+$/;
+// A leading group never starts with 0, so "0.001" is not read as 1 and "01.000" is rejected.
+const GROUPED = /^[1-9]\d{0,2}(\.\d{3})+$/;
 const DIGITS = /^\d+$/;
 
 /**

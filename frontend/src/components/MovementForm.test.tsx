@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import type { Movement } from "../api/types";
@@ -71,6 +71,43 @@ describe("MovementForm", () => {
     expect(description).toHaveAccessibleDescription("Informe uma descrição.");
     expect(description).toHaveFocus();
     expect(writes(fetchMock)).toHaveLength(0);
+  });
+
+  it("MovementForm limits the date to the supported years", async () => {
+    const fetchMock = mockFetch({});
+    const user = userEvent.setup();
+    renderForm();
+
+    const date = screen.getByLabelText("Data");
+    expect(date).toHaveAttribute("min", "2000-01-01");
+    expect(date).toHaveAttribute("max", "2100-12-31");
+
+    await user.type(screen.getByLabelText("Descrição"), "Mercado");
+    await user.selectOptions(screen.getByLabelText("Categoria"), "1");
+    await user.type(screen.getByLabelText("Valor"), "50");
+
+    for (const typo of ["0202-03-04", "2205-03-04", "1999-12-31", "2101-01-01"]) {
+      fireEvent.change(date, { target: { value: typo } });
+      await user.click(screen.getByRole("button", { name: "Salvar" }));
+      expect(date, typo).toHaveAttribute("aria-invalid", "true");
+      expect(date, typo).toHaveAccessibleDescription("Informe uma data entre 2000 e 2100.");
+      expect(date, typo).toHaveFocus();
+    }
+    expect(writes(fetchMock)).toHaveLength(0);
+  });
+
+  it.each(["2000-01-01", "2100-12-31"])("MovementForm accepts the edge date %s", async (edge) => {
+    const fetchMock = mockFetch({ "POST /api/Expense": { status: 201, body: { id: 9 } } });
+    const user = userEvent.setup();
+    const { onSaved } = renderForm();
+
+    await user.type(screen.getByLabelText("Descrição"), "Mercado");
+    await user.selectOptions(screen.getByLabelText("Categoria"), "1");
+    await user.type(screen.getByLabelText("Valor"), "50");
+    fireEvent.change(screen.getByLabelText("Data"), { target: { value: edge } });
+    await user.click(screen.getByRole("button", { name: "Salvar" }));
+    await waitFor(() => expect(onSaved).toHaveBeenCalledWith(expect.objectContaining({ movimentDate: edge })));
+    expect(writes(fetchMock)).toHaveLength(1);
   });
 
   it("MovementForm submits IsRecurring flag", async () => {

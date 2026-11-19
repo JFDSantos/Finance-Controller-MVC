@@ -8,6 +8,9 @@ interface UserMenuProps {
   onDeleteAccount(): void;
 }
 
+/** Shared public demo account (same address as DemoSeeder.DemoEmail); it cannot be deleted. */
+const DEMO_EMAIL = "demo@financecontroller.app";
+
 function initials(name: string): string {
   const parts = name.trim().split(/\s+/).filter(Boolean);
   const letters = parts.length > 1 ? parts[0][0] + parts[parts.length - 1][0] : (parts[0]?.[0] ?? "?");
@@ -90,16 +93,18 @@ export const UserMenu = forwardRef<HTMLButtonElement | null, UserMenuProps>(func
               Sair
             </button>
           </li>
-          <li>
-            <button
-              type="button"
-              className="user-menu__item user-menu__item--danger"
-              onClick={() => choose(onDeleteAccount)}
-            >
-              <Icon name="trash" size={18} />
-              Excluir minha conta
-            </button>
-          </li>
+          {user.email.toLowerCase() === DEMO_EMAIL ? null : (
+            <li>
+              <button
+                type="button"
+                className="user-menu__item user-menu__item--danger"
+                onClick={() => choose(onDeleteAccount)}
+              >
+                <Icon name="trash" size={18} />
+                Excluir minha conta
+              </button>
+            </li>
+          )}
         </ul>
       </div>
     </div>

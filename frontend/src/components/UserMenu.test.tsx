@@ -4,12 +4,12 @@ import { describe, expect, it, vi } from "vitest";
 import { demoUser } from "../test/fetchMock";
 import { UserMenu } from "./UserMenu";
 
-function renderMenu() {
+function renderMenu(user = demoUser) {
   const onLogout = vi.fn();
   const onDeleteAccount = vi.fn();
   render(
     <>
-      <UserMenu user={demoUser} onLogout={onLogout} onDeleteAccount={onDeleteAccount} />
+      <UserMenu user={user} onLogout={onLogout} onDeleteAccount={onDeleteAccount} />
       <a href="#fora">Fora do menu</a>
     </>,
   );
@@ -17,6 +17,21 @@ function renderMenu() {
 }
 
 describe("UserMenu", () => {
+  it("offers account deletion to a regular user", async () => {
+    const user = userEvent.setup();
+    const { button } = renderMenu();
+    await user.click(button);
+    expect(screen.getByRole("button", { name: "Excluir minha conta" })).toBeVisible();
+  });
+
+  it("hides account deletion for the shared demo user, whatever the email casing", async () => {
+    const user = userEvent.setup();
+    const { button } = renderMenu({ ...demoUser, email: "Demo@FinanceController.app" });
+    await user.click(button);
+    expect(screen.getByRole("button", { name: "Sair" })).toBeVisible();
+    expect(screen.queryByRole("button", { name: "Excluir minha conta" })).toBeNull();
+  });
+
   it("UserMenu does not close when the pointer lands on an item", async () => {
     const user = userEvent.setup();
     const { onLogout, button } = renderMenu();

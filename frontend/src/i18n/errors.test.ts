@@ -28,6 +28,8 @@ describe("errorMessage", () => {
       "INVALID_YEAR",
       "INVALID_RANGE",
       "INVALID_VALUE",
+      "INVALID_DATE",
+      "DEMO_READ_ONLY",
     ]);
     for (const code of STABLE_ERROR_CODES) {
       const message = errorMessage(code);

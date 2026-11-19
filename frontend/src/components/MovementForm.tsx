@@ -11,6 +11,10 @@ import { Segmented } from "./Segmented";
 import { SelectField } from "./SelectField";
 
 export const MAX_DESCRIPTION = 100;
+/** Same range as the API (PeriodValidation.MinYear..MaxYear). */
+const MIN_YEAR = 2000;
+const MAX_YEAR = 2100;
+const DATE_RANGE_MESSAGE = `Informe uma data entre ${MIN_YEAR} e ${MAX_YEAR}.`;
 
 export interface SavedMovement {
   type: MovementType;
@@ -52,6 +56,10 @@ function validate(values: { description: string; movimentDate: string; categoryI
   if (!description) errors.description = "Informe uma descrição.";
   else if (description.length > MAX_DESCRIPTION) errors.description = `Use no máximo ${MAX_DESCRIPTION} caracteres.`;
   if (!/^\d{4}-\d{2}-\d{2}$/.test(values.movimentDate)) errors.movimentDate = "Informe a data.";
+  else {
+    const year = Number(values.movimentDate.slice(0, 4));
+    if (year < MIN_YEAR || year > MAX_YEAR) errors.movimentDate = DATE_RANGE_MESSAGE;
+  }
   if (!values.categoryId) errors.categoryId = "Escolha uma categoria.";
   const value = amountError(values.value);
   if (value) errors.value = value;
@@ -72,7 +80,7 @@ function serverFieldErrors(error: ApiError): Errors {
     } else if (property === "value") {
       errors.value = `O valor precisa ser maior que zero. ${AMOUNT_FORMAT}`;
     } else if (property === "movimentdate") {
-      errors.movimentDate = "Informe uma data válida.";
+      errors.movimentDate = field.errorCode === "INVALID_DATE" ? DATE_RANGE_MESSAGE : "Informe uma data válida.";
     }
   }
   return errors;
@@ -187,6 +195,8 @@ export function MovementForm({ categories, movement, defaultDate, onSaved, onCan
           ref={refs.movimentDate}
           label="Data"
           type="date"
+          min={`${MIN_YEAR}-01-01`}
+          max={`${MAX_YEAR}-12-31`}
           value={movimentDate}
           onChange={(e) => setMovimentDate(e.target.value)}
           error={errors.movimentDate}

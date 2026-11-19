@@ -40,6 +40,11 @@ describe("format", () => {
     expect(parseAmount("12.5")).toBe(12.5);
     expect(parseAmount("1.234")).toBe(1234);
 
+    expect(parseAmount("1.000")).toBe(1000);
+    expect(parseAmount("999.999")).toBe(999999);
+    expect(parseAmount("0.001")).toBeNull();
+    expect(parseAmount("01.000")).toBeNull();
+    expect(parseAmount("0.000")).toBeNull();
     expect(parseAmount("")).toBeNull();
     expect(parseAmount("0")).toBeNull();
     expect(parseAmount("0,00")).toBeNull();
