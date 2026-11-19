@@ -196,6 +196,18 @@ var app = builder.Build();
 // Must be first so scheme/IP are corrected before HTTPS redirection and everything else.
 app.UseForwardedHeaders();
 
+// Baseline security headers on every response. The CSP is limited to frame-ancestors on purpose: a full
+// policy could break the SPA (inline styles, fonts, chart libraries).
+app.Use(async (ctx, next) =>
+{
+    var headers = ctx.Response.Headers;
+    headers["X-Content-Type-Options"] = "nosniff";
+    headers["X-Frame-Options"] = "DENY";
+    headers["Referrer-Policy"] = "strict-origin-when-cross-origin";
+    headers["Content-Security-Policy"] = "frame-ancestors 'none'";
+    await next();
+});
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -211,7 +223,17 @@ app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 // React build (copied to wwwroot at deploy time).
 app.UseDefaultFiles();
-app.UseStaticFiles();
+app.UseStaticFiles(new StaticFileOptions
+{
+    OnPrepareResponse = ctx =>
+    {
+        var headers = ctx.Context.Response.Headers;
+        if (string.Equals(ctx.File.Name, "index.html", StringComparison.OrdinalIgnoreCase))
+            headers.CacheControl = "no-cache"; // always revalidate so a new release is picked up
+        else if (ctx.Context.Request.Path.StartsWithSegments("/assets", StringComparison.OrdinalIgnoreCase))
+            headers.CacheControl = "public, max-age=31536000, immutable"; // Vite fingerprints these file names
+    }
+});
 
 app.UseMiddleware<RequireJsonMiddleware>();
 
@@ -231,13 +253,16 @@ app.MapFallback("{*path}", async (HttpContext ctx, IWebHostEnvironment env) =>
     var index = env.WebRootFileProvider.GetFileInfo("index.html");
     var isApiOrHealth = path.StartsWithSegments("/api", StringComparison.OrdinalIgnoreCase)
         || path.StartsWithSegments("/health", StringComparison.OrdinalIgnoreCase);
-    if (isApiOrHealth || !index.Exists || !HttpMethods.IsGet(ctx.Request.Method))
+    // A path with a file extension is a missing file (e.g. /assets/old-hash.js), not a client-side route.
+    var looksLikeFile = Path.HasExtension(path.Value);
+    if (isApiOrHealth || looksLikeFile || !index.Exists || !HttpMethods.IsGet(ctx.Request.Method))
     {
         ctx.Response.StatusCode = StatusCodes.Status404NotFound;
         await ctx.Response.WriteAsJsonAsync(new { code = "NOT_FOUND", message = "Resource not found" });
         return;
     }
     ctx.Response.ContentType = "text/html; charset=utf-8";
+    ctx.Response.Headers.CacheControl = "no-cache";
     await ctx.Response.SendFileAsync(index);
 });
 

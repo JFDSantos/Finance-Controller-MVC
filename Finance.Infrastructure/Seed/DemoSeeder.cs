@@ -74,19 +74,19 @@ namespace Finance.Infrastructure.Seed
                     if (Past(d)) context.Expenses.Add(new Expense { UserId = user.Id, CategoryId = Cat(cat), Description = desc, Value = v, MovimentDate = d, IsRecurring = rec });
                 }
 
-                Inc(5, "Monthly salary", 5200m, "Salário", true);
-                if (back != 1) Inc(18, "Freelance project", 850m + back * 150m, "Outros");
-                Exp(6, "Rent", 1800m, "Moradia", true);
-                Exp(8, "Internet and phone", 129.90m, "Moradia", true);
-                Exp(3, "Groceries", 342.50m - back * 20m, "Alimentação");
-                Exp(12, "Restaurant", 96.80m + back * 12m, "Alimentação");
-                Exp(20, "Groceries", 287.35m, "Alimentação");
-                Exp(10, "Fuel", 210m, "Transporte");
-                Exp(15, "Ride apps", 64.20m + back * 5m, "Transporte");
-                Exp(14, "Pharmacy", 78.45m, "Saúde");
-                Exp(22, "Cinema and streaming", 59.90m, "Lazer");
-                Exp(25, "Weekend trip", 240m - back * 30m, "Lazer");
-                Exp(27, "Miscellaneous", 45m, "Outros");
+                Inc(5, "Salário mensal", 5200m, "Salário", true);
+                if (back != 1) Inc(18, "Projeto freelance", 850m + back * 150m, "Outros");
+                Exp(6, "Aluguel", 1800m, "Moradia", true);
+                Exp(8, "Internet e telefone", 129.90m, "Moradia", true);
+                Exp(3, "Mercado", 342.50m - back * 20m, "Alimentação");
+                Exp(12, "Restaurante", 96.80m + back * 12m, "Alimentação");
+                Exp(20, "Mercado", 287.35m, "Alimentação");
+                Exp(10, "Combustível", 210m, "Transporte");
+                Exp(15, "Aplicativos de transporte", 64.20m + back * 5m, "Transporte");
+                Exp(14, "Farmácia", 78.45m, "Saúde");
+                Exp(22, "Cinema e streaming", 59.90m, "Lazer");
+                Exp(25, "Viagem de fim de semana", 240m - back * 30m, "Lazer");
+                Exp(27, "Gastos diversos", 45m, "Outros");
             }
             await context.SaveChangesAsync();
         }
