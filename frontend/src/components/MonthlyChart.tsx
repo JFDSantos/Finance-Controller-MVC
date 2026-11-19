@@ -4,7 +4,7 @@ import type { MonthPoint } from "../api/types";
 import { niceTicks, subtractMoney, toMonthlySeries } from "../lib/chartData";
 import { formatBRL, monthLabel } from "../lib/format";
 import type { YearMonth } from "../lib/monthParam";
-import { compactBRL, signedBRL } from "../lib/money";
+import { compactBRL, plainAmount, signedAmount, signedBRL } from "../lib/money";
 import { ChartPanel } from "./ChartPanel";
 
 interface MonthlyChartProps {
@@ -112,25 +112,25 @@ export function MonthlyChart({ points, selected }: MonthlyChartProps) {
                 <tr>
                   <th scope="col">Mês</th>
                   <th scope="col" className="chart-table__num">
-                    Receitas
+                    Receitas (R$)
                   </th>
                   <th scope="col" className="chart-table__num">
-                    Despesas
+                    Despesas (R$)
                   </th>
                   <th scope="col" className="chart-table__num">
-                    Saldo
+                    Saldo (R$)
                   </th>
                 </tr>
               </thead>
               <tbody>
                 {series.map((p, i) => (
                   <tr key={p.label} className={i === selectedIndex ? "chart-table__row--selected" : undefined}>
-                    <td>
+                    <td className="chart-table__month">
                       <abbr title={monthLabel(points[i].year, points[i].month)}>{p.label}</abbr>
                     </td>
-                    <td className="chart-table__num">{formatBRL(p.income)}</td>
-                    <td className="chart-table__num">{formatBRL(p.expense)}</td>
-                    <td className="chart-table__num">{signedBRL(subtractMoney(p.income, p.expense))}</td>
+                    <td className="chart-table__num">{plainAmount(p.income)}</td>
+                    <td className="chart-table__num">{plainAmount(p.expense)}</td>
+                    <td className="chart-table__num">{signedAmount(subtractMoney(p.income, p.expense))}</td>
                   </tr>
                 ))}
               </tbody>

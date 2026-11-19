@@ -45,3 +45,11 @@ describe("SummaryCards", () => {
     expect(screen.getByRole("group", { name: /Despesas/ })).toHaveTextContent("Sem receitas no mês");
   });
 });
+
+describe("SummaryCards zero amounts", () => {
+  it("prints no sign on a zero amount", () => {
+    render(<SummaryCards summary={summary(0, 0)} period="janeiro de 2028" />);
+    expect(plain(screen.getByRole("group", { name: /Receitas/ }).textContent)).not.toContain("+");
+    expect(plain(screen.getByRole("group", { name: /Despesas/ }).textContent)).not.toContain("−");
+  });
+});

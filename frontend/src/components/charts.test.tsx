@@ -75,11 +75,18 @@ describe("chart table views", () => {
     expect(tableRows).toHaveLength(12);
     const last = within(tableRows[11]).getAllByRole("cell").map((c) => plain(c.textContent));
     expect(last[0]).toBe("nov/26");
-    expect(last[1]).toBe("R$ 5.000,50");
-    expect(last[2]).toBe("R$ 2.350,25");
-    expect(last[3]).toBe("+R$ 2.650,25");
+    // Same figures as the readout; the column headers carry the currency.
+    expect(within(table).getAllByRole("columnheader").map((c) => c.textContent)).toEqual([
+      "Mês",
+      "Receitas (R$)",
+      "Despesas (R$)",
+      "Saldo (R$)",
+    ]);
+    expect(last[1]).toBe("5.000,50");
+    expect(last[2]).toBe("2.350,25");
+    expect(last[3]).toBe("+2.650,25");
     const october = within(tableRows[10]).getAllByRole("cell").map((c) => plain(c.textContent));
-    expect(october.slice(0, 3)).toEqual(["out/26", "R$ 1.000,00", "R$ 500,00"]);
+    expect(october.slice(0, 3)).toEqual(["out/26", "1.000,00", "500,00"]);
   });
 
   it("shows a calm note when the category chart has no expenses", () => {

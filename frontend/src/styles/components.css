@@ -1670,6 +1670,7 @@ h2[tabindex="-1"]:focus {
 
 .dashboard__charts {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--space-5);
   margin-top: var(--space-5);
 }
@@ -1825,6 +1826,7 @@ h2[tabindex="-1"]:focus {
 /* ---------- Chart panels ---------- */
 .chart-panel {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   align-content: start;
   gap: var(--space-4);
   min-width: 0;
@@ -1946,6 +1948,11 @@ h2[tabindex="-1"]:focus {
   overflow-wrap: normal;
 }
 
+.chart-table th.chart-table__num {
+  white-space: normal;
+  vertical-align: bottom;
+}
+
 .chart-table__note {
   color: var(--color-ink-muted);
 }
@@ -1956,6 +1963,31 @@ h2[tabindex="-1"]:focus {
 
 .chart-table abbr {
   text-decoration: none;
+}
+
+.chart-table .chart-table__month {
+  white-space: nowrap;
+  overflow-wrap: normal;
+}
+
+@media (max-width: 29.99rem) {
+  .chart-table {
+    font-size: var(--text-xs);
+  }
+
+  .chart-table th,
+  .chart-table td {
+    padding-right: var(--space-1);
+    padding-left: var(--space-1);
+  }
+
+  .monthly-readout__list {
+    column-gap: var(--space-4);
+  }
+
+  .monthly-readout__item dd {
+    font-size: var(--text-base);
+  }
 }
 
 /* Expenses by category: ranked bars, name and figures above each bar */

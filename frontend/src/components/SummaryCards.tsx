@@ -38,17 +38,17 @@ export function SummaryCards({ summary, period }: SummaryCardsProps) {
         }
         note={
           tone === "positive" ? (
-            <>
+            <span>
               <strong>Positivo</strong>: as receitas cobriram as despesas.
-            </>
+            </span>
           ) : tone === "negative" ? (
-            <>
+            <span>
               <strong>Negativo</strong>: as despesas passaram as receitas.
-            </>
+            </span>
           ) : (
-            <>
+            <span>
               <strong>Zerado</strong>: receitas e despesas empataram.
-            </>
+            </span>
           )
         }
       />
@@ -58,7 +58,7 @@ export function SummaryCards({ summary, period }: SummaryCardsProps) {
         glyph={<TileGlyph figure="half" />}
         value={
           <>
-            <span aria-hidden="true">+</span>
+            {toCents(summary.income) > 0 ? <span aria-hidden="true">+</span> : null}
             {formatBRL(summary.income)}
           </>
         }
@@ -70,7 +70,7 @@ export function SummaryCards({ summary, period }: SummaryCardsProps) {
         glyph={<TileGlyph figure="half" rotation={180} />}
         value={
           <>
-            <span aria-hidden="true">−</span>
+            {toCents(summary.expense) > 0 ? <span aria-hidden="true">−</span> : null}
             {formatBRL(summary.expense)}
           </>
         }
