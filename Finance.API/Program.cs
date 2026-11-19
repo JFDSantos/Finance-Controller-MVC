@@ -121,7 +121,6 @@ var services = builder.Services;
 services.AddScoped<IBaseService<Expense,ExpenseCreateDto,ExpenseSelectDto>, ExpenseService>(); 
 services.AddScoped<IBaseService<Income,IncomeCreateDto,IncomeSelectDto>, IncomeService>();
 services.AddScoped<IBaseService<Category,CategoryCreateDto,CategorySelectDto>, CategoryService>();
-services.AddScoped<IBaseService<User,UserCreateDto,UserSelectDto>, UserService>();
 
 // Specific Services (for backward compatibility with Controllers)
 services.AddScoped<IExpenseService, ExpenseService>();

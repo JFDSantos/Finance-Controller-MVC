@@ -53,27 +53,15 @@ public class BaseServiceTests
     }
 
     [Fact]
-    public async Task UserService_UpdateAsync_PreservesRoleAndId_AndRehashesPassword()
+    public void UserService_ExposesNoGenericCrudPath()
     {
-        var existing = new User
-        {
-            Id = 7, UserName = "old", Email = "old@example.com",
-            Password = BCrypt.Net.BCrypt.HashPassword("OldPass#1"), Role = EUserRole.admin
-        };
-        var repo = new Mock<IBaseRepository<User, int>>();
-        repo.Setup(r => r.GetByIdAsync(7)).ReturnsAsync(existing);
-        var userRepo = new Mock<IUserRepository>();
-        var service = new UserService(repo.Object, userRepo.Object, Mock.Of<IUnitOfWork>(), Mapper(),
-            new InlineValidator<UserCreateDto>(), Mock.Of<ICategoryRepository>());
-
-        await service.UpdateAsync(7, new UserCreateDto { UserName = "new", Email = "new@example.com", Password = "NewPass#1" });
-
-        Assert.Equal(7, existing.Id);
-        Assert.Equal(EUserRole.admin, existing.Role);
-        Assert.Equal("new", existing.UserName);
-        Assert.Equal("new@example.com", existing.Email);
-        Assert.NotEqual("NewPass#1", existing.Password);
-        Assert.True(BCrypt.Net.BCrypt.Verify("NewPass#1", existing.Password));
+        // Registration and account deletion are the only write paths; the generic AddAsync (no password
+        // hashing) and UpdateAsync must not be reachable through the service or its interface.
+        Assert.False(typeof(IBaseService<User, UserCreateDto, UserSelectDto>).IsAssignableFrom(typeof(UserService)));
+        Assert.False(typeof(IBaseService<User, UserCreateDto, UserSelectDto>).IsAssignableFrom(typeof(IUserService)));
+        var names = typeof(UserService).GetMethods().Select(m => m.Name).ToHashSet();
+        Assert.DoesNotContain("AddAsync", names);
+        Assert.DoesNotContain("UpdateAsync", names);
     }
 
     [Fact]

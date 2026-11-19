@@ -11,8 +11,16 @@ using System.Text;
 
 namespace Finance.Application.Services
 {
-    public class UserService : BaseService<User, UserCreateDto, UserSelectDto>, IUserService
+    /// <summary>
+    /// Account operations only: registration (validated, hashed, default categories), login check, lookup and
+    /// deletion. Deliberately not a generic CRUD service, so no path can create or change a user without hashing.
+    /// </summary>
+    public class UserService : IUserService
     {
+        private readonly IBaseRepository<User, int> _repository;
+        private readonly IUnitOfWork _uow;
+        private readonly IMapper _mapper;
+        private readonly IValidator<UserCreateDto> _validator;
         private readonly IUserRepository _userRepository;
         private readonly ICategoryRepository _categoryRepository;
 
@@ -25,8 +33,12 @@ namespace Finance.Application.Services
             IUnitOfWork uow,
             IMapper mapper,
             IValidator<UserCreateDto> validator,
-            ICategoryRepository categoryRepository) : base(repository, uow, mapper, validator)
+            ICategoryRepository categoryRepository)
         {
+            _repository = repository;
+            _uow = uow;
+            _mapper = mapper;
+            _validator = validator;
             _userRepository = userRepository;
             _categoryRepository = categoryRepository;
         }
@@ -85,37 +97,10 @@ namespace Finance.Application.Services
             await _repository.DeleteAsync(user.Id);
             await _uow.CommitAsync();
         }
-        public override async Task<UserSelectDto> AddAsync(UserCreateDto dto)
+        public async Task<UserSelectDto> GetByIdAsync(int id)
         {
-            var validationResult = await _validator.ValidateAsync(dto);
-            if (!validationResult.IsValid)
-                throw new ValidationException(validationResult.Errors);
-
-            var user = _mapper.Map<User>(dto);
-            user.Email = NormalizeEmail(user.Email);
-            user.Role = EUserRole.user;
-
-            user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
-
-            await _userRepository.AddAsync(user);
-            await _uow.CommitAsync();
-
+            var user = await _repository.GetByIdAsync(id) ?? throw new KeyNotFoundException("User not found");
             return _mapper.Map<UserSelectDto>(user);
-        }
-
-        public override async Task<UserSelectDto> UpdateAsync(int id, UserCreateDto dto)
-        {
-            var existing = await _repository.GetByIdAsync(id) ?? throw new KeyNotFoundException("User not found");
-
-            // Map onto the tracked entity: Id and Role (not in the DTO) are preserved.
-            _mapper.Map(dto, existing);
-            existing.Email = NormalizeEmail(existing.Email);
-            existing.Password = BCrypt.Net.BCrypt.HashPassword(dto.Password);
-
-            await _repository.UpdateAsync(id, existing);
-            await _uow.CommitAsync();
-
-            return _mapper.Map<UserSelectDto>(existing);
         }
 
         public async Task<UserSelectDto?> ValidLoginUserAsync(string email, string password)

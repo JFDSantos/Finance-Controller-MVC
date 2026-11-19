@@ -2,7 +2,6 @@ using Finance.Infrastructure.Data;
 using Finance.Domain.Models;
 using Finance.Application.Interfaces;
 using Finance.Application.ViewModel;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace Finance.Infrastructure.Repositories
