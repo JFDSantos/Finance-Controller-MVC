@@ -15,6 +15,10 @@ public class ApiFactory : WebApplicationFactory<Program>
     public const string DefaultPassword = "Senha#12345";
 
     private readonly Dictionary<string, string?> _overrides;
+    // Empty per-instance web root so a built Finance.API/wwwroot (Vite output) never influences tests.
+    // A test that needs an index.html overrides it with WithWebHostBuilder(b => b.UseWebRoot(dir)).
+    private readonly string _webRoot = Directory.CreateDirectory(
+        Path.Combine(Path.GetTempPath(), "fc-webroot-" + Guid.NewGuid())).FullName;
 
     /// <param name="configOverrides">Extra/overriding configuration; a null value removes the key (e.g. ["Jwt__Key"] = null).</param>
     public ApiFactory() : this(null) { } // parameterless ctor required by xunit class fixtures
@@ -38,6 +42,10 @@ public class ApiFactory : WebApplicationFactory<Program>
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         builder.UseEnvironment("Development");
+        builder.UseWebRoot(_webRoot);
+        // In Development the static-web-assets manifest re-maps Finance.API/wwwroot into the web root file
+        // provider, which would leak a built frontend into tests. Point it at a manifest that does not exist.
+        builder.UseSetting(WebHostDefaults.StaticWebAssetsKey, Path.Combine(_webRoot, "no-manifest.json"));
         builder.ConfigureAppConfiguration((_, config) =>
         {
             // Normalize "A__B" to "A:B" so overrides win over appsettings.
@@ -70,5 +78,14 @@ public class ApiFactory : WebApplicationFactory<Program>
         var db = scope.ServiceProvider.GetRequiredService<FinanceContext>();
         await db.Database.EnsureDeletedAsync();
         await db.Database.MigrateAsync();
+    }
+
+    protected override void Dispose(bool disposing)
+    {
+        base.Dispose(disposing);
+        if (disposing)
+        {
+            try { Directory.Delete(_webRoot, true); } catch (IOException) { }
+        }
     }
 }
