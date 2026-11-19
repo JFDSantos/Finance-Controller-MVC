@@ -6,14 +6,14 @@ Documentação prática para desenvolvedores trabalhando no Finance-Controller-M
 
 ## 📚 Documentos
 
-### Setup Local (Planejado)
-**Status**: 🔄 Planejado
+### Setup Local
+**Status**: ✅ No [README principal](../../README.md#-rodando-localmente)
 
 Como configurar ambiente local:
-- Pré-requisitos (.NET 6+, SQL Server/PostgreSQL)
+- Pré-requisitos (.NET 8 SDK, Node 22, PostgreSQL)
 - Clonar repositório
 - Restaurar dependências
-- Configurar connection strings
+- Configurar `Jwt__Key` e `ConnectionStrings__DefaultConnection` (variáveis de ambiente ou user-secrets, nunca `appsettings`)
 - Rodar migrations
 - Verificar se está funcionando
 
@@ -92,14 +92,14 @@ Antes de fazer commit de novo código:
 
 ## 🤔 Troubleshooting
 
-### Problema: "Connection string não encontrada"
-→ Veja: [Setup Local](./Setup-Local.md) — Seção appsettings
+### Problema: "Connection string não encontrada" ou "Jwt:Key must be set"
+→ Veja: [README — Rodando localmente](../../README.md#-rodando-localmente) (variáveis de ambiente)
 
 ### Problema: "Migration falhou"
-→ Veja: [Setup Local](./Setup-Local.md) — Seção Migrations
+→ Rode `dotnet ef database update --project Finance.Infrastructure --startup-project Finance.API` com `ConnectionStrings__DefaultConnection` definida
 
 ### Problema: "Não sei como estruturar novo feature"
-→ Veja: [Code Standards](./Code-Standards.md)  
+→ Veja: Code Standards (acima)  
 → Veja: [SOLID Principles](../architecture/SOLID-Principles.md)
 
 ---

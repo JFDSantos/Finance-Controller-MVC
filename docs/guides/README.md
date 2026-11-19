@@ -43,14 +43,11 @@ Segurança checklist:
 
 ## ⚡ Quick Snippets
 
-### Copiar Connection String
-```json
-// appsettings.Development.json
-{
-  "ConnectionStrings": {
-    "DefaultConnection": "Server=(localdb)\\mssqllocaldb;Database=FinanceDb;Trusted_Connection=true;"
-  }
-}
+### Connection string e chave JWT (local)
+```bash
+# Variáveis de ambiente; não grave segredos em appsettings
+export ConnectionStrings__DefaultConnection="Host=localhost;Database=finance;Username=postgres;Password=postgres"
+export Jwt__Key="$(openssl rand -base64 48)"
 ```
 
 ### Setup DI Container
@@ -132,10 +129,10 @@ var service = new CategoryService(mockRepo.Object, uow, mapper, validator);
 | Tópico | Link |
 |--------|------|
 | SOLID Principles | [docs/architecture/SOLID-Principles.md](../architecture/SOLID-Principles.md) |
-| Setup Local | [docs/development/Setup-Local.md](../development/Setup-Local.md) (em breve) |
-| Unit Testing | [docs/testing/Unit-Testing.md](../testing/Unit-Testing.md) (em breve) |
-| GitHub Actions | [docs/devops/CI-CD-Pipeline.md](../devops/CI-CD-Pipeline.md) (em breve) |
-| Docker | [docs/devops/Docker-Setup.md](../devops/Docker-Setup.md) (em breve) |
+| Setup Local | [README — Rodando localmente](../../README.md#-rodando-localmente) |
+| Testes | [docs/testing/README.md](../testing/README.md) |
+| GitHub Actions e Docker | [docs/devops/DEPLOY.md](../devops/DEPLOY.md) |
+| Diagramas | [docs/architecture/README.md](../architecture/README.md#diagramas-do-sistema) |
 
 ---
 
@@ -144,8 +141,8 @@ var service = new CategoryService(mockRepo.Object, uow, mapper, validator);
 ### Procure por:
 1. **SOLID questions**: [SOLID Principles](../architecture/SOLID-Principles.md)
 2. **Setup issues**: Veja Security Checklist (em breve)
-3. **Performance issues**: [Performance Tips](./Performance-Tips.md) (em breve)
-4. **Bugs obscuros**: [Common Issues](./Common-Issues.md) (em breve)
+3. **Performance issues**: Performance Tips (em breve)
+4. **Bugs obscuros**: Common Issues (em breve)
 
 ---
 

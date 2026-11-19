@@ -6,63 +6,24 @@ Documentação sobre pipeline de deploy, containerização e infraestrutura.
 
 ## 📚 Documentos
 
-### CI/CD Pipeline (Planejado)
-**Status**: 🔄 Planejado
+### [DEPLOY.md](DEPLOY.md)
+**Status**: ✅ Completo (19/11/2026)
 
-Configurar GitHub Actions:
-- Trigger: push em branches
-- Build .NET
-- Rodar testes
-- Verificar cobertura
-- Publicar artefatos
-- Notificações
+Passo a passo de produção: Neon (Postgres), Render (web service Docker), segredos e variáveis no GitHub e no Render, primeiro deploy, verificação, rotação de segredos e limitações dos planos gratuitos.
 
-### Docker Setup (Planejado)
-**Status**: 🔄 Planejado
+### [Diagrama do fluxo de deploy](../architecture/README.md#fluxo-de-deploy)
+**Status**: ✅ Completo (19/11/2026)
 
-Containerizar aplicação:
-- Dockerfile para API
-- Docker Compose para stack (API + DB)
-- Multi-stage builds
-- Tamanho otimizado de imagem
-- Push para registry
-
-### Deployment Guide (Planejado)
-**Status**: 🔄 Planejado
-
-Deploy em produção:
-- Ambientes: dev, staging, prod
-- Secrets management
-- Database migrations
-- Health checks
-- Rollback strategy
-- Monitoring
+![Fluxo de deploy](../architecture/diagrams/deploy-flow.svg)
 
 ---
 
-## 🏗️ Infraestrutura Alvo
+## 🏗️ Infraestrutura atual
 
-```
-┌─────────────────────────────────────┐
-│       GitHub (Repository)           │
-│  ↓ Trigger GitHub Actions           │
-├─────────────────────────────────────┤
-│    GitHub Actions (CI Pipeline)     │
-│  • Build & Test                     │
-│  • Code Coverage Check              │
-│  • Build Docker Image               │
-│  ↓                                   │
-├─────────────────────────────────────┤
-│    Docker Registry (ghcr.io)        │
-│  ↓ Pull Image                       │
-├─────────────────────────────────────┤
-│    Produção (Azure/Heroku/AWS)      │
-│  • API Container                    │
-│  • Database (PostgreSQL)            │
-│  • Load Balancer                    │
-│  • Monitoring (Application Insights)│
-└─────────────────────────────────────┘
-```
+- **CI** (`.github/workflows/ci.yml`, todo push e PR): `backend` (build e `dotnet test` com serviço `postgres:16`), `frontend` (`npm ci`, lint, testes, build) e `docker` (build da imagem, sem push).
+- **Deploy** (`.github/workflows/deploy.yml`): roda quando o CI de um push na `main` deste repositório termina verde, ou manualmente a partir da `main`. Gera o bundle de migrations do EF Core, aplica no Neon pela conexão direta, chama o Deploy Hook do Render e espera `/health` responder 200.
+- **Imagem** (`Dockerfile`): build do React, publish da API com o build em `wwwroot`, runtime `aspnet:8.0` sem root na porta 8080.
+- **Hospedagem**: Render (web service free, `render.yaml`, auto deploy desligado) e Neon (Postgres free; conexão pooled para o app, direta para migrations).
 
 ---
 
@@ -70,13 +31,12 @@ Deploy em produção:
 
 | Componente | Status | Sprint |
 |-----------|--------|--------|
-| GitHub Actions | 🔄 Planejado | 9 |
-| Docker API | 🔄 Planejado | 9 |
-| Docker Compose | 🔄 Planejado | 9 |
-| Deploy Staging | 🔄 Planejado | 9 |
-| Deploy Produção | 🔄 Planejado | 10 |
-| Monitoring | 🔄 Planejado | 10 |
-| Alertas | 🔄 Planejado | 10 |
+| GitHub Actions (CI) | ✅ Pronto | 9 |
+| Docker API + frontend | ✅ Pronto | 9 |
+| Workflow de deploy | ✅ Pronto | 9 |
+| Primeiro deploy em produção | ⏳ Pendente (contas Render/Neon e segredos) | 9 |
+| Docker Compose local | 🔄 Não planejado por ora | - |
+| Monitoring / Alertas | 🔄 Planejado | 10 |
 
 ---
 
@@ -84,27 +44,16 @@ Deploy em produção:
 
 ### Local Docker
 ```bash
-# Build imagem
-docker build -t finance-api:latest .
-
-# Rodar container
-docker run -p 5001:5001 finance-api:latest
-
-# Docker Compose
-docker-compose up
+docker build -t finance-controller .
+docker run -p 8080:8080 \
+  -e Jwt__Key="$(openssl rand -base64 48)" \
+  -e ConnectionStrings__DefaultConnection="Host=host.docker.internal;Database=finance;Username=postgres;Password=postgres" \
+  finance-controller
 ```
 
-### GitHub Actions
-```yaml
-# .github/workflows/ci.yml (futuro)
-on: [push]
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-dotnet@v1
-      - run: dotnet test
+### Validar os workflows
+```bash
+actionlint .github/workflows/*.yml
 ```
 
 ---
@@ -122,7 +71,7 @@ jobs:
 → Considere matrix builds
 
 ### Problema: "Prod diferente de local"
-→ Use Docker Compose para igualar amb.
+→ Rode a imagem Docker localmente (acima)
 → Environment variables para config
 → Versionamento de imagens
 
@@ -140,20 +89,18 @@ jobs:
 ## 🎓 Roadmap de DevOps
 
 ### Sprint 9: CI/CD & Docker
-- [ ] Criar Dockerfile
-- [ ] Docker Compose com DB
-- [ ] GitHub Actions pipeline
-- [ ] Deploy staging automático
-- [ ] Testes em CI
+- [x] Criar Dockerfile
+- [x] GitHub Actions pipeline
+- [x] Testes em CI
+- [x] Workflow de deploy (migrations, Deploy Hook, health check)
+- [ ] Primeiro deploy (depende da configuração das contas)
 
 ### Sprint 10: Produção
-- [ ] Deploy produção
-- [ ] SSL/HTTPS
+- [x] SSL/HTTPS (terminado no proxy do Render; HSTS no app)
 - [ ] Monitoring & Alertas
 - [ ] Logs estruturados
 - [ ] Backup strategy
 
 ---
 
-**Próximos documentos**: CI/CD Pipeline, Docker Setup, Deployment Guide  
-**Última Atualização**: 26 de Abril de 2026
+**Última Atualização**: 19 de Novembro de 2026

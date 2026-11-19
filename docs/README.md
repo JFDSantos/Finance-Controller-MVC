@@ -11,53 +11,43 @@ Este diretório contém toda a documentação de processos, arquitetura, testes 
 ```
 docs/
 ├── README.md (você está aqui)
-├── architecture/              ← Padrões e design arquiteturais
+├── Roadmap.md                ← Plano em sprints e progresso
+├── architecture/             ← Padrões, design e diagramas
+│   ├── README.md             ← Camadas e explicação dos diagramas
 │   ├── SOLID-Principles.md
-│   ├── Layer-Architecture.md (futuro)
-│   └── Design-Patterns.md (futuro)
-├── development/              ← Guias de desenvolvimento
-│   ├── Setup-Local.md
-│   ├── Git-Workflow.md
-│   └── Code-Standards.md
-├── testing/                  ← Estratégias e guias de testes
-│   ├── Unit-Testing.md
-│   ├── Integration-Testing.md
-│   └── Test-Coverage.md (futuro)
-├── devops/                   ← CI/CD, deploy, infraestrutura
-│   ├── CI-CD-Pipeline.md
-│   ├── Docker-Setup.md
-│   └── Deployment-Guide.md (futuro)
-└── guides/                   ← Guias rápidos e troubleshooting
-    ├── Common-Issues.md
-    ├── Performance-Tips.md
-    └── Security-Checklist.md
+│   └── diagrams/             ← architecture, data-model, deploy-flow (.html e .svg)
+├── development/README.md     ← Guias de desenvolvimento
+├── testing/README.md         ← Estratégia e execução de testes
+├── devops/
+│   ├── README.md             ← Visão de CI/CD e infraestrutura
+│   └── DEPLOY.md             ← Passo a passo de deploy (Render + Neon + GitHub Actions)
+└── guides/README.md          ← Guias rápidos e troubleshooting
 ```
+
+Documentos planejados (ainda não escritos): Git Workflow, Code Standards, Common Issues, Performance Tips, Security Checklist.
 
 ---
 
 ## 🎯 Quick Navigation
 
 ### 🏗️ **Arquitetura & Design**
+- [Arquitetura e diagramas](architecture/README.md) — Camadas, modelo de dados e fluxo de deploy
 - [SOLID Principles](architecture/SOLID-Principles.md) — Princípios fundamentais (SRP, OCP, LSP, ISP, DIP)
 - [Roadmap](Roadmap.md) — Plano geral do projeto em fases
 
 ### 💻 **Desenvolvimento Local**
-- [Setup Local](development/Setup-Local.md) — Como configurar ambiente local
-- [Git Workflow](development/Git-Workflow.md) — Processo de trabalho com Git
-- [Code Standards](development/Code-Standards.md) — Padrões de código do projeto
+- [Rodando localmente](../README.md#-rodando-localmente) — Pré-requisitos, variáveis de ambiente, migrations, API e frontend
+- [Development](development/README.md) — Guias e checklists
 
 ### 🧪 **Testes**
-- [Unit Testing](testing/Unit-Testing.md) — Como escrever testes unitários
-- [Integration Testing](testing/Integration-Testing.md) — Testes de integração
+- [Testing](testing/README.md) — Testes unitários, de integração (Postgres real) e do frontend
 
 ### 🚀 **DevOps & Deploy**
-- [CI/CD Pipeline](devops/CI-CD-Pipeline.md) — Configuração de pipeline (GitHub Actions)
-- [Docker Setup](devops/Docker-Setup.md) — Containerização da aplicação
+- [DEPLOY.md](devops/DEPLOY.md) — Render, Neon, segredos e primeiro deploy
+- [DevOps](devops/README.md) — CI/CD e infraestrutura
 
 ### 📋 **Guias Rápidos**
-- [Common Issues](guides/Common-Issues.md) — Problemas comuns e soluções
-- [Performance Tips](guides/Performance-Tips.md) — Otimizações de performance
-- [Security Checklist](guides/Security-Checklist.md) — Checklist de segurança
+- [Guides](guides/README.md) — Snippets e troubleshooting
 
 ---
 
@@ -78,15 +68,25 @@ git checkout -b feature/sua-feature
 git push origin feature/sua-feature
 # Criar Pull Request
 
-# Veja: docs/development/Git-Workflow.md
+# Git Workflow: documento planejado
 ```
 
 ---
-2
+
 ## 📊 Status da Documentação
 
 | Seção | Status | Última Atualização |
 |-------|--------|------------------|
+| **SOLID Principles** | ✅ Completo | 26/04/2026 |
+| **Roadmap** | ✅ Atualizado | 19/11/2026 |
+| **Arquitetura e diagramas** | ✅ Completo | 19/11/2026 |
+| **Setup Local (README principal)** | ✅ Completo | 19/11/2026 |
+| **Testing** | ✅ Atualizado | 19/11/2026 |
+| **Deploy (DEPLOY.md)** | ✅ Completo | 19/11/2026 |
+| **Git Workflow / Code Standards** | 🔄 Planejado | - |
+| **Common Issues / Performance Tips / Security Checklist** | 🔄 Planejado | - |
+
+-------|--------|------------------|
 | **SOLID Principles** | ✅ Completo | 26/04/2026 |
 | **Roadmap** | ✅ Completo | 26/04/2026 |
 | **Setup Local** | 🔄 Em Progresso | - |
@@ -131,11 +131,11 @@ Se encontrar erros ou tiver sugestões, contribua!
 ## 📞 Suporte
 
 - **Dúvidas sobre SOLID?** Veja [architecture/SOLID-Principles.md](architecture/SOLID-Principles.md)
-- **Problema de setup?** Veja [guides/Common-Issues.md](guides/Common-Issues.md)
-- **Precisa escrever testes?** Veja [testing/Unit-Testing.md](testing/Unit-Testing.md)
+- **Problema de setup?** Veja [Rodando localmente](../README.md#-rodando-localmente) e [guides/README.md](guides/README.md)
+- **Precisa escrever testes?** Veja [testing/README.md](testing/README.md)
 
 ---
 
-**Última Atualização**: 26 de Abril de 2026  
+**Última Atualização**: 19 de Novembro de 2026  
 **Mantido por**: Jeferson Santos  
 **Versão**: 1.0

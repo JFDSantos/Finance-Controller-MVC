@@ -82,32 +82,38 @@ Bem-vindo ao seu desafio de aprendizado! Aqui está um roadmap gamificado, divid
 ---
 
 ## 🏃 Sprint 6-7: Testes Unitários & Integração
-**Status:** 🔄 PRÓXIMA FASE
-- [ ] Testes unitários para Services (mocks de repositories)
-- [ ] Testes de integração para Controllers
-- [ ] Testes para validadores (FluentValidation)
-- [ ] Cobertura de testes: meta 80%+
+**Status:** ✅ CONCLUÍDO (19/11/2026)
+- ✅ Testes unitários dos services com repositórios simulados (`Finance.Tests/Unit`: BaseService, CategoryService, regras de categoria, JWT, resumo)
+- ✅ Testes dos validadores FluentValidation (`ValidatorTests`)
+- ✅ Testes de integração da API com `WebApplicationFactory` contra um PostgreSQL real (`Finance.Tests/Integration`: autenticação, isolamento entre usuários, regras HTTP, nomes de categoria, resumo, schema, produção)
+- ✅ Testes rodam no CI a cada push, com um serviço `postgres:16`
+- ⏳ Cobertura de 80%+: não medida ainda (`dotnet test /p:CollectCoverage=true` está disponível pelo coverlet)
+
+**Desvio do plano:** em vez de Testcontainers, os testes usam um Postgres lido de `TEST_DB_CONNECTION` (serviço do GitHub Actions no CI, Postgres local em desenvolvimento).
 
 **Objetivo:** Solidificar SOLID com testes
 
 ---
 
 ## 🏃 Sprint 8: O Frontend do Herói
-**Status:** 🔄 PRÓXIMA FASE
-- [ ] Criar SPA responsiva (React, Angular, etc.)
-- [ ] Consumir API, criar dashboard, gráficos
-- [ ] Implementar dark mode e acessibilidade
+**Status:** ✅ CONCLUÍDO (19/11/2026), nível 2
+- ✅ SPA em React + TypeScript + Vite, servida pela própria API a partir de `wwwroot`
+- ✅ Cadastro, login, logout e exclusão de conta; CRUD de categorias, receitas e despesas
+- ✅ Lista de movimentações com filtros; dashboard com saldo, totais, gráfico por categoria e gráfico mês a mês (SVG feito à mão)
+- ✅ Responsiva (até 360px) e com atenção a acessibilidade (rótulos, anúncios de leitura, contraste)
+- ⏳ Dark mode: fora do escopo (nível 3)
 
 **Objetivo:** Interface moderna e responsiva
 
 ---
 
 ## 🚀 Sprint 9: O DevOps Desbravador
-**Status:** 🔄 FUTURA
-- [ ] Dockerizar API e banco
-- [ ] Configurar CI/CD (GitHub Actions)
-- [ ] Deploy em ambiente de teste (Vercel, Azure, etc.)
-- [ ] Gerenciar secrets e variáveis de ambiente
+**Status:** 🟡 PARCIAL (19/11/2026): pipeline pronto, deploy pendente da configuração das contas
+- ✅ Dockerfile multi-stage (build do frontend, publish da API, imagem runtime sem root)
+- ✅ CI no GitHub Actions: `backend` (com Postgres), `frontend` (lint, testes, build) e `docker` (build da imagem)
+- ✅ Workflow de deploy: guarda (só `main` deste repositório), migrations bundle no Neon pela conexão direta, Deploy Hook do Render e espera de `/health`
+- ✅ Segredos fora do repositório: environment `production` no GitHub e variáveis do serviço no Render ([DEPLOY.md](devops/DEPLOY.md))
+- ⏳ Primeiro deploy: depende de o dono criar as contas no Render e no Neon e cadastrar os segredos
 
 **Objetivo:** Deploy automatizado
 
@@ -128,7 +134,7 @@ Bem-vindo ao seu desafio de aprendizado! Aqui está um roadmap gamificado, divid
 **Status:** 🔄 FUTURA
 - [ ] Revisar segurança (OWASP)
 - [ ] Testes de carga e performance
-- [ ] Documentar tudo (README, Wiki, Swagger)
+- [ ] Documentar tudo (README, Wiki, Swagger): README, diagramas e guia de deploy já feitos em 19/11/2026; Swagger existe só em Development
 - [ ] Deploy em produção
 - [ ] Monitorar, corrigir bugs, coletar feedback
 
@@ -140,6 +146,16 @@ Bem-vindo ao seu desafio de aprendizado! Aqui está um roadmap gamificado, divid
 
 | Fase | Sprints | Status | Progresso |
 |------|---------|--------|-----------|
+| **SOLID Principles** | 1-5 | ✅ COMPLETE | 100% |
+| **Testes & Integração** | 6-7 | ✅ CONCLUÍDO | 100% (cobertura não medida) |
+| **Frontend** | 8 | ✅ CONCLUÍDO | 100% (nível 2) |
+| **DevOps** | 9 | 🟡 PARCIAL | Docker e CI/CD prontos; primeiro deploy pendente |
+| **Escalabilidade** | 10 | 🔄 FUTURA | 0% |
+| **Produção** | Final | 🔄 FUTURA | 0% |
+
+*Atualizado em 19/11/2026.*
+
+------|---------|--------|-----------|
 | **SOLID Principles** | 1-5 | ✅ COMPLETE | 100% |
 | **Testes & Integração** | 6-7 | 🔄 PRÓXIMA | 0% |
 | **Frontend & DevOps** | 8-10 | 🔄 FUTURA | 0% |
