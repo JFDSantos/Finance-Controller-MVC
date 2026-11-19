@@ -174,7 +174,8 @@ export function MonthlyChart({ points, selected }: MonthlyChartProps) {
               onKeyDown={onKeyDown}
               onFocus={() => setFocused(true)}
               onBlur={() => setFocused(false)}
-              onPointerLeave={() => setPointed(null)}
+              // A tap keeps its month in the readout; only a mouse leaving the plot returns to the chosen month.
+              onPointerLeave={(event) => event.pointerType === "mouse" && setPointed(null)}
             >
               <svg width={width} height={baseline + AXIS} aria-hidden="true" focusable="false">
                 {ticks.map((tick) => (

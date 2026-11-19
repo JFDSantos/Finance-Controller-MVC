@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-18T23:59:00+00:00",
+  "generatedAt": "2026-11-19T12:00:00+00:00",
   "title": "Design System: Finance Controller",
   "extensions": {
     "colorMeta": {
@@ -168,6 +168,36 @@
           "oklch(80% 0.02 266)",
           "oklch(95% 0.01 266)"
         ]
+      },
+      "chart-income": {
+        "role": "tertiary",
+        "displayName": "Income Mark",
+        "canonical": "#16916e"
+      },
+      "chart-expense": {
+        "role": "tertiary",
+        "displayName": "Expense Mark",
+        "canonical": "#b3261e"
+      },
+      "chart-expense-wash": {
+        "role": "tertiary",
+        "displayName": "Expense Mark Wash",
+        "canonical": "#f2cfcc"
+      },
+      "chart-category": {
+        "role": "primary",
+        "displayName": "Category Bars",
+        "canonical": "#1d44a6"
+      },
+      "chart-grid": {
+        "role": "neutral",
+        "displayName": "Chart Grid",
+        "canonical": "#e6ebf3"
+      },
+      "chart-baseline": {
+        "role": "neutral",
+        "displayName": "Chart Baseline",
+        "canonical": "#aab5cb"
       }
     },
     "typographyMeta": {
@@ -328,6 +358,30 @@
       "description": "White panel with a 7x1 tile strip, a title, one sentence and the primary action.",
       "html": "<div class=\"ds-empty\"><strong>Nenhuma movimentação em março de 2020</strong><p>Registre uma receita ou despesa para acompanhar como o mês está indo.</p></div>",
       "css": ".ds-empty{display:grid;justify-items:center;gap:12px;padding:48px 24px;background:#fff;border:1px solid #d3dbea;border-radius:10px;text-align:center;font:400 16px/1.5 'Public Sans Variable',system-ui,sans-serif;color:#172036}.ds-empty p{margin:0;color:#4a5573;max-width:44ch}"
+    },
+    {
+      "name": "Summary Tiles",
+      "kind": "custom",
+      "refersTo": "summary-panel",
+      "description": "The month's Saldo, Receitas and Despesas as square tiles in a cobalt-grout frame; sign, word and a rising or hanging half-disc carry direction, the Despesas tile adds a ten-tile spent meter.",
+      "html": "<div class=\"ds-sum\"><div class=\"ds-sum__t ds-sum__t--bal\"><span>Saldo</span><strong>+R$ 2.625,65</strong><small><b>Positivo</b>: as receitas cobriram as despesas.</small></div><div class=\"ds-sum__t\"><span>Receitas</span><strong>+R$ 8.031,50</strong><small>Entrou no mês</small></div><div class=\"ds-sum__t\"><span>Despesas</span><strong>−R$ 5.405,85</strong><small>67% das receitas</small></div></div>",
+      "css": ".ds-sum{display:grid;grid-template-columns:1.35fr 1fr 1fr;gap:6px;padding:6px;background:#13307a;border-radius:10px;font:400 16px/1.5 'Public Sans Variable',system-ui,sans-serif;color:#172036}.ds-sum__t{display:grid;gap:8px;padding:24px;background:#fff}.ds-sum__t span{font-size:14px;font-weight:600;color:#4a5573}.ds-sum__t strong{font-size:24px;letter-spacing:-.02em}.ds-sum__t small{font-size:14px;color:#4a5573}.ds-sum__t--bal{background:#1d44a6;color:#fff}.ds-sum__t--bal span,.ds-sum__t--bal small{color:#c9d6f5}.ds-sum__t--bal strong{font-size:40px}.ds-sum__t--bal b{color:#fff}"
+    },
+    {
+      "name": "Category Bars",
+      "kind": "custom",
+      "refersTo": "chart-panel",
+      "description": "Expenses by category: ranked one-hue bars, name, amount and share above each bar, square at the baseline and rounded at the data end; table twin behind Ver como tabela.",
+      "html": "<div class=\"ds-cat\"><div><span>Moradia</span><b>R$ 1.850,00</b><i>34%</i><em style=\"width:100%\"></em></div><div><span>Educação</span><b>R$ 780,00</b><i>14%</i><em style=\"width:42%\"></em></div></div>",
+      "css": ".ds-cat{display:grid;gap:16px;padding:24px;background:#fff;border:1px solid #d3dbea;border-radius:10px;font:400 16px/1.5 'Public Sans Variable',system-ui,sans-serif;color:#172036}.ds-cat div{display:grid;grid-template-columns:1fr auto auto;gap:4px 12px;align-items:baseline}.ds-cat i{font-style:normal;font-size:14px;color:#4a5573}.ds-cat em{grid-column:1/-1;height:10px;background:#1d44a6;border-radius:0 4px 4px 0}"
+    },
+    {
+      "name": "Monthly Columns",
+      "kind": "custom",
+      "refersTo": "chart-panel",
+      "description": "Income vs expense over 12 months as paired columns on one axis (#16916e / #b3261e, 2px gap, 4px rounded tops), a readout above that is legend and direct label for the month in focus, keyboard arrows walk the months.",
+      "html": "<div class=\"ds-mon\"><div class=\"ds-mon__r\"><span><i style=\"background:#16916e\"></i>Receitas <b>R$ 8.031,50</b></span><span><i style=\"background:#b3261e\"></i>Despesas <b>R$ 5.405,85</b></span></div><div class=\"ds-mon__p\"><em style=\"height:70%;background:#16916e\"></em><em style=\"height:30%;background:#b3261e\"></em><s></s><em style=\"height:78%;background:#16916e\"></em><em style=\"height:48%;background:#b3261e\"></em></div></div>",
+      "css": ".ds-mon{display:grid;gap:12px;padding:24px;background:#fff;border:1px solid #d3dbea;border-radius:10px;font:400 14px/1.5 'Public Sans Variable',system-ui,sans-serif;color:#172036}.ds-mon__r{display:flex;gap:24px}.ds-mon__r i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px}.ds-mon__p{display:flex;align-items:flex-end;gap:2px;height:120px;border-bottom:1px solid #aab5cb}.ds-mon__p em{width:18px;border-radius:4px 4px 0 0}.ds-mon__p s{width:24px}"
     }
   ],
   "narrative": {

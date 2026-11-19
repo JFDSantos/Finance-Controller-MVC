@@ -21,6 +21,12 @@ colors:
   danger-wash: "#fcebea"
   income: "#18794e"
   expense: "#b3261e"
+  chart-income: "#16916e"
+  chart-expense: "#b3261e"
+  chart-expense-wash: "#f2cfcc"
+  chart-category: "#1d44a6"
+  chart-grid: "#e6ebf3"
+  chart-baseline: "#aab5cb"
 typography:
   page-title:
     fontFamily: "Public Sans Variable, Public Sans, system-ui, sans-serif"
@@ -173,6 +179,28 @@ components:
     textColor: "{colors.ink}"
     rounded: "{rounded.lg}"
     padding: "48px 24px"
+  summary-panel:
+    backgroundColor: "{colors.cobalt-grout}"
+    rounded: "{rounded.lg}"
+    padding: "6px"
+  summary-tile:
+    backgroundColor: "{colors.surface}"
+    textColor: "{colors.ink}"
+    padding: "16px"
+  summary-tile-balance:
+    backgroundColor: "{colors.cobalt}"
+    textColor: "{colors.on-cobalt}"
+    padding: "24px 16px"
+  chart-panel:
+    backgroundColor: "{colors.surface}"
+    textColor: "{colors.ink}"
+    rounded: "{rounded.lg}"
+    padding: "16px"
+  chart-toggle-pressed:
+    backgroundColor: "{colors.cobalt-wash}"
+    textColor: "{colors.cobalt-deep}"
+    rounded: "{rounded.md}"
+    height: "44px"
 ---
 
 # Design System: Finance Controller
@@ -211,6 +239,14 @@ A restrained-but-committed palette: neutrals tinted toward cobalt, cobalt owning
 ### Tertiary
 - **Alarm Red** (`danger`, `danger-deep`, `danger-wash`): field and form errors, the destructive menu item and the delete button. Also the expense colour (`expense`).
 - **Ledger Green** (`income`): income amounts only (used from the movements and dashboard tasks onward).
+
+### Chart marks
+Chart colours do one job each and were checked with the dataviz palette validator against the white chart surface (light only; no dark theme exists).
+- **Income mark** (`chart-income`, `#16916e`) and **Expense mark** (`chart-expense`, `#b3261e`): the two series of the 12-month chart. The income mark is a lighter step of the ledger green so the pair separates under colour-vision deficiency (worst CVD ΔE 10.6, normal-vision ΔE 28.7, both ≥ 3:1 on white). The ledger's own `income` green (`#18794e`) against the red only reached ΔE 6.5 (warn band), which is why the mark is not the text colour.
+- **Category bars** (`chart-category`, cobalt): expenses by category is one series of nominal categories, so every bar takes the same hue; the names are direct labels. Never colour categories by rank or by value.
+- **Spent meter** (`chart-expense` over `chart-expense-wash`): the filled and unfilled steps of the same red.
+- **Grid** (`chart-grid`) and **baseline** (`chart-baseline`): solid hairlines, recessive.
+- Text in charts always wears ink tokens, never a series colour; identity comes from a swatch beside it.
 
 ### Neutral
 - **Glazed White** (`glaze`): page ground, checkbox rows, disabled buttons.
@@ -331,14 +367,23 @@ Create and edit a movement in the wide dialog (34rem): Tipo, Descrição, Valor 
 ### Category list
 A white panel with hairline rows: name on the left, quiet Renomear and Excluir on the right. Renaming happens in place: the row turns glaze and becomes a field with Cancelar and Salvar; Enter saves, Escape cancels, focus returns to that row's Renomear button. Creating sits above the list as one field and an "Adicionar" button.
 
+### Dashboard (Painel)
+The month selector (the same Período control as Movimentações, in `?mes=`) scopes the summary and the category chart; the 12-month chart always ends at the current month and highlights the chosen month when it falls inside it. Under the month heading:
+
+- **Summary panel:** the month drawn as a small azulejo panel. Three tiles in a cobalt-grout frame (6px grout, 10px outer radius, square tiles): **Saldo** on a cobalt tile in white (2 to 2.5rem, proportional figures), **Receitas** and **Despesas** on white tiles. Each tile carries one `TileGlyph` (a single module): a half-disc rising for income and a positive balance, hanging for expense and a negative balance, a diagonal for a zero balance, so direction reads by shape as well as by the sign and the word (“Positivo”, “Negativo”, “Zerado”). Zero amounts print no sign. The Despesas tile has the **spent meter**: ten small tiles, each a tenth of the month's income, filled by what was spent, beside “67% das receitas” (or “Sem receitas no mês”). One column on phones, balance on its own row from 30rem, three across from 48rem.
+- **Chart panel** (`ChartPanel`): white panel, title, one muted sentence, and a **Ver como tabela** toggle (`aria-pressed`, cobalt wash when on) that swaps the chart for its table twin with the same figures.
+- **Para onde foi o dinheiro** (`CategoryChart`): ranked horizontal bars, largest first, ties by name; name and amount and share above each 10px bar (square at the baseline, 4px rounded data end, at least 2px). Past eight categories the smallest fold into **Outros** (always last, with “N categorias”).
+- **Últimos 12 meses** (`MonthlyChart`): paired columns (income left, expense right, 2px surface gap, at most 20px each, 4px rounded tops) on one axis with compact ticks (“R$ 2,5 mil”). Above the plot a **readout** is the legend and the direct label: swatch, series name, value, and the saldo, for the month in focus (the chosen month, or the one under the pointer or keyboard). The whole month band is the hit target; the plot is one tab stop and the arrow keys, Home and End walk the months, with a cobalt-outlined band. X labels thin to every second or third month on narrow widths, always keeping the chosen one. An all-zero year keeps the axis and says “Nenhuma movimentação nos últimos 12 meses.” The table puts the currency in the headers (“Receitas (R$)”) so four columns fit at 360px.
+- **States:** skeletons shaped like the tiles and like twelve columns (after 300ms); while another month loads, the previous one stays at 60% opacity. An empty month replaces the summary and the category chart with the 7×1 tile strip, “Nenhuma movimentação em …”, one sentence and **Ir para Movimentações** (to the same month). Summary and series fail independently, each with a danger notice and “Tentar novamente”.
+
 ### Tile Panel (signature)
-An SVG grid of 100-unit square tiles with 6-unit grout, each tile one of three figures in one of four rotations, chosen by a seeded generator so the panel is identical on every render. Figures are glaze white, about one in six ochre, on cobalt tile grounds. It plays one quarter-turn entrance per page load (900ms, exponential ease-out, 22ms stagger), skipped under `prefers-reduced-motion`. Sizes in use: 7×5 (auth, desktop), 7×1 (auth, phone), 3×3 with the centre tile missing (404). The mark is a 2×2 of the same module whose quarter-discs meet in one disc, one quarter ochre.
+An SVG grid of 100-unit square tiles with 6-unit grout, each tile one of three figures in one of four rotations, chosen by a seeded generator so the panel is identical on every render. Figures are glaze white, about one in six ochre, on cobalt tile grounds. It plays one quarter-turn entrance per page load (900ms, exponential ease-out, 22ms stagger), skipped under `prefers-reduced-motion`. Sizes in use: 7×5 (auth, desktop), 7×1 (auth, phone), 3×3 with the centre tile missing (404). The mark is a 2×2 of the same module whose quarter-discs meet in one disc, one quarter ochre. `TileGlyph` is a single module (cobalt-grout or glaze ground, one figure) used beside data on the dashboard.
 
 ## Do's and Don'ts
 
 ### Do:
 - **Do** put the shell on cobalt (`cobalt`) and the work on glazed white (`glaze`) and white surfaces.
-- **Do** use the tile module for data when the dashboard arrives: a month rendered as a 7-column grid of tiles, each day's tile carrying that day's movement.
+- **Do** use the tile module for data on the dashboard: the summary is a tile panel and the spent meter counts in tiles. (A per-day 7-column month grid remains a possible future addition; it needs per-day data the summary endpoint does not return.)
 - **Do** keep figures tabular and money in `R$ 1.234,50`.
 - **Do** give every async action a pending label and every failure a pt-BR message from `errorMessage`.
 - **Do** keep touch targets at 44px and focus rings visible: cobalt on light, ochre on cobalt.
