@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: finance-controller
+    runtime: docker
+    plan: free
+    region: oregon
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /health
+    autoDeployTrigger: "off" # deploys come from GitHub Actions via Deploy Hook
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: Demo__Enabled
+        value: "false"
+      - key: ConnectionStrings__DefaultConnection
+        sync: false
+      - key: Jwt__Key
+        sync: false
+      - key: Demo__Password
+        sync: false
+      # Public demo credentials, forwarded to the Docker build as build args.
+      - key: VITE_DEMO_EMAIL
+        sync: false
+      - key: VITE_DEMO_PASSWORD
+        sync: false
