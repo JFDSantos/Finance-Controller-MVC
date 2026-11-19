@@ -100,6 +100,85 @@ public class ProductionTests
     }
 
     [Fact]
+    public async Task StaticFiles_HaveCorrectCacheHeaders()
+    {
+        var dir = Path.Combine(Path.GetTempPath(), "fc-web-" + Guid.NewGuid());
+        Directory.CreateDirectory(Path.Combine(dir, "assets"));
+        File.WriteAllText(Path.Combine(dir, "index.html"), "<html>SPA-INDEX</html>");
+        File.WriteAllText(Path.Combine(dir, "assets", "app-abc123.js"), "console.log(1)");
+        File.WriteAllText(Path.Combine(dir, "favicon.svg"), "<svg/>");
+        try
+        {
+            await using var f = new ApiFactory();
+            using var web = f.WithWebHostBuilder(b => b.UseWebRoot(dir));
+            var client = web.CreateClient();
+
+            foreach (var path in new[] { "/", "/index.html", "/some/spa/route" })
+            {
+                var r = await client.GetAsync(path);
+                Assert.Equal(HttpStatusCode.OK, r.StatusCode);
+                Assert.Contains("SPA-INDEX", await r.Content.ReadAsStringAsync());
+                Assert.Equal("no-cache", r.Headers.CacheControl?.ToString());
+            }
+
+            var asset = await client.GetAsync("/assets/app-abc123.js");
+            Assert.Equal(HttpStatusCode.OK, asset.StatusCode);
+            Assert.Equal("public, max-age=31536000, immutable", asset.Headers.CacheControl?.ToString());
+
+            var other = await client.GetAsync("/favicon.svg");
+            Assert.Equal(HttpStatusCode.OK, other.StatusCode);
+            Assert.DoesNotContain("immutable", other.Headers.CacheControl?.ToString() ?? "");
+        }
+        finally { Directory.Delete(dir, true); }
+    }
+
+    [Theory]
+    [InlineData("/assets/missing.js")]
+    [InlineData("/missing.css")]
+    [InlineData("/robots.txt")]
+    public async Task MissingFileWithExtension_Returns404Json_NotIndexHtml(string path)
+    {
+        var dir = Path.Combine(Path.GetTempPath(), "fc-web-" + Guid.NewGuid());
+        Directory.CreateDirectory(dir);
+        File.WriteAllText(Path.Combine(dir, "index.html"), "<html>SPA-INDEX</html>");
+        try
+        {
+            await using var f = new ApiFactory();
+            using var web = f.WithWebHostBuilder(b => b.UseWebRoot(dir));
+            var r = await web.CreateClient().GetAsync(path);
+            Assert.Equal(HttpStatusCode.NotFound, r.StatusCode);
+            Assert.Contains("json", r.Content.Headers.ContentType?.MediaType);
+            var body = await r.Content.ReadAsStringAsync();
+            Assert.DoesNotContain("SPA-INDEX", body);
+            Assert.Equal("NOT_FOUND", JsonDocument.Parse(body).RootElement.GetProperty("code").GetString());
+        }
+        finally { Directory.Delete(dir, true); }
+    }
+
+    [Fact]
+    public async Task SecurityHeaders_PresentOnApiAndStaticResponses()
+    {
+        var dir = Path.Combine(Path.GetTempPath(), "fc-web-" + Guid.NewGuid());
+        Directory.CreateDirectory(dir);
+        File.WriteAllText(Path.Combine(dir, "index.html"), "<html>SPA-INDEX</html>");
+        try
+        {
+            await using var f = new ApiFactory();
+            using var web = f.WithWebHostBuilder(b => b.UseWebRoot(dir));
+            var client = web.CreateClient();
+            foreach (var path in new[] { "/health", "/api/nope", "/", "/some/spa/route" })
+            {
+                var r = await client.GetAsync(path);
+                Assert.Equal("nosniff", r.Headers.GetValues("X-Content-Type-Options").Single());
+                Assert.Equal("DENY", r.Headers.GetValues("X-Frame-Options").Single());
+                Assert.Equal("strict-origin-when-cross-origin", r.Headers.GetValues("Referrer-Policy").Single());
+                Assert.Equal("frame-ancestors 'none'", r.Headers.GetValues("Content-Security-Policy").Single());
+            }
+        }
+        finally { Directory.Delete(dir, true); }
+    }
+
+    [Fact]
     public async Task SpaFallback_WithoutIndexHtml_DoesNotThrow()
     {
         await using var f = new ApiFactory();
@@ -262,6 +341,22 @@ public class ProductionTests
         Assert.Equal(7, first.cats);
         Assert.True(first.movs >= 20);
         Assert.True(first.recurring >= 2);
+    }
+
+    [Fact]
+    public async Task DemoSeeder_SampleDataIsInPortuguese()
+    {
+        await using var f = new ApiFactory();
+        await f.ResetDatabaseAsync();
+        using var scope = f.Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<FinanceContext>();
+        await DemoSeeder.SeedAsync(db, DemoPass);
+        var descriptions = await db.Moviments.IgnoreQueryFilters().Select(m => m.Description).Distinct().ToListAsync();
+        Assert.Contains("Salário mensal", descriptions);
+        Assert.Contains("Aluguel", descriptions);
+        Assert.Contains("Mercado", descriptions);
+        foreach (var english in new[] { "Monthly salary", "Rent", "Groceries", "Restaurant", "Fuel", "Pharmacy", "Miscellaneous" })
+            Assert.DoesNotContain(english, descriptions);
     }
 
     [Fact]

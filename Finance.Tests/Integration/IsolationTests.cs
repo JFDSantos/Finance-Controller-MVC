@@ -34,6 +34,38 @@ public class IsolationTests : IClassFixture<ApiFactory>
                 await _factory.CreateLoggedInClientAsync("b@example.com"));
     }
 
+    private static async Task AssertCategoryNotFound400(HttpResponseMessage r)
+    {
+        Assert.Equal(HttpStatusCode.BadRequest, r.StatusCode);
+        var j = await r.Content.ReadFromJsonAsync<JsonElement>();
+        Assert.Equal("VALIDATION_FAILED", j.GetProperty("code").GetString());
+        Assert.Contains(j.GetProperty("errors").EnumerateArray(),
+            e => e.GetProperty("errorCode").GetString() == "CATEGORY_NOT_FOUND");
+    }
+
+    [Fact]
+    public async Task UserB_CannotUseUserA_Category_OnMovements()
+    {
+        var (a, b) = await TwoUsersAsync();
+        var catA = await CreateCategoryAsync(a, "Only-A");
+        var catB = await CreateCategoryAsync(b, "Only-B");
+        var bIncome = await CreateIncomeAsync(b, catB, 10m);
+
+        var body = new { description = "x", movimentDate = "2026-01-02", isRecurring = false, categoryId = catA, value = 5m };
+        await AssertCategoryNotFound400(await b.PostAsJsonAsync("/api/Income", body));
+        await AssertCategoryNotFound400(await b.PostAsJsonAsync("/api/Expense", body));
+        await AssertCategoryNotFound400(await b.PutAsJsonAsync($"/api/Income/{bIncome}", body));
+
+        // B's own income keeps its category, and A's category is untouched.
+        var own = await b.GetFromJsonAsync<JsonElement>($"/api/Income/{bIncome}");
+        Assert.Equal(catB, own.GetProperty("categoryId").GetInt32());
+        var aCats = await a.GetFromJsonAsync<JsonElement>("/api/Category");
+        Assert.Contains(aCats.EnumerateArray(), c => c.GetProperty("id").GetInt32() == catA && c.GetProperty("name").GetString() == "Only-A");
+        Assert.Equal(0, (await a.GetFromJsonAsync<JsonElement>("/api/Income")).GetArrayLength());
+        Assert.Equal(0, (await a.GetFromJsonAsync<JsonElement>("/api/Expense")).GetArrayLength());
+        Assert.Equal(HttpStatusCode.NoContent, (await a.DeleteAsync($"/api/Category/{catA}")).StatusCode);
+    }
+
     [Fact]
     public async Task UserB_CannotGetUserA_Income()
     {
