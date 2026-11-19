@@ -28,7 +28,7 @@ Para a conexão direta, use o host sem `-pooler`. Se a senha tiver caracteres co
 3. Preencha as variáveis marcadas como `sync: false` quando solicitado (tabela abaixo).
 4. Em **Settings > Deploy Hook** do serviço, copie a URL do hook (guarde em segredo; quem tem a URL dispara deploys).
 
-Não há região do Render no Brasil; `oregon` é a região padrão do plano gratuito. Se preferir menor latência para o Brasil, troque `region` em `render.yaml` por uma região leste dos EUA oferecida pelo Render (confira a lista na documentação).
+Não há região do Render no Brasil; `oregon` é a região padrão do plano gratuito. (Não verificado na documentação oficial.) Se preferir menor latência para o Brasil, troque `region` em `render.yaml` por uma região leste dos EUA oferecida pelo Render (confira a lista na documentação).
 
 ### Variáveis de ambiente
 
@@ -46,7 +46,8 @@ Não há região do Render no Brasil; `oregon` é a região padrão do plano gra
 
 ## 3. GitHub (segredos, variáveis e ambiente)
 
-1. **Settings > Environments > New environment**: `production`. (Opcional: exigir aprovação manual.)
+1. **Settings > Environments > New environment**: `production`. Recomendado (defesa em profundidade, não obrigatório): ative **Required reviewers** nesse ambiente, para que todo deploy exija aprovação manual.
+   O workflow `Deploy` só roda para `push` na `main` deste mesmo repositório (verifica `event == 'push'`, `head_repository == github.repository` e `head_branch == 'main'`), assim um PR vindo de fork, mesmo de um branch chamado `main`, nunca executa código com os segredos de produção.
 2. No ambiente `production` (ou em Settings > Secrets and variables > Actions), cadastre:
    - Secret `DATABASE_URL_DIRECT`: string Npgsql **direta** do Neon, com `SSL Mode=Require`.
    - Secret `RENDER_DEPLOY_HOOK_URL`: URL do Deploy Hook do Render.
@@ -55,7 +56,9 @@ Não há região do Render no Brasil; `oregon` é a região padrão do plano gra
 
 ## 4. Conta demo (opcional)
 
-Defina no Render `Demo__Enabled=true`, `Demo__Password=<senha>`, `VITE_DEMO_EMAIL=demo@financecontroller.app` e `VITE_DEMO_PASSWORD=<mesma senha>`. O Render repassa variáveis de ambiente ao build Docker como build args; o `Dockerfile` as recebe como `ARG` e o frontend exibe o botão "Experimentar com a conta demo" somente quando as duas existem.
+Defina no Render `Demo__Enabled=true`, `Demo__Password=<senha>`, `VITE_DEMO_EMAIL=demo@financecontroller.app` e `VITE_DEMO_PASSWORD=<mesma senha>`. Em princípio, o Render repassa as variáveis de ambiente do serviço ao build Docker como build args (**não verificado na documentação oficial**, que não pôde ser consultada); o `Dockerfile` as recebe como `ARG` e o frontend exibe o botão "Experimentar com a conta demo" somente quando as duas existem.
+
+**Confirme após o primeiro deploy** que o botão "Experimentar com a conta demo" aparece na tela de login. Se não aparecer, as variáveis não chegaram ao build: defina `VITE_DEMO_EMAIL` e `VITE_DEMO_PASSWORD` como build args do Docker nas configurações do serviço no Render (ou, como alternativa, passe `--build-arg` ao construir a imagem em outro host) e refaça o deploy.
 
 **Essas credenciais são públicas por desenho**: ficam embutidas no JavaScript servido ao navegador. Use uma senha exclusiva e não dê privilégios a essa conta.
 
@@ -76,7 +79,7 @@ Ordem: migrations primeiro, depois o app. O workflow `Deploy` já faz nessa orde
 ## 7. Rotação de segredos
 
 - **`Jwt__Key`**: gere outra com `openssl rand -base64 48`, atualize no Render e reinicie/redeploy. Todas as sessões ativas são invalidadas (os usuários precisam entrar de novo).
-- **Senha demo**: altere `Demo__Password` e `VITE_DEMO_PASSWORD` no Render e faça novo deploy (o build precisa rodar de novo para o frontend receber a nova senha). Se a conta demo já existe no banco com a senha antiga, redefina-a no banco ou remova o usuário demo antes do deploy.
+- **Senha demo**: altere `Demo__Password` e `VITE_DEMO_PASSWORD` no Render e faça novo deploy (o build precisa rodar de novo para o frontend receber a nova senha). O `DemoSeeder` regrava o hash da senha automaticamente quando `Demo__Password` muda, então não é preciso mexer no banco.
 - **Deploy Hook**: regenere no Render e atualize `RENDER_DEPLOY_HOOK_URL`.
 
 ## 8. Limitações conhecidas
@@ -85,7 +88,7 @@ Ordem: migrations primeiro, depois o app. O workflow `Deploy` já faz nessa orde
 - Neon free: o banco "escala a zero" quando ocioso; a primeira consulta depois disso tem alguns segundos extras.
 - Não há verificação de e-mail nem recuperação de senha.
 - O app confia em `X-Forwarded-For` (rate limit por IP) somente porque só é acessível através do proxy do Render. Não exponha a porta 8080 diretamente em outro ambiente.
-- Sem Deploy Hook automático: o auto deploy do Render está desligado; só o workflow publica.
+- O auto deploy do Render está desligado (`autoDeployTrigger: "off"`); somente o workflow `Deploy` publica novas versões.
 
 ## 9. Custos
 
